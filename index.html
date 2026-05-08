@@ -287,23 +287,6 @@
         .photo-upload-btn:hover { background: rgba(27,94,32,0.1); }
         .photo-upload-btn.selected { border-style: solid; background: rgba(67,160,71,0.08); color: var(--success); border-color: var(--success); }
 
-        /* ===== CONFIG SETUP BANNER ===== */
-        .config-banner { background: linear-gradient(135deg, #0d3b10, #1b5e20); color: white; padding: 0; position: fixed; inset: 0; z-index: 99999; display: flex; align-items: center; justify-content: center; }
-        .config-card { background: white; border-radius: 16px; padding: 40px; max-width: 640px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 50px rgba(0,0,0,0.3); }
-        .config-card h2 { color: #1b5e20; margin-bottom: 8px; font-size: 1.5rem; }
-        .config-card p { color: #757575; margin-bottom: 24px; font-size: 0.95rem; }
-        .config-section { margin-bottom: 28px; }
-        .config-section h3 { color: #1b5e20; font-size: 1rem; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; padding-bottom: 8px; border-bottom: 2px solid #e0e0e0; }
-        .config-input { width: 100%; padding: 10px 14px; border: 2px solid #e0e0e0; border-radius: 8px; font-family: monospace; font-size: 0.9rem; margin-bottom: 10px; transition: border-color 0.2s; }
-        .config-input:focus { outline: none; border-color: #1b5e20; }
-        .config-input.valid { border-color: #43a047; background: #f1f8e9; }
-        .config-hint { font-size: 0.8rem; color: #757575; margin-bottom: 8px; }
-        .config-hint a { color: #1565c0; }
-        .config-save-btn { background: #1b5e20; color: white; border: none; padding: 14px 32px; border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer; width: 100%; margin-top: 8px; }
-        .config-save-btn:hover { background: #0d3b10; }
-        .config-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 24px; }
-        .config-logo-icon { width: 48px; height: 48px; background: #1b5e20; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; font-weight: 800; }
-
         .hidden { display: none !important; }
         .text-center { text-align: center; }
         .mt-4 { margin-top: 16px; }
@@ -335,60 +318,6 @@
     </style>
 </head>
 <body>
-
-<!-- ===== FIRST-TIME SETUP BANNER ===== -->
-<div id="configBanner" class="config-banner hidden">
-    <div class="config-card">
-        <div class="config-logo">
-            <div class="config-logo-icon">K</div>
-            <div>
-                <div style="font-weight:800; font-size:1.2rem; color:#1b5e20;">KRAC College</div>
-                <div style="font-size:0.8rem; color:#757575;">System Configuration</div>
-            </div>
-        </div>
-        <h2>Welcome! Quick Setup Required</h2>
-        <p>Fill in your service credentials below. This is a one-time setup — your config is saved locally and never shared. You can get all these free of charge.</p>
-
-        <!-- NEON DATABASE -->
-        <div class="config-section">
-            <h3><i class="fas fa-database" style="color:#1b5e20;"></i> Neon PostgreSQL Database</h3>
-            <p class="config-hint">
-                Go to <a href="https://neon.tech" target="_blank">neon.tech</a> → Create Project → Connection Details → copy the <strong>Connection string</strong> (starts with <code>postgresql://...</code>)
-            </p>
-            <input class="config-input" id="cfg_neon_url" type="text" placeholder="postgresql://user:password@ep-xxx.neon.tech/neondb?sslmode=require">
-        </div>
-
-        <!-- EMAILJS -->
-        <div class="config-section">
-            <h3><i class="fas fa-envelope" style="color:#1b5e20;"></i> EmailJS (for admission emails)</h3>
-            <p class="config-hint">
-                Go to <a href="https://emailjs.com" target="_blank">emailjs.com</a> → Free account → Dashboard → get your <strong>Public Key</strong>, <strong>Service ID</strong>, and <strong>Template ID</strong>.<br>
-                In EmailJS, create an email service connected to <strong>inquiry.krfc.agribusiness@gmail.com</strong>, then create a template with variables: <code>{{to_email}}</code>, <code>{{to_name}}</code>, <code>{{admission_number}}</code>, <code>{{status}}</code>, <code>{{message}}</code>.
-            </p>
-            <input class="config-input" id="cfg_emailjs_public_key" type="text" placeholder="EmailJS Public Key (e.g. user_xxxxxxxxx)">
-            <input class="config-input" id="cfg_emailjs_service_id" type="text" placeholder="EmailJS Service ID (e.g. service_xxxxxx)">
-            <input class="config-input" id="cfg_emailjs_template_id" type="text" placeholder="EmailJS Template ID (e.g. template_xxxxxx)">
-        </div>
-
-        <!-- CLOUDINARY -->
-        <div class="config-section">
-            <h3><i class="fas fa-cloud-upload-alt" style="color:#1b5e20;"></i> Cloudinary (photo uploads)</h3>
-            <p class="config-hint">
-                Go to <a href="https://cloudinary.com" target="_blank">cloudinary.com</a> → Free account → Dashboard → copy your <strong>Cloud Name</strong>.<br>
-                Then go to Settings → Upload → Add Upload Preset → set it to <strong>Unsigned</strong> → save and copy the preset name.
-            </p>
-            <input class="config-input" id="cfg_cloud_name" type="text" placeholder="Cloudinary Cloud Name (e.g. my-krac-cloud)">
-            <input class="config-input" id="cfg_upload_preset" type="text" placeholder="Upload Preset name (e.g. krac_uploads)">
-        </div>
-
-        <button class="config-save-btn" onclick="saveConfig()">
-            <i class="fas fa-rocket"></i> Save & Launch KRAC System
-        </button>
-        <p style="text-align:center; margin-top:12px; font-size:0.8rem; color:#757575;">
-            All fields required. Config is saved in your browser's local storage.
-        </p>
-    </div>
-</div>
 
 <!-- ===== LOADING OVERLAY ===== -->
 <div class="loading-overlay" id="loadingOverlay">
@@ -1026,10 +955,6 @@
                 <div class="form-group"><label>Admission Prefix</label><input type="text" value="KRAC" id="admPrefix"></div>
                 <div class="form-group"><label>Default Password</label><input type="text" value="student123" id="defaultPassword"></div>
                 <button class="btn btn-primary" onclick="saveSettings()"><i class="fas fa-save"></i> Save Settings</button>
-                <hr style="margin:24px 0; border:none; border-top:1px solid var(--border);">
-                <h4 style="color:var(--primary); margin-bottom:12px;"><i class="fas fa-tools"></i> Reconfigure Services</h4>
-                <p style="color:var(--text-light); margin-bottom:16px; font-size:0.9rem;">Need to update your Neon, EmailJS, or Cloudinary credentials?</p>
-                <button class="btn btn-outline" onclick="resetConfig()"><i class="fas fa-redo"></i> Open Setup Wizard</button>
             </div>
         </div>
     </main>
@@ -1214,79 +1139,53 @@
 
 <script>
 // ============================================================
-//  CONFIG — stored in localStorage, set via Setup Wizard
+//  ✏️  YOUR CREDENTIALS — fill in these 5 values and save
+//  (Neon DB credentials go in api/db.js — see that file)
 // ============================================================
-let CFG = {};
 
-function loadConfig() {
-    const saved = localStorage.getItem('krac_config');
-    if (saved) {
-        try { CFG = JSON.parse(saved); return true; } catch(e) {}
-    }
-    return false;
-}
+// 1. EmailJS — emailjs.com → Account → API Keys → Public Key
+const EMAILJS_PUBLIC_KEY  = 'YOUR_EMAILJS_PUBLIC_KEY';
+// 2. EmailJS — Email Services → your Gmail service → Service ID
+const EMAILJS_SERVICE_ID  = 'YOUR_EMAILJS_SERVICE_ID';
+// 3. EmailJS — Email Templates → your template → Template ID
+const EMAILJS_TEMPLATE_ID = 'YOUR_EMAILJS_TEMPLATE_ID';
 
-function saveConfig() {
-    CFG = {
-        neon_url:            document.getElementById('cfg_neon_url').value.trim(),
-        emailjs_public_key:  document.getElementById('cfg_emailjs_public_key').value.trim(),
-        emailjs_service_id:  document.getElementById('cfg_emailjs_service_id').value.trim(),
-        emailjs_template_id: document.getElementById('cfg_emailjs_template_id').value.trim(),
-        cloud_name:          document.getElementById('cfg_cloud_name').value.trim(),
-        upload_preset:       document.getElementById('cfg_upload_preset').value.trim(),
-    };
-    if (!CFG.neon_url || !CFG.emailjs_public_key || !CFG.emailjs_service_id ||
-        !CFG.emailjs_template_id || !CFG.cloud_name || !CFG.upload_preset) {
-        alert('Please fill in all fields before saving.');
-        return;
-    }
-    localStorage.setItem('krac_config', JSON.stringify(CFG));
-    document.getElementById('configBanner').classList.add('hidden');
-    initEmailJS();
-    showToast('Configuration saved! System is ready.', 'success');
-    loadPublicData();
-}
+// 4. Cloudinary — cloudinary.com → Dashboard → Cloud Name
+const CLOUD_NAME    = 'YOUR_CLOUD_NAME';
+// 5. Cloudinary — Settings → Upload → Upload Presets → unsigned preset name
+const UPLOAD_PRESET = 'YOUR_UPLOAD_PRESET';
 
-function resetConfig() {
-    localStorage.removeItem('krac_config');
-    document.getElementById('configBanner').classList.remove('hidden');
-}
+// ============================================================
+//  (nothing else to change in this file)
+// ============================================================
+
+const CFG = {
+    emailjs_public_key:  EMAILJS_PUBLIC_KEY,
+    emailjs_service_id:  EMAILJS_SERVICE_ID,
+    emailjs_template_id: EMAILJS_TEMPLATE_ID,
+    cloud_name:          CLOUD_NAME,
+    upload_preset:       UPLOAD_PRESET,
+};
 
 function initEmailJS() {
-    if (CFG.emailjs_public_key) {
+    if (CFG.emailjs_public_key && !CFG.emailjs_public_key.startsWith('YOUR_')) {
         emailjs.init({ publicKey: CFG.emailjs_public_key });
     }
 }
 
 // ============================================================
-//  ✅ NEON DB — via HTTP fetch (no SDK needed, works anywhere)
-//  All queries go through Neon's serverless HTTP endpoint
+//  DATABASE — proxies all queries through Vercel /api/db
+//  The API route connects to Neon server-side (avoids CORS)
 // ============================================================
 async function neonQuery(sql, params = []) {
-    if (!CFG.neon_url) throw new Error('Neon DB not configured');
-
-    // Extract connection info from the postgres URL
-    // Format: postgresql://user:password@host/dbname?sslmode=require
-    const url = new URL(CFG.neon_url.replace('postgresql://', 'https://').replace('postgres://', 'https://'));
-    const host = url.hostname;   // e.g. ep-xxx.neon.tech
-    const [user, password] = url.username ? [url.username, decodeURIComponent(url.password)] : ['',''];
-    const database = url.pathname.replace('/', '');
-
-    const endpoint = `https://${host}/sql`;
-
-    const response = await fetch(endpoint, {
+    const response = await fetch('/api/db', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Basic ' + btoa(`${user}:${password}`),
-            'Neon-Connection-String': CFG.neon_url
-        },
-        body: JSON.stringify({ query: sql, params })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sql, params })
     });
-
     if (!response.ok) {
         const err = await response.text();
-        throw new Error(`Neon DB error: ${err}`);
+        throw new Error('DB error: ' + err);
     }
     const data = await response.json();
     return data.rows || [];
@@ -2545,33 +2444,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Load static public data
     loadPublicData();
 
-    // Check for saved config
-    const configured = loadConfig();
+    // Init EmailJS
+    initEmailJS();
 
-    if (!configured) {
-        // Show setup wizard for first-time setup
-        document.getElementById('configBanner').classList.remove('hidden');
-    } else {
-        // Init services with saved config
-        initEmailJS();
+    // Init Neon DB (creates tables automatically on first run)
+    showLoading('Starting up...');
+    try {
+        await initDB();
+        await loadSettings();
+        hideLoading();
+    } catch(e) {
+        hideLoading();
+        // DB not configured yet — site still works for public pages
+        console.warn('DB not ready:', e.message);
+    }
 
-        // Init Neon DB (create tables)
-        showLoading('Initializing database...');
-        try {
-            await initDB();
-            await loadSettings();
-            hideLoading();
-        } catch(e) {
-            hideLoading();
-            showToast('Database connection failed. Check your Neon URL in Settings → Setup Wizard.', 'error');
-            console.error('DB init error:', e);
-        }
-
-        // Restore session
-        if (currentUser) {
-            redirectToDashboard(currentUser.role);
-            if (currentUser.role === 'teacher' || currentUser.role === 'admin') refreshAdmissionBadges();
-        }
+    // Restore session if user was already logged in
+    if (currentUser) {
+        redirectToDashboard(currentUser.role);
+        if (currentUser.role === 'teacher' || currentUser.role === 'admin') refreshAdmissionBadges();
     }
 });
 </script>

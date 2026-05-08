@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KRAC - Kenya Rural Agribusiness College</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Firebase Compat SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
     <style>
@@ -103,8 +102,9 @@
         .course-body { padding: 28px; }
         .course-body h3 { color: var(--primary); margin-bottom: 12px; font-size: 1.3rem; }
         .course-body p { color: var(--text-light); margin-bottom: 16px; font-size: 0.95rem; }
-        .course-meta { display: flex; gap: 16px; font-size: 0.85rem; color: var(--text-light); }
+        .course-meta { display: flex; gap: 16px; font-size: 0.85rem; color: var(--text-light); flex-wrap: wrap; }
         .course-meta span { display: flex; align-items: center; gap: 6px; }
+        .course-fee { margin-top: 16px; padding: 10px 16px; background: rgba(27,94,32,0.07); border-radius: var(--radius); display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--primary); font-size: 0.9rem; }
 
         /* ===== ABOUT ===== */
         .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
@@ -125,10 +125,11 @@
         .goals-list li i, .impact-list li i { color: var(--success); margin-top: 3px; }
 
         /* ===== TEAM ===== */
-        .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 32px; }
+        .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 32px; }
         .team-card { background: var(--bg-white); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow); text-align: center; transition: var(--transition); cursor: pointer; }
         .team-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-lg); }
-        .team-image { width: 100%; height: 280px; background: linear-gradient(135deg, var(--primary-light), var(--primary-dark)); display: flex; align-items: center; justify-content: center; color: white; font-size: 4rem; }
+        .team-image { width: 100%; height: 280px; background: linear-gradient(135deg, var(--primary-light), var(--primary-dark)); display: flex; align-items: center; justify-content: center; color: white; font-size: 4rem; overflow: hidden; }
+        .team-image img { width: 100%; height: 100%; object-fit: cover; object-position: top center; }
         .team-info { padding: 24px; }
         .team-info h4 { color: var(--primary); margin-bottom: 4px; font-size: 1.2rem; }
         .team-info p { color: var(--secondary); font-weight: 600; font-size: 0.9rem; margin-bottom: 12px; }
@@ -264,8 +265,8 @@
 
         /* ===== TEAM MODAL ===== */
         .team-modal-body { display: grid; grid-template-columns: 200px 1fr; gap: 32px; align-items: start; }
-        .team-modal-image { width: 200px; height: 200px; border-radius: var(--radius-lg); background: linear-gradient(135deg, var(--primary-light), var(--primary-dark)); display: flex; align-items: center; justify-content: center; color: white; font-size: 4rem; overflow: hidden; }
-        .team-modal-image img { width: 100%; height: 100%; object-fit: cover; }
+        .team-modal-image { width: 200px; height: 240px; border-radius: var(--radius-lg); background: linear-gradient(135deg, var(--primary-light), var(--primary-dark)); display: flex; align-items: center; justify-content: center; color: white; font-size: 4rem; overflow: hidden; }
+        .team-modal-image img { width: 100%; height: 100%; object-fit: cover; object-position: top center; }
         .team-modal-info h3 { color: var(--primary); font-size: 1.5rem; margin-bottom: 4px; }
         .team-modal-info .role { color: var(--secondary); font-weight: 600; margin-bottom: 8px; }
         .team-modal-info .dept { color: var(--text-light); font-size: 0.9rem; margin-bottom: 16px; }
@@ -352,8 +353,8 @@
             <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1593113598332-cd288d649433?w=1920');"></div>
         </div>
         <div class="hero-content">
-            <h1>Shaping the Future of Kenyan Agriculture</h1>
-            <p>Empowering rural communities through quality education, innovation, and sustainable agribusiness practices.</p>
+            <h1>Empowering Communities Through Agribusiness, Innovation &amp; Skills Development</h1>
+            <p>Kenya Rural Agribusiness College — Building the Future of Agribusiness in Kenya. Boarding &amp; Day School Available.</p>
             <div class="hero-buttons">
                 <a href="#courses" class="btn btn-secondary" onclick="router('courses')">
                     <i class="fas fa-book-open"></i> Explore Courses
@@ -373,22 +374,19 @@
     <section>
         <div class="stats-grid">
             <div class="stat-card"><h3 id="statStudents">50+</h3><p>Enrolled Students</p></div>
-            <div class="stat-card" style="background:var(--secondary); color:var(--text-dark);"><h3>25+</h3><p>Expert Faculty</p></div>
-            <div class="stat-card" style="background:var(--accent); color:white;"><h3>15+</h3><p>Programs Offered</p></div>
-            <div class="stat-card" style="background:var(--text-dark); color:white;"><h3>98%</h3><p>Graduate Employment</p></div>
+            <div class="stat-card" style="background:var(--secondary); color:var(--text-dark);"><h3>4</h3><p>Courses Offered</p></div>
+            <div class="stat-card" style="background:var(--accent); color:white;"><h3>98%</h3><p>Graduate Employment</p></div>
+            <div class="stat-card" style="background:var(--text-dark); color:white;"><h3>5+</h3><p>Industry Partners</p></div>
         </div>
     </section>
 
     <section id="courses">
         <div class="section-header">
             <h2>Our Programs</h2>
-            <p>Comprehensive agricultural education designed to transform rural livelihoods and build sustainable futures.</p>
+            <p>Practical, market-driven agribusiness training designed to transform rural livelihoods and build sustainable futures.</p>
         </div>
         <div class="courses-grid" id="coursesGrid">
-            <div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--text-light);">
-                <div class="spinner" style="margin:0 auto 16px;"></div>
-                <p>Loading programs from Firebase...</p>
-            </div>
+            <!-- Populated by JS from static data -->
         </div>
     </section>
 
@@ -403,7 +401,7 @@
             </div>
             <div class="about-content">
                 <h3>Kenya Rural Agribusiness College</h3>
-                <p>Founded with a vision to bridge the gap between traditional farming and modern agribusiness, KRAC has grown to become a leading institution in agricultural education.</p>
+                <p>Founded with a vision to bridge the gap between traditional farming and modern agribusiness, KRAC has grown to become a leading institution in agricultural education in the Mt Kenya region, based in Othaya, Nyeri.</p>
                 <p>Our state-of-the-art facilities, experienced faculty, and strong industry partnerships ensure our graduates are well-equipped to lead Kenya's agricultural transformation.</p>
                 <div class="mission-vision">
                     <div class="mv-card mv-card-large">
@@ -419,55 +417,25 @@
                     <div class="goals-list">
                         <h4><i class="fas fa-flag"></i> Our Goals</h4>
                         <ul>
-                            <li><i class="fas fa-check"></i> Quality Training-Provide competency-based, hands-on training in crop and livestock production.</li>
-                            <li><i class="fas fa-check"></i> Skills Development-Equip learners with practical and entrepreneurial skills for self-employment and job creation.</li>
-                            <li><i class="fas fa-check"></i> Agribusiness Promotion-Promote value addition, agro-processing, and access to markets</li>
-                            <li><i class="fas fa-check"></i> Innovation & Technology-Integrate modern technologies such as digital agriculture and smart farming.</li>
-                            <li><i class="fas fa-check"></i> Sustainable Agriculture-Promote climate-smart and environmentally sustainable farming practices.</li>
-                            <li><i class="fas fa-check"></i> Industry Linkages-Build partnerships with agribusiness companies, NGOs, and research institutions.</li>
-                            <li><i class="fas fa-check"></i> Community Development -Contribute to rural development through outreach programs and extension services.</li>
+                            <li><i class="fas fa-check"></i> Quality Training — Provide competency-based, hands-on training in crop and livestock production.</li>
+                            <li><i class="fas fa-check"></i> Skills Development — Equip learners with practical and entrepreneurial skills for self-employment and job creation.</li>
+                            <li><i class="fas fa-check"></i> Agribusiness Promotion — Promote value addition, agro-processing, and access to markets.</li>
+                            <li><i class="fas fa-check"></i> Innovation &amp; Technology — Integrate modern technologies such as digital agriculture and smart farming.</li>
+                            <li><i class="fas fa-check"></i> Sustainable Agriculture — Promote climate-smart and environmentally sustainable farming practices.</li>
+                            <li><i class="fas fa-check"></i> Industry Linkages — Build partnerships with agribusiness companies, NGOs, and research institutions.</li>
+                            <li><i class="fas fa-check"></i> Community Development — Contribute to rural development through outreach programs and extension services.</li>
                         </ul>
                     </div>
                     <div class="impact-list">
                         <h4><i class="fas fa-chart-line"></i> Our Impact</h4>
                         <ul>
-                            <li><i class="fas fa-check"></i> 1. Economic Impact-
-Increased income levels for graduates through agribusiness ventures
-Creation of employment opportunities (self and wage employment)
-Growth of small and medium agribusiness enterprises
-</li>
-                            <li><i class="fas fa-check"></i> 2.Food Security Improvement-
-Increased production of crops and livestock products
-Improved availability of nutritious food at household and community level
-Reduced post-harvest losses through better handling and value addition
-</li>
-                            <li><i class="fas fa-check"></i> 3. Skills and Knowledge Development-
-Development of practical, hands-on agricultural skills
-Increased adoption of modern farming technologies and techniques
-Enhanced entrepreneurial and business management skills
-</li>
-                            <li><i class="fas fa-check"></i> 4. Youth and Women Empowerment-
-Increased participation of youth and women in agribusiness
-Improved financial independence and decision-making capacity
-Reduction in rural unemployment
-</li>
-                            <li><i class="fas fa-check"></i>5. Community Development-
-Strengthened local economies through agribusiness activities
-Improved livelihoods in rural areas
-Knowledge transfer through trained graduates to communities
- </li>
-  <li><i class="fas fa-check"></i>6. Environmental Impact-
-Adoption of climate-smart and sustainable farming practices
-Improved soil health and water management
-Reduced environmental degradation
-
- </li>
-  <li><i class="fas fa-check"></i>7. Institutional Impact-
-Establishment of a reputable agribusiness training center
-Strong partnerships with industry, NGOs, and government
-Contribution to national agricultural development goals
-
- </li>
+                            <li><i class="fas fa-check"></i> Economic Impact — Increased income levels for graduates through agribusiness ventures and creation of employment opportunities.</li>
+                            <li><i class="fas fa-check"></i> Food Security — Increased production of crops and livestock products; reduced post-harvest losses through value addition.</li>
+                            <li><i class="fas fa-check"></i> Skills &amp; Knowledge — Development of practical, hands-on agricultural skills and enhanced entrepreneurial capacity.</li>
+                            <li><i class="fas fa-check"></i> Youth &amp; Women Empowerment — Increased participation of youth and women in agribusiness; improved financial independence.</li>
+                            <li><i class="fas fa-check"></i> Community Development — Strengthened local economies through agribusiness activities and improved rural livelihoods.</li>
+                            <li><i class="fas fa-check"></i> Environmental Impact — Adoption of climate-smart farming practices, improved soil health and water management.</li>
+                            <li><i class="fas fa-check"></i> Institutional Impact — Establishment of a reputable agribusiness training center with strong industry and NGO partnerships.</li>
                         </ul>
                     </div>
                 </div>
@@ -478,13 +446,10 @@ Contribution to national agricultural development goals
     <section id="team">
         <div class="section-header">
             <h2>Our Leadership</h2>
-            <p>Meet the dedicated professionals leading our mission to transform agricultural education.</p>
+            <p>Meet the dedicated professionals appointed to lead KRAC's mission to transform agricultural education.</p>
         </div>
         <div class="team-grid" id="teamGrid">
-            <div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--text-light);">
-                <div class="spinner" style="margin:0 auto 16px;"></div>
-                <p>Loading team from Firebase...</p>
-            </div>
+            <!-- Populated by JS from static data -->
         </div>
     </section>
 
@@ -499,7 +464,7 @@ Contribution to national agricultural development goals
     <section id="affiliates">
         <div class="section-header">
             <h2>Affiliated Institutions</h2>
-            <p>Connected with leading academic and research institutions across the region.</p>
+            <p>Connected with leading agricultural and research institutions across the region.</p>
         </div>
         <div class="partners-grid" id="affiliatesGrid"></div>
     </section>
@@ -507,7 +472,7 @@ Contribution to national agricultural development goals
     <section id="admissions">
         <div class="section-header">
             <h2>Admissions</h2>
-            <p>Begin your journey towards a rewarding career in agribusiness.</p>
+            <p>Begin your journey towards a rewarding career in agribusiness. Admissions Open — Intake Ongoing.</p>
         </div>
         <div class="admissions-grid">
             <div>
@@ -544,7 +509,7 @@ Contribution to national agricultural development goals
             <div class="contact-info">
                 <div class="contact-item">
                     <i class="fas fa-map-marker-alt"></i>
-                    <div><h4>Location</h4><p>KRAC Main Campus<br>Along Nyeri-Othaya Highway opposite Kenyatta Level 6 Hospital<br>P.O. Box 00-00000, Nairobi, Kenya</p></div>
+                    <div><h4>Location</h4><p>KRAC Main Campus<br>Othaya, Nyeri<br>(Opposite Kenyatta Level 6 Hospital, Nyeri-Othaya Highway)</p></div>
                 </div>
                 <div class="contact-item">
                     <i class="fas fa-envelope"></i>
@@ -552,7 +517,7 @@ Contribution to national agricultural development goals
                 </div>
                 <div class="contact-item">
                     <i class="fas fa-phone"></i>
-                    <div><h4>Phone</h4><p>+254 746617 719</p></div>
+                    <div><h4>Phone</h4><p>0746 617 719</p></div>
                 </div>
                 <div class="contact-item">
                     <i class="fas fa-clock"></i>
@@ -579,7 +544,7 @@ Contribution to national agricultural development goals
         <div class="footer-grid">
             <div class="footer-section">
                 <h4>About KRAC</h4>
-                <p>Kenya Rural Agribusiness College is dedicated to transforming agricultural education and empowering rural communities.</p>
+                <p>Kenya Rural Agribusiness College is dedicated to transforming agricultural education and empowering rural communities in Othaya, Nyeri and beyond.</p>
             </div>
             <div class="footer-section">
                 <h4>Quick Links</h4>
@@ -604,7 +569,7 @@ Contribution to national agricultural development goals
             </div>
         </div>
         <div class="footer-bottom">
-            <p>Kenya Rural Agribusiness College (KRAC). All rights reserved. | <a href="#" style="color:var(--secondary);">Privacy Policy</a></p>
+            <p>&copy; 2025 Kenya Rural Agribusiness College (KRAC). All rights reserved. | <a href="#" style="color:var(--secondary);">Privacy Policy</a></p>
         </div>
     </footer>
 </div>
@@ -966,10 +931,10 @@ Contribution to national agricultural development goals
             <div class="card">
                 <h3 style="color:var(--primary); margin-bottom:24px;"><i class="fas fa-edit"></i> Edit Website Content</h3>
                 <div class="form-group"><label>College Name</label><input type="text" id="contentCollegeName" value="Kenya Rural Agribusiness College"></div>
-                <div class="form-group"><label>Tagline</label><input type="text" id="contentTagline" value="Shaping the Future of Kenyan Agriculture"></div>
+                <div class="form-group"><label>Tagline</label><input type="text" id="contentTagline" value="Empowering Communities Through Agribusiness, Innovation & Skills Development"></div>
                 <div class="form-group"><label>About Text</label><textarea id="contentAbout" rows="4">Founded with a vision to bridge the gap between traditional farming and modern agribusiness...</textarea></div>
                 <div class="form-group"><label>Contact Email</label><input type="email" id="contentEmail" value="inquiry.krfc.agribusiness@gmail.com"></div>
-                <div class="form-group"><label>Contact Phone</label><input type="text" id="contentPhone" value="+254 746617 719"></div>
+                <div class="form-group"><label>Contact Phone</label><input type="text" id="contentPhone" value="0746 617 719"></div>
                 <button class="btn btn-primary" onclick="saveContent()"><i class="fas fa-save"></i> Save Changes</button>
             </div>
         </div>
@@ -1106,7 +1071,7 @@ Contribution to national agricultural development goals
         <div class="modal-body" id="admissionReviewBody"></div>
         <div class="modal-footer">
             <button class="btn btn-danger" onclick="handleAdmissionAction('reject')"><i class="fas fa-times"></i> Reject</button>
-            <button class="btn btn-primary" onclick="handleAdmissionAction('approve')"><i class="fas fa-check"></i> Approve & Enroll</button>
+            <button class="btn btn-primary" onclick="handleAdmissionAction('approve')"><i class="fas fa-check"></i> Approve &amp; Enroll</button>
         </div>
     </div>
 </div>
@@ -1155,38 +1120,135 @@ Contribution to national agricultural development goals
 
 <script>
 // ============================================================
-//  FIREBASE CONFIGURATION
-//  Replace the placeholders below with your actual Firebase config
-//  from console.firebase.google.com → Project Settings → Web App
+//  FIREBASE — only used for portal/dashboard data (students, results, fees, exams, applications)
+//  The public website (courses, team, partners) is served from static JS arrays below.
 // ============================================================
 const firebaseConfig = {
-    apiKey:            "PASTE_YOUR_API_KEY_HERE",
-    authDomain:        "PASTE_YOUR_PROJECT_ID.firebaseapp.com",
-    projectId:         "PASTE_YOUR_PROJECT_ID",
-    storageBucket:     "PASTE_YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "PASTE_YOUR_MESSAGING_SENDER_ID",
-    appId:             "PASTE_YOUR_APP_ID"
+   apiKey: "AIzaSyBvhk9fi6E7CmjdGxy4QcqzJJaEOZjy4kQ",
+  authDomain: "kilimopedia.firebaseapp.com",
+  projectId: "kilimopedia",
+  storageBucket: "kilimopedia.firebasestorage.app",
+  messagingSenderId: "687569754083",
+  appId: "1:687569754083:web:561f94fddd70e98c8632d6",
+  measurementId: "G-5PYQRED78Y"
 };
 
 const isFirebaseConfigured = firebaseConfig.apiKey && !firebaseConfig.apiKey.includes("PASTE_YOUR");
-
-// Initialize Firebase
-if (isFirebaseConfigured) {
-    firebase.initializeApp(firebaseConfig);
-}
+if (isFirebaseConfigured) { firebase.initializeApp(firebaseConfig); }
 const db = isFirebaseConfigured ? firebase.firestore() : null;
 
 // ============================================================
-//  FIREBASE DATABASE LAYER
-//  All functions below replace the old Azure / localStorage calls.
+//  STATIC PUBLIC DATA — hardcoded from official KRAC documents
+//  Edit these arrays to update what visitors see on the website.
 // ============================================================
 
+const STATIC_PROGRAMS = [
+    {
+        id: "1",
+        name: "Veterinary Assistance Course",
+        duration: "6–15 Months",
+        level: "Certificate",
+        fee: "KES 7,000 – 84,000",
+        description: "Practical livestock health and management training. Covers animal disease prevention, basic treatment techniques, and herd management for cattle, goats, poultry, and rabbits.",
+        icon: "fa-horse-head"
+    },
+    {
+        id: "2",
+        name: "Women Empowerment Program",
+        duration: "10 Months",
+        level: "Certificate",
+        fee: "KES 3,000 – 30,000",
+        description: "Focus on Value Chains and Livestock Industries. Includes poultry, goats, rabbits, and agribusiness skills. Designed to economically empower women through practical, income-generating agricultural activities.",
+        icon: "fa-female"
+    },
+    {
+        id: "3",
+        name: "Junior Agripreneur Course (Holiday Program)",
+        duration: "Holiday Program",
+        level: "Short Course",
+        fee: "KES 1,500 – 3,000",
+        description: "Hands-on agriculture and entrepreneurship for young learners. Introduces students to farming, animal care, and basic business concepts during school holidays.",
+        icon: "fa-seedling"
+    },
+    {
+        id: "4",
+        name: "Crop Development & Marketing Course",
+        duration: "12 Months",
+        level: "Certificate",
+        fee: "KES 33,390",
+        description: "Modern farming techniques, value addition, and market access. Trains students in crop production, post-harvest handling, agro-processing, and connecting with buyers and markets.",
+        icon: "fa-chart-line"
+    }
+];
+
+const STATIC_TEAM = [
+    {
+        id: "1",
+        name: "Mr. Vincent Otieno",
+        role: "Principal & Head of AITAP Business Project",
+        department: "Executive",
+        bio: "Mr. Otieno provides overall leadership, strategic direction, and institutional growth for both the college and the AITAP Business Project. His extensive field experience, training expertise, and international exposure bring valuable technical skills and a global perspective to the institution.",
+        image: "",
+        portfolio: [
+            "Diploma in Agricultural Extension — Bukura Agricultural College",
+            "Diploma in Technical Instructor Education — Bukura Agricultural College",
+            "Field Technician & Extension Officer — ICIPE (International Centre for Insect Physiology and Ecology), gaining expertise in fieldwork, extension services, and agricultural research support",
+            "Technical Instructor at Bukura Agricultural College — trained students on practical agricultural skills",
+            "Completed a six-month internship in Southern Germany, gaining exposure to advanced agricultural systems and practices"
+        ]
+    },
+    {
+        id: "2",
+        name: "Ms. Hope Kanoti Munyoki",
+        role: "Head of Academics / Dean of Studies",
+        department: "Administration",
+        bio: "Ms. Hope leads all academic programs, curriculum development, training quality assurance, and student affairs. Her hands-on farm management experience, research expertise, and strong student leadership bring valuable practical insight, innovation, and academic excellence to the institution.",
+        image: "",
+        portfolio: [
+            "BSc in Agriculture — Egerton University",
+            "Farm Supervisor — Integrated Farm Tech Company",
+            "Experiment Supervisor — Karlo Research Station",
+            "Field Attachment Trainee — Baraka College, Molo",
+            "Leader, AEESA (Agricultural Economics & Extension Students Association) — Egerton University"
+        ]
+    },
+    {
+        id: "3",
+        name: "Mr. Onyango Elly Omondi",
+        role: "Head of Departments Coordination",
+        department: "Administration",
+        bio: "Mr. Onyango oversees coordination across all academic and operational departments, ensuring efficiency, collaboration, and performance delivery. His academic background, volunteer service, and leadership role in community coordination bring strong organizational, grassroots mobilization, and agricultural development perspectives to the institution.",
+        image: "",
+        portfolio: [
+            "BSc in Agriculture — Kisii University",
+            "Volunteer — Ministry of Agriculture, Livestock and Blue Economy",
+            "Ugenya Sub County Coordinator — Onagi Comrades Alliance",
+            "Community coordination and grassroots mobilization in agricultural development programs"
+        ]
+    }
+];
+
+const STATIC_PARTNERS = [
+    { id: "1", name: "Pesira Limited", type: "NGO", description: "Policy support and curriculum alignment with national agricultural goals." },
+    { id: "2", name: "Mercy Corps", type: "Agricultural Company", description: "Pending confirmation — research collaboration and access to latest farming technologies." },
+    { id: "3", name: "ICIPE", type: "NGO", description: "International Centre for Insect Physiology and Ecology — research partnerships and funding support." },
+    { id: "4", name: "APA", type: "Insurance", description: "Agricultural insurance and risk management support for farmers and graduates." },
+    { id: "5", name: "Croplife Farmers SACCO", type: "SACCO", description: "Market linkage training and cooperative financial services for graduate farmers." }
+];
+
+const STATIC_AFFILIATES = [
+    { id: "1", name: "Kenya Rural Food Centre (KRFC)", type: "KRFC", description: "Joint food security programs and resource sharing for rural community development." },
+    { id: "2", name: "Agricultural Industrial Technical Application Project (AITAP)", type: "AITAP", description: "Technical training collaboration and agribusiness innovation partnership." }
+];
+
+// ============================================================
+//  FIREBASE DATABASE LAYER (portal data only)
+// ============================================================
 async function getUsers() {
     if (!isFirebaseConfigured) return DB.users;
     const snap = await db.collection("users").get();
     return snap.docs.map(d => ({ id: d.id, ...d.data() }));
 }
-
 async function findUser(username, passwordHash, role) {
     if (!isFirebaseConfigured) {
         return DB.users.find(u => u.username === username && u.password === passwordHash && u.role === role && u.status === 'active') || null;
@@ -1195,22 +1257,16 @@ async function findUser(username, passwordHash, role) {
     const users = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     return users.find(u => u.password === passwordHash && u.role === role && u.status === 'active') || null;
 }
-
 async function saveUser(user) {
     if (!isFirebaseConfigured) {
         if (user.id) {
             const i = DB.users.findIndex(u => String(u.id) === String(user.id));
             if (i !== -1) DB.users[i] = user;
-        } else {
-            user.id = String(Date.now());
-            DB.users.push(user);
-        }
-        saveLocalDB();
-        return user;
+        } else { user.id = String(Date.now()); DB.users.push(user); }
+        saveLocalDB(); return user;
     }
     if (user.id) {
-        const id = String(user.id);
-        const { id: _, ...data } = user;
+        const id = String(user.id); const { id: _, ...data } = user;
         await db.collection("users").doc(id).set({ ...data, id }, { merge: true });
         return { ...user, id };
     } else {
@@ -1218,381 +1274,150 @@ async function saveUser(user) {
         return { id: ref.id, ...user };
     }
 }
-
 async function deleteUser(userId) {
-    if (!isFirebaseConfigured) {
-        DB.users = DB.users.filter(u => String(u.id) !== String(userId));
-        saveLocalDB();
-        return;
-    }
+    if (!isFirebaseConfigured) { DB.users = DB.users.filter(u => String(u.id) !== String(userId)); saveLocalDB(); return; }
     await db.collection("users").doc(String(userId)).delete();
 }
-
 async function getResults(studentId = null) {
-    if (!isFirebaseConfigured) {
-        return studentId ? DB.results.filter(r => String(r.student_id) === String(studentId)) : DB.results;
-    }
+    if (!isFirebaseConfigured) { return studentId ? DB.results.filter(r => String(r.student_id) === String(studentId)) : DB.results; }
     let ref = db.collection("results");
     if (studentId) ref = ref.where("student_id", "==", String(studentId));
     const snap = await ref.get();
     return snap.docs.map(d => ({ id: d.id, ...d.data() }));
 }
-
 async function saveResult(result) {
     if (!isFirebaseConfigured) {
         const i = DB.results.findIndex(r => String(r.student_id) === String(result.student_id) && String(r.unit_id) === String(result.unit_id));
         if (i !== -1) DB.results[i] = result; else DB.results.push(result);
-        saveLocalDB();
-        return result;
+        saveLocalDB(); return result;
     }
     const docId = `${result.student_id}_${result.unit_id}`;
     await db.collection("results").doc(docId).set(result, { merge: true });
     return result;
 }
-
 async function getPayments(studentId = null) {
-    if (!isFirebaseConfigured) {
-        return studentId ? DB.payments.filter(p => String(p.student_id) === String(studentId)) : DB.payments;
-    }
+    if (!isFirebaseConfigured) { return studentId ? DB.payments.filter(p => String(p.student_id) === String(studentId)) : DB.payments; }
     let ref = db.collection("payments");
     if (studentId) ref = ref.where("student_id", "==", String(studentId));
     const snap = await ref.get();
     return snap.docs.map(d => ({ id: d.id, ...d.data() }));
 }
-
 async function savePayment(payment) {
-    if (!isFirebaseConfigured) {
-        DB.payments.push(payment);
-        saveLocalDB();
-        return payment;
-    }
+    if (!isFirebaseConfigured) { DB.payments.push(payment); saveLocalDB(); return payment; }
     const ref = await db.collection("payments").add(payment);
     return { id: ref.id, ...payment };
 }
-
-async function getPrograms() {
-    if (!isFirebaseConfigured) return DB.programs;
-    const snap = await db.collection("programs").get();
-    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
-}
-
-async function saveProgram(program) {
-    if (!isFirebaseConfigured) {
-        if (program.id) {
-            const i = DB.programs.findIndex(p => String(p.id) === String(program.id));
-            if (i !== -1) DB.programs[i] = program;
-        } else {
-            program.id = String(Date.now());
-            DB.programs.push(program);
-        }
-        saveLocalDB();
-        return program;
-    }
-    if (program.id) {
-        await db.collection("programs").doc(String(program.id)).set(program, { merge: true });
-        return program;
-    } else {
-        const ref = await db.collection("programs").add(program);
-        return { id: ref.id, ...program };
-    }
-}
-
+async function getPrograms() { return STATIC_PROGRAMS; }
 async function getCourses() {
     if (!isFirebaseConfigured) return DB.courses;
     const snap = await db.collection("courses").get();
     return snap.docs.map(d => ({ id: d.id, ...d.data() }));
 }
-
 async function saveCourse(course) {
     if (!isFirebaseConfigured) {
-        if (course.id) {
-            const i = DB.courses.findIndex(c => String(c.id) === String(course.id));
-            if (i !== -1) DB.courses[i] = course;
-        } else {
-            course.id = String(Date.now());
-            DB.courses.push(course);
-        }
-        saveLocalDB();
-        return course;
+        if (course.id) { const i = DB.courses.findIndex(c => String(c.id) === String(course.id)); if (i !== -1) DB.courses[i] = course; }
+        else { course.id = String(Date.now()); DB.courses.push(course); }
+        saveLocalDB(); return course;
     }
-    if (course.id) {
-        await db.collection("courses").doc(String(course.id)).set(course, { merge: true });
-        return course;
-    } else {
-        const ref = await db.collection("courses").add(course);
-        return { id: ref.id, ...course };
-    }
+    if (course.id) { await db.collection("courses").doc(String(course.id)).set(course, { merge: true }); return course; }
+    else { const ref = await db.collection("courses").add(course); return { id: ref.id, ...course }; }
 }
-
-async function getTeam() {
-    if (!isFirebaseConfigured) return DB.team;
-    const snap = await db.collection("team").get();
-    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
-}
-
+async function getTeam() { return STATIC_TEAM; }
 async function saveTeamMember(member) {
-    if (!isFirebaseConfigured) {
-        if (member.id) {
-            const i = DB.team.findIndex(t => String(t.id) === String(member.id));
-            if (i !== -1) DB.team[i] = member;
-        } else {
-            member.id = String(Date.now());
-            DB.team.push(member);
-        }
-        saveLocalDB();
-        return member;
-    }
     if (member.id) {
-        await db.collection("team").doc(String(member.id)).set(member, { merge: true });
-        return member;
-    } else {
-        const ref = await db.collection("team").add(member);
-        return { id: ref.id, ...member };
-    }
+        const i = STATIC_TEAM.findIndex(t => String(t.id) === String(member.id));
+        if (i !== -1) STATIC_TEAM[i] = member;
+    } else { member.id = String(Date.now()); STATIC_TEAM.push(member); }
+    loadPublicData(); return member;
 }
-
-async function deleteTeamMember(memberId) {
-    if (!isFirebaseConfigured) {
-        DB.team = DB.team.filter(t => String(t.id) !== String(memberId));
-        saveLocalDB();
-        return;
-    }
-    await db.collection("team").doc(String(memberId)).delete();
+async function deleteTeamMemberById(memberId) {
+    const i = STATIC_TEAM.findIndex(t => String(t.id) === String(memberId));
+    if (i !== -1) STATIC_TEAM.splice(i, 1);
+    loadPublicData();
 }
-
-async function getPartners() {
-    if (!isFirebaseConfigured) return DB.partners;
-    const snap = await db.collection("partners").get();
-    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
-}
-
-async function getAffiliates() {
-    if (!isFirebaseConfigured) return DB.affiliates;
-    const snap = await db.collection("affiliates").get();
-    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
-}
-
+async function getPartners() { return STATIC_PARTNERS; }
+async function getAffiliates() { return STATIC_AFFILIATES; }
 async function getSettings() {
     if (!isFirebaseConfigured) return DB.settings;
     const doc = await db.collection("settings").doc("main").get();
     return doc.exists ? doc.data() : DB.settings;
 }
-
 async function saveSettingsToFirebase(settings) {
     if (!isFirebaseConfigured) return;
     await db.collection("settings").doc("main").set(settings, { merge: true });
 }
-
 async function getExams() {
     if (!isFirebaseConfigured) return DB.exams;
     const snap = await db.collection("exams").get();
     return snap.docs.map(d => ({ id: d.id, ...d.data() }));
 }
-
 async function saveExams(exams) {
-    if (!isFirebaseConfigured) {
-        DB.exams.push(...exams);
-        saveLocalDB();
-        return exams;
-    }
+    if (!isFirebaseConfigured) { DB.exams.push(...exams); saveLocalDB(); return exams; }
     for (const exam of exams) {
         if (!exam.id) exam.id = String(Date.now() + Math.random());
         await db.collection("exams").doc(String(exam.id)).set(exam);
     }
     return exams;
 }
-
 async function deleteExam(examId) {
-    if (!isFirebaseConfigured) {
-        DB.exams = DB.exams.filter(e => String(e.id) !== String(examId));
-        saveLocalDB();
-        return;
-    }
+    if (!isFirebaseConfigured) { DB.exams = DB.exams.filter(e => String(e.id) !== String(examId)); saveLocalDB(); return; }
     await db.collection("exams").doc(String(examId)).delete();
 }
-
 async function getApplications() {
     if (!isFirebaseConfigured) return DB.admissionApplications;
     const snap = await db.collection("applications").get();
     return snap.docs.map(d => ({ id: d.id, ...d.data() }));
 }
-
 async function saveApplication(app) {
-    if (!isFirebaseConfigured) {
-        app.id = String(Date.now());
-        DB.admissionApplications.push(app);
-        saveLocalDB();
-        return app;
-    }
+    if (!isFirebaseConfigured) { app.id = String(Date.now()); DB.admissionApplications.push(app); saveLocalDB(); return app; }
     const ref = await db.collection("applications").add(app);
     return { id: ref.id, ...app };
 }
-
 async function updateApplication(app) {
     if (!isFirebaseConfigured) {
         const i = DB.admissionApplications.findIndex(a => String(a.id) === String(app.id));
         if (i !== -1) DB.admissionApplications[i] = app;
-        saveLocalDB();
-        return app;
+        saveLocalDB(); return app;
     }
     const { id, ...data } = app;
     await db.collection("applications").doc(String(id)).set(data, { merge: true });
     return app;
 }
-
 async function deleteApplication(appId) {
-    if (!isFirebaseConfigured) {
-        DB.admissionApplications = DB.admissionApplications.filter(a => String(a.id) !== String(appId));
-        saveLocalDB();
-        return;
-    }
+    if (!isFirebaseConfigured) { DB.admissionApplications = DB.admissionApplications.filter(a => String(a.id) !== String(appId)); saveLocalDB(); return; }
     await db.collection("applications").doc(String(appId)).delete();
 }
 
 // ============================================================
-//  SEED DATABASE (run once in browser console: seedDatabase())
-// ============================================================
-async function seedDatabase() {
-    if (!isFirebaseConfigured) { console.warn("Firebase not configured."); return; }
-    console.log("Seeding Firestore with default KRAC data...");
-
-    const defaultUsers = [
-        { id: "1", username: "admin",       password: hashPassword("admin123"),   role: "admin",   name: "System Administrator",  email: "admin@krac.ac.ke",       phone: "+254700000001", first_login: false, status: "active" },
-        { id: "2", username: "TCH001",      password: hashPassword("teacher123"), role: "teacher", name: "Dr. James Mwangi",      email: "j.mwangi@krac.ac.ke",    phone: "+254712345001", first_login: false, status: "active" },
-        { id: "3", username: "TCH002",      password: hashPassword("teacher123"), role: "teacher", name: "Prof. Grace Wanjiku",   email: "g.wanjiku@krac.ac.ke",   phone: "+254712345002", first_login: false, status: "active" },
-        { id: "4", username: "KRAC2025001", password: hashPassword("student123"), role: "student", name: "John Kamau",            email: "john.kamau@email.com",   phone: "+254723456001", id_number: "12345678", course: "Diploma in Agriculture",    admission_number: "KRAC2025001", fees_total: 45000, fees_paid: 33000, first_login: true, status: "active", enrollment_date: "2025-01-15" },
-        { id: "5", username: "KRAC2025002", password: hashPassword("student123"), role: "student", name: "Mary Akinyi",           email: "mary.akinyi@email.com",  phone: "+254723456002", id_number: "87654321", course: "Certificate in Animal Health", admission_number: "KRAC2025002", fees_total: 35000, fees_paid: 35000, first_login: true, status: "active", enrollment_date: "2025-01-15" },
-        { id: "6", username: "KRAC2025003", password: hashPassword("student123"), role: "student", name: "Peter Ochieng",         email: "peter.ochieng@email.com", phone: "+254723456003", id_number: "45678901", course: "Diploma in Agribusiness",    admission_number: "KRAC2025003", fees_total: 45000, fees_paid: 20000, first_login: true, status: "active", enrollment_date: "2025-01-15" }
-    ];
-
-    const defaultPrograms = [
-        { id: "1", name: "Diploma in Agriculture",        duration: "2 Years",  level: "Diploma",      description: "Comprehensive training in modern farming techniques, crop management, and sustainable agriculture practices.", icon: "fa-seedling" },
-        { id: "2", name: "Diploma in Agribusiness",       duration: "2 Years",  level: "Diploma",      description: "Business skills tailored for the agricultural sector including marketing, finance, and supply chain management.", icon: "fa-chart-line" },
-        { id: "3", name: "Certificate in Animal Health",  duration: "1 Year",   level: "Certificate",  description: "Essential veterinary skills for livestock management, disease prevention, and animal welfare.", icon: "fa-paw" },
-        { id: "4", name: "Certificate in Crop Production",duration: "1 Year",   level: "Certificate",  description: "Hands-on training in crop cultivation, pest management, and post-harvest handling techniques.", icon: "fa-leaf" },
-        { id: "5", name: "Short Course: Organic Farming", duration: "3 Months", level: "Short Course", description: "Intensive training in organic certification, natural pest control, and sustainable farming methods.", icon: "fa-apple-alt" },
-        { id: "6", name: "Short Course: Farm Management", duration: "3 Months", level: "Short Course", description: "Learn modern farm administration, record keeping, and profitability optimization strategies.", icon: "fa-tractor" }
-    ];
-
-    const defaultCourses = [
-        { id: "1", code: "AGR101", name: "Introduction to Crop Science", lecturer: "Dr. James Mwangi",   duration: "1 Semester", students: 45, status: "active" },
-        { id: "2", code: "AGR102", name: "Soil Science & Management",    lecturer: "Prof. Grace Wanjiku", duration: "1 Semester", students: 38, status: "active" },
-        { id: "3", code: "AGR103", name: "Animal Husbandry",             lecturer: "Dr. James Mwangi",   duration: "1 Semester", students: 42, status: "active" },
-        { id: "4", code: "BUS201", name: "Agribusiness Management",      lecturer: "Prof. Grace Wanjiku", duration: "1 Semester", students: 35, status: "active" },
-        { id: "5", code: "TEC301", name: "Agricultural Technology",      lecturer: "Dr. James Mwangi",   duration: "1 Semester", students: 28, status: "active" }
-    ];
-
-    const defaultTeam = [
-        { id: "1", name: "Dr. Samuel Kipchirchir", role: "CEO & Founder",       department: "Executive",      bio: "Agricultural economist with 20+ years experience in rural development.", image: "", portfolio: ["PhD in Agricultural Economics, University of Nairobi", "Published 25+ research papers on rural development", "Former Advisor, Ministry of Agriculture"] },
-        { id: "2", name: "Prof. Anne Wambui",       role: "Principal",           department: "Administration", bio: "Former dean with expertise in agricultural education policy.", image: "", portfolio: ["Professor of Agricultural Education, Egerton University", "15 years in academic leadership", "Developed national agricultural curriculum"] },
-        { id: "3", name: "Dr. James Mwangi",        role: "Head of Agriculture",  department: "Agriculture",    bio: "Specialist in sustainable farming and crop science research.", image: "", portfolio: ["PhD in Crop Science, JKUAT", "Certified Organic Farming Expert", "Consultant for FAO Kenya"] },
-        { id: "4", name: "Prof. Grace Wanjiku",     role: "Head of Agribusiness", department: "Business",       bio: "Expert in agricultural value chains and rural enterprise development.", image: "", portfolio: ["MBA in Agribusiness, Strathmore University", "Founded 3 successful agribusiness ventures"] },
-        { id: "5", name: "Mr. Peter Njoroge",       role: "Senior Field Officer", department: "Extension",      bio: "Leads community outreach and practical training programs.", image: "", portfolio: ["MSc in Agricultural Extension, University of Nairobi", "Manages 25 community demonstration farms"] },
-        { id: "6", name: "Ms. Lucy Achieng",        role: "Field Officer",        department: "Extension",      bio: "Coordinates student attachment programs and farm visits.", image: "", portfolio: ["BSc in Agriculture, Moi University", "Awarded Best Extension Officer 2024"] }
-    ];
-
-    const defaultPartners = [
-        { id: "1", name: "Ministry of Agriculture",               type: "Government", description: "Policy support and curriculum alignment with national agricultural goals." },
-        { id: "2", name: "Kenya Agricultural Research Institute", type: "Government", description: "Research collaboration and access to latest farming technologies." },
-        { id: "3", name: "USAID Kenya",                           type: "NGO",        description: "Funding for rural outreach programs and student scholarships." },
-        { id: "4", name: "World Vision Kenya",                    type: "NGO",        description: "Community development projects and internship opportunities." },
-        { id: "5", name: "Twiga Foods",                           type: "Corporate",  description: "Market linkage training and graduate employment programs." },
-        { id: "6", name: "Safaricom Foundation",                  type: "Corporate",  description: "Digital agriculture training and technology infrastructure support." }
-    ];
-
-    const defaultAffiliates = [
-        { id: "1", name: "University of Nairobi",    type: "University", description: "Credit transfer and degree progression pathways." },
-        { id: "2", name: "Egerton University",       type: "University", description: "Joint research programs and faculty exchange." },
-        { id: "3", name: "Jomo Kenyatta University", type: "University", description: "Technology transfer and innovation hub collaboration." },
-        { id: "4", name: "Kenya Seed Company",       type: "Industry",   description: "Seed technology training and certification programs." }
-    ];
-
-    const defaultResults = [
-        { student_id: "4", unit_id: "1", unit_code: "AGR101", unit_name: "Introduction to Crop Science", cat: 25, exam: 60, total: 85, grade: "A",  remarks: "Excellent" },
-        { student_id: "4", unit_id: "2", unit_code: "AGR102", unit_name: "Soil Science & Management",    cat: 22, exam: 55, total: 77, grade: "B+", remarks: "Very Good" },
-        { student_id: "4", unit_id: "3", unit_code: "AGR103", unit_name: "Animal Husbandry",             cat: 20, exam: 50, total: 70, grade: "B",  remarks: "Good" },
-        { student_id: "5", unit_id: "1", unit_code: "AGR101", unit_name: "Introduction to Crop Science", cat: 28, exam: 65, total: 93, grade: "A",  remarks: "Excellent" },
-        { student_id: "6", unit_id: "1", unit_code: "AGR101", unit_name: "Introduction to Crop Science", cat: 18, exam: 45, total: 63, grade: "C",  remarks: "Pass" }
-    ];
-
-    const defaultPayments = [
-        { student_id: "4", date: "2025-01-15", reference: "PAY001", amount: 15000, method: "Bank Transfer", status: "completed" },
-        { student_id: "4", date: "2025-02-20", reference: "PAY002", amount: 10000, method: "MPesa",         status: "completed" },
-        { student_id: "4", date: "2025-03-15", reference: "PAY003", amount:  8000, method: "Bank Transfer", status: "completed" },
-        { student_id: "5", date: "2025-01-10", reference: "PAY004", amount: 35000, method: "Bank Transfer", status: "completed" },
-        { student_id: "6", date: "2025-01-20", reference: "PAY005", amount: 20000, method: "MPesa",         status: "completed" }
-    ];
-
-    for (const u of defaultUsers)      await db.collection("users").doc(u.id).set(u);
-    for (const p of defaultPrograms)   await db.collection("programs").doc(p.id).set(p);
-    for (const c of defaultCourses)    await db.collection("courses").doc(c.id).set(c);
-    for (const t of defaultTeam)       await db.collection("team").doc(t.id).set(t);
-    for (const p of defaultPartners)   await db.collection("partners").doc(p.id).set(p);
-    for (const a of defaultAffiliates) await db.collection("affiliates").doc(a.id).set(a);
-    for (const r of defaultResults)    await db.collection("results").add(r);
-    for (const p of defaultPayments)   await db.collection("payments").add(p);
-    await db.collection("settings").doc("main").set({ admission_prefix: "KRAC", current_year: 2025, default_password: "student123", semester: "Semester 1" });
-
-    console.log("Firestore seeded successfully!");
-}
-
-// ============================================================
-//  LOCAL FALLBACK DATA STORE
+//  LOCAL FALLBACK DATA STORE (portal only)
 // ============================================================
 const DB = {
     users: JSON.parse(localStorage.getItem('krac_users')) || [
         { id:"1", username:'admin', password:hashPassword('admin123'), role:'admin', name:'System Administrator', email:'admin@krac.ac.ke', phone:'+254700000001', first_login:false, status:'active' },
-        { id:"2", username:'TCH001', password:hashPassword('teacher123'), role:'teacher', name:'Dr. James Mwangi', email:'j.mwangi@krac.ac.ke', phone:'+254712345001', first_login:false, status:'active' },
-        { id:"3", username:'TCH002', password:hashPassword('teacher123'), role:'teacher', name:'Prof. Grace Wanjiku', email:'g.wanjiku@krac.ac.ke', phone:'+254712345002', first_login:false, status:'active' },
-        { id:"4", username:'KRAC2025001', password:hashPassword('student123'), role:'student', name:'John Kamau', email:'john.kamau@email.com', phone:'+254723456001', id_number:'12345678', course:'Diploma in Agriculture', admission_number:'KRAC2025001', fees_total:45000, fees_paid:33000, first_login:true, status:'active', enrollment_date:'2025-01-15' },
-        { id:"5", username:'KRAC2025002', password:hashPassword('student123'), role:'student', name:'Mary Akinyi', email:'mary.akinyi@email.com', phone:'+254723456002', id_number:'87654321', course:'Certificate in Animal Health', admission_number:'KRAC2025002', fees_total:35000, fees_paid:35000, first_login:true, status:'active', enrollment_date:'2025-01-15' },
-        { id:"6", username:'KRAC2025003', password:hashPassword('student123'), role:'student', name:'Peter Ochieng', email:'peter.ochieng@email.com', phone:'+254723456003', id_number:'45678901', course:'Diploma in Agribusiness', admission_number:'KRAC2025003', fees_total:45000, fees_paid:20000, first_login:true, status:'active', enrollment_date:'2025-01-15' }
+        { id:"2", username:'TCH001', password:hashPassword('teacher123'), role:'teacher', name:'Mr. Vincent Otieno', email:'v.otieno@krac.ac.ke', phone:'+254712345001', first_login:false, status:'active' },
+        { id:"3", username:'TCH002', password:hashPassword('teacher123'), role:'teacher', name:'Ms. Hope Kanoti Munyoki', email:'h.munyoki@krac.ac.ke', phone:'+254712345002', first_login:false, status:'active' },
+        { id:"4", username:'KRAC2025001', password:hashPassword('student123'), role:'student', name:'John Kamau', email:'john.kamau@email.com', phone:'+254723456001', id_number:'12345678', course:'Veterinary Assistance Course', admission_number:'KRAC2025001', fees_total:45000, fees_paid:33000, first_login:true, status:'active', enrollment_date:'2025-01-15' },
+        { id:"5", username:'KRAC2025002', password:hashPassword('student123'), role:'student', name:'Mary Akinyi', email:'mary.akinyi@email.com', phone:'+254723456002', id_number:'87654321', course:'Women Empowerment Program', admission_number:'KRAC2025002', fees_total:30000, fees_paid:30000, first_login:true, status:'active', enrollment_date:'2025-01-15' },
+        { id:"6", username:'KRAC2025003', password:hashPassword('student123'), role:'student', name:'Peter Ochieng', email:'peter.ochieng@email.com', phone:'+254723456003', id_number:'45678901', course:'Crop Development & Marketing Course', admission_number:'KRAC2025003', fees_total:33390, fees_paid:20000, first_login:true, status:'active', enrollment_date:'2025-01-15' }
     ],
     courses: JSON.parse(localStorage.getItem('krac_courses')) || [
-        { id:"1", code:'AGR101', name:'Introduction to Crop Science', lecturer:'Dr. James Mwangi', duration:'1 Semester', students:45, status:'active' },
-        { id:"2", code:'AGR102', name:'Soil Science & Management', lecturer:'Prof. Grace Wanjiku', duration:'1 Semester', students:38, status:'active' },
-        { id:"3", code:'AGR103', name:'Animal Husbandry', lecturer:'Dr. James Mwangi', duration:'1 Semester', students:42, status:'active' },
-        { id:"4", code:'BUS201', name:'Agribusiness Management', lecturer:'Prof. Grace Wanjiku', duration:'1 Semester', students:35, status:'active' },
-        { id:"5", code:'TEC301', name:'Agricultural Technology', lecturer:'Dr. James Mwangi', duration:'1 Semester', students:28, status:'active' }
+        { id:"1", code:'VET101', name:'Livestock Health Management', lecturer:'Mr. Vincent Otieno', duration:'1 Semester', students:20, status:'active' },
+        { id:"2", code:'WEP201', name:'Poultry & Small Livestock Production', lecturer:'Ms. Hope Kanoti Munyoki', duration:'1 Semester', students:18, status:'active' },
+        { id:"3", code:'CRP301', name:'Crop Production & Value Addition', lecturer:'Mr. Vincent Otieno', duration:'1 Semester', students:22, status:'active' },
+        { id:"4", code:'AGR401', name:'Agribusiness & Market Access', lecturer:'Ms. Hope Kanoti Munyoki', duration:'1 Semester', students:15, status:'active' }
     ],
-    programs: JSON.parse(localStorage.getItem('krac_programs')) || [
-        { id:"1", name:'Vetrinary Assistance Course', duration:'6-15 months', level:'', description:'' },
-        { id:"2", name:'Junior Agriprenuer Course', duration:'Holiday Program', level:'', description:'' },
-        { id:"3", name:'Crop Development & Marketing Course', duration:'12 Months', level:'', description:'.', icon:'' },
-        { id:"4", name:'Women Empowerment Program', duration:'1o Months', level:'', description:'.', icon:'' },
-        ],
     results: JSON.parse(localStorage.getItem('krac_results')) || [
-        { student_id:"4", unit_id:"1", unit_code:'AGR101', unit_name:'Introduction to Crop Science', cat:25, exam:60, total:85, grade:'A', remarks:'Excellent' },
-        { student_id:"4", unit_id:"2", unit_code:'AGR102', unit_name:'Soil Science & Management', cat:22, exam:55, total:77, grade:'B+', remarks:'Very Good' },
-        { student_id:"4", unit_id:"3", unit_code:'AGR103', unit_name:'Animal Husbandry', cat:20, exam:50, total:70, grade:'B', remarks:'Good' },
-        { student_id:"5", unit_id:"1", unit_code:'AGR101', unit_name:'Introduction to Crop Science', cat:28, exam:65, total:93, grade:'A', remarks:'Excellent' },
-        { student_id:"6", unit_id:"1", unit_code:'AGR101', unit_name:'Introduction to Crop Science', cat:18, exam:45, total:63, grade:'C', remarks:'Pass' }
+        { student_id:"4", unit_id:"1", unit_code:'VET101', unit_name:'Livestock Health Management', cat:25, exam:60, total:85, grade:'A', remarks:'Excellent' },
+        { student_id:"4", unit_id:"2", unit_code:'WEP201', unit_name:'Poultry & Small Livestock Production', cat:22, exam:55, total:77, grade:'B+', remarks:'Very Good' },
+        { student_id:"5", unit_id:"2", unit_code:'WEP201', unit_name:'Poultry & Small Livestock Production', cat:28, exam:65, total:93, grade:'A', remarks:'Excellent' },
+        { student_id:"6", unit_id:"3", unit_code:'CRP301', unit_name:'Crop Production & Value Addition', cat:18, exam:45, total:63, grade:'C', remarks:'Pass' }
     ],
     payments: JSON.parse(localStorage.getItem('krac_payments')) || [
         { student_id:"4", date:'2025-01-15', reference:'PAY001', amount:15000, method:'Bank Transfer', status:'completed' },
         { student_id:"4", date:'2025-02-20', reference:'PAY002', amount:10000, method:'MPesa', status:'completed' },
         { student_id:"4", date:'2025-03-15', reference:'PAY003', amount:8000, method:'Bank Transfer', status:'completed' },
-        { student_id:"5", date:'2025-01-10', reference:'PAY004', amount:35000, method:'Bank Transfer', status:'completed' },
+        { student_id:"5", date:'2025-01-10', reference:'PAY004', amount:30000, method:'Bank Transfer', status:'completed' },
         { student_id:"6", date:'2025-01-20', reference:'PAY005', amount:20000, method:'MPesa', status:'completed' }
-    ],
-    team: JSON.parse(localStorage.getItem('krac_team')) || [
-        { id:"1", name:'James Gichigo', role:'CEO & Founder', department:'Executive', bio:'Agricultural economist with 20+ years experience in rural development.', image:'', portfolio:['PhD in Agricultural Economics, University of Nairobi','Published 25+ research papers on rural development','Former Advisor, Ministry of Agriculture','Led 15+ community development projects'] },
-        { id:"2", name:'Prof. Anne Wambui', role:'Principal', department:'Administration', bio:'Former dean with expertise in agricultural education policy.', image:'', portfolio:['Professor of Agricultural Education, Egerton University','15 years in academic leadership','Developed national agricultural curriculum','Member, Kenya National Education Council'] },
-        { id:"3", name:'Dr. James Mwangi', role:'Head of Agriculture', department:'Agriculture', bio:'Specialist in sustainable farming and crop science research.', image:'', portfolio:['PhD in Crop Science, JKUAT','Certified Organic Farming Expert','Developed 5 new crop varieties','Consultant for FAO Kenya'] },
-        { id:"4", name:'Prof. Grace Wanjiku', role:'Head of Agribusiness', department:'Business', bio:'Expert in agricultural value chains and rural enterprise development.', image:'', portfolio:['MBA in Agribusiness, Strathmore University','Founded 3 successful agribusiness ventures','Value chain specialist for USAID projects'] },
-        { id:"5", name:'Mr. Peter Njoroge', role:'Senior Field Officer', department:'Extension', bio:'Leads community outreach and practical training programs.', image:'', portfolio:['MSc in Agricultural Extension, University of Nairobi','10+ years field experience','Manages 25 community demonstration farms'] },
-        { id:"6", name:'Ms. Lucy Achieng', role:'Field Officer', department:'Extension', bio:'Coordinates student attachment programs and farm visits.', image:'', portfolio:['BSc in Agriculture, Moi University','Youth in Agriculture champion','Coordinates 200+ student attachments annually'] }
-    ],
-    partners: JSON.parse(localStorage.getItem('krac_partners')) || [
-        { id:"1", name:'Pesira Limited', type:'NGO', description:'Policy support and curriculum alignment with national agricultural goals.' },
-        { id:"2", name:'Mercy Crops', type:'Agricultural Company', description:'Research collaboration and access to latest farming technologies.' },
-        { id:"3", name:'ICIPE', type:'NGO', description:'Funding for rural outreach programs and student scholarships.' },
-        { id:"4", name:'APA', type:'Insurance', description:'Community development projects and internship opportunities.' },
-        { id:"5", name:'Crop Farmers', type:'SACCO', description:'Market linkage training and graduate employment programs.' },
-    ],
-    affiliates: JSON.parse(localStorage.getItem('krac_affiliates')) || [
-        { id:"1", name:'Kenya Rural Food Centre', type:'KRFC', description:'.' },
-        { id:"2", name:'Agricutural Industrial Technical Project', type:'AITAP ', description:'.' },
     ],
     settings: JSON.parse(localStorage.getItem('krac_settings')) || { admission_prefix:'KRAC', current_year:2025, default_password:'student123', semester:'Semester 1' },
     exams: JSON.parse(localStorage.getItem('krac_exams')) || [],
@@ -1602,12 +1427,8 @@ const DB = {
 function saveLocalDB() {
     localStorage.setItem('krac_users', JSON.stringify(DB.users));
     localStorage.setItem('krac_courses', JSON.stringify(DB.courses));
-    localStorage.setItem('krac_programs', JSON.stringify(DB.programs));
     localStorage.setItem('krac_results', JSON.stringify(DB.results));
     localStorage.setItem('krac_payments', JSON.stringify(DB.payments));
-    localStorage.setItem('krac_team', JSON.stringify(DB.team));
-    localStorage.setItem('krac_partners', JSON.stringify(DB.partners));
-    localStorage.setItem('krac_affiliates', JSON.stringify(DB.affiliates));
     localStorage.setItem('krac_settings', JSON.stringify(DB.settings));
     localStorage.setItem('krac_exams', JSON.stringify(DB.exams));
     localStorage.setItem('krac_applications', JSON.stringify(DB.admissionApplications));
@@ -1626,12 +1447,8 @@ let currentUser = JSON.parse(sessionStorage.getItem('krac_currentUser')) || null
 let selectedRole = 'student';
 let currentSlide = 0;
 
-function showLoading(text = 'Loading...') {
-    document.getElementById('loadingText').textContent = text;
-    document.getElementById('loadingOverlay').classList.add('active');
-}
+function showLoading(text = 'Loading...') { document.getElementById('loadingText').textContent = text; document.getElementById('loadingOverlay').classList.add('active'); }
 function hideLoading() { document.getElementById('loadingOverlay').classList.remove('active'); }
-
 function showToast(message, type = 'success') {
     const c = document.getElementById('toastContainer');
     const t = document.createElement('div');
@@ -1641,7 +1458,6 @@ function showToast(message, type = 'success') {
     c.appendChild(t);
     setTimeout(() => { t.style.opacity='0'; t.style.transform='translateX(100%)'; setTimeout(()=>t.remove(),300); }, 4500);
 }
-
 function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 function generateAdmissionNumber() {
     const prefix = DB.settings.admission_prefix || 'KRAC';
@@ -1692,7 +1508,6 @@ function selectRole(role) {
     document.querySelectorAll('.role-option').forEach(o=>o.classList.remove('active'));
     document.querySelector(`[data-role="${role}"]`).classList.add('active');
 }
-
 async function handleLogin(e) {
     e.preventDefault();
     const username = document.getElementById('loginUsername').value.trim();
@@ -1705,17 +1520,10 @@ async function handleLogin(e) {
         if (user.status !== 'active') { showToast('Account inactive. Contact administrator.', 'error'); return; }
         currentUser = user;
         sessionStorage.setItem('krac_currentUser', JSON.stringify(user));
-        if (user.first_login) {
-            document.getElementById('firstLoginModal').classList.add('active');
-        } else {
-            redirectToDashboard(user.role);
-        }
-    } catch(err) {
-        hideLoading();
-        showToast('Login error: ' + err.message, 'error');
-    }
+        if (user.first_login) { document.getElementById('firstLoginModal').classList.add('active'); }
+        else { redirectToDashboard(user.role); }
+    } catch(err) { hideLoading(); showToast('Login error: ' + err.message, 'error'); }
 }
-
 async function handlePasswordChange(e) {
     e.preventDefault();
     const np = document.getElementById('newPassword').value;
@@ -1732,20 +1540,98 @@ async function handlePasswordChange(e) {
         document.getElementById('firstLoginModal').classList.remove('active');
         showToast('Password updated successfully');
         redirectToDashboard(currentUser.role);
-    } catch(e) {
-        hideLoading();
-        showToast('Error: ' + e.message, 'error');
-    }
+    } catch(e) { hideLoading(); showToast('Error: ' + e.message, 'error'); }
 }
-
 function redirectToDashboard(role) {
     document.getElementById('portalPage').classList.add('hidden');
     if (role === 'student') { document.getElementById('studentDashboard').classList.add('active'); initStudentDashboard(); }
     else if (role === 'teacher') { document.getElementById('teacherDashboard').classList.add('active'); initTeacherDashboard(); }
     else if (role === 'admin') { document.getElementById('adminDashboard').classList.add('active'); initAdminDashboard(); }
 }
-
 function logout() { currentUser = null; sessionStorage.removeItem('krac_currentUser'); showPublicWebsite(); showToast('Logged out'); }
+
+// ============================================================
+//  PUBLIC WEBSITE — renders from static arrays
+// ============================================================
+function loadPublicData() {
+    // COURSES
+    document.getElementById('coursesGrid').innerHTML = STATIC_PROGRAMS.map(p=>`
+        <div class="course-card">
+            <div class="course-image"><i class="fas ${p.icon}"></i></div>
+            <div class="course-body">
+                <h3>${p.name}</h3>
+                <p>${p.description}</p>
+                <div class="course-meta">
+                    <span><i class="fas fa-clock"></i> ${p.duration}</span>
+                    <span><i class="fas fa-layer-group"></i> ${p.level}</span>
+                </div>
+                <div class="course-fee"><i class="fas fa-tag"></i> ${p.fee}</div>
+            </div>
+        </div>
+    `).join('');
+
+    // TEAM
+    document.getElementById('teamGrid').innerHTML = STATIC_TEAM.map(t=>`
+        <div class="team-card" onclick="openTeamModal('${t.id}')">
+            <div class="team-image">
+                ${t.image ? `<img src="${t.image}" alt="${t.name}">` : '<i class="fas fa-user"></i>'}
+            </div>
+            <div class="team-info">
+                <h4>${t.name}</h4>
+                <p>${t.role}</p>
+                <small>${t.department}</small>
+                <div class="team-view-profile"><i class="fas fa-id-card"></i> View Portfolio</div>
+            </div>
+        </div>
+    `).join('');
+
+    // PARTNERS
+    document.getElementById('partnersGrid').innerHTML = STATIC_PARTNERS.map(p=>`
+        <div class="partner-card">
+            <div class="partner-logo"><i class="fas fa-handshake"></i></div>
+            <h4>${p.name}</h4>
+            <span class="badge badge-warning" style="margin-bottom:8px; display:inline-block;">${p.type}</span>
+            <p>${p.description}</p>
+        </div>
+    `).join('');
+
+    // AFFILIATES
+    document.getElementById('affiliatesGrid').innerHTML = STATIC_AFFILIATES.map(a=>`
+        <div class="partner-card">
+            <div class="partner-logo"><i class="fas fa-university"></i></div>
+            <h4>${a.name}</h4>
+            <span class="badge badge-success" style="margin-bottom:8px; display:inline-block;">${a.type}</span>
+            <p>${a.description}</p>
+        </div>
+    `).join('');
+
+    // POPULATE APPLICATION FORM COURSE DROPDOWN
+    const appSelect = document.getElementById('appCourse');
+    if (appSelect) {
+        appSelect.innerHTML = '<option value="">-- Select Program --</option>' +
+            STATIC_PROGRAMS.map(p=>`<option value="${p.name}">${p.name}</option>`).join('');
+    }
+}
+
+function openTeamModal(id) {
+    const m = STATIC_TEAM.find(t => String(t.id) === String(id));
+    if (!m) return;
+    document.getElementById('teamModalBody').innerHTML = `
+        <div class="team-modal-image">
+            ${m.image ? `<img src="${m.image}" alt="${m.name}">` : '<i class="fas fa-user"></i>'}
+        </div>
+        <div class="team-modal-info">
+            <h3>${m.name}</h3>
+            <div class="role">${m.role}</div>
+            <div class="dept"><i class="fas fa-building"></i> ${m.department}</div>
+            <div class="bio">${m.bio}</div>
+            <div class="portfolio-section">
+                <h4><i class="fas fa-trophy"></i> Background & Experience</h4>
+                <ul>${m.portfolio.map(i=>`<li><i class="fas fa-star"></i> ${i}</li>`).join('')}</ul>
+            </div>
+        </div>`;
+    document.getElementById('teamPortfolioModal').classList.add('active');
+}
 
 // ============================================================
 //  STUDENT DASHBOARD
@@ -1757,9 +1643,7 @@ async function initStudentDashboard() {
     if (currentUser.photo) {
         avatarEl.innerHTML = `<img src="${currentUser.photo}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;">`;
         avatarEl.style.background = 'none'; avatarEl.style.padding = '0';
-    } else {
-        avatarEl.textContent = currentUser.name.charAt(0).toUpperCase();
-    }
+    } else { avatarEl.textContent = currentUser.name.charAt(0).toUpperCase(); }
     showLoading('Loading dashboard...');
     try {
         const results = await getResults(currentUser.id);
@@ -1777,7 +1661,6 @@ async function initStudentDashboard() {
     } catch(e) { hideLoading(); showToast('Error loading dashboard: '+e.message,'error'); }
     showStudentSection('overview');
 }
-
 function showStudentSection(sec) {
     document.querySelectorAll('#studentDashboard .main-content > div').forEach(d=>d.classList.add('hidden'));
     const el = document.getElementById(`student${sec.charAt(0).toUpperCase()+sec.slice(1)}`);
@@ -1790,7 +1673,6 @@ function showStudentSection(sec) {
     if (sec==='courses') loadStudentCourses();
     if (sec==='profile') loadStudentProfile();
 }
-
 async function loadStudentResults() {
     const tbody = document.getElementById('studentResultsTable');
     tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Loading...</td></tr>';
@@ -1802,7 +1684,6 @@ async function loadStudentResults() {
         `).join('') || '<tr><td colspan="7" style="text-align:center;">No results available</td></tr>';
     } catch(e) { tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:red;">Error: ${e.message}</td></tr>`; }
 }
-
 async function loadStudentExams() {
     const tbody = document.getElementById('studentExamsTable');
     tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Loading...</td></tr>';
@@ -1811,17 +1692,11 @@ async function loadStudentExams() {
         const today = new Date().toISOString().split('T')[0];
         const upcoming = exams.filter(e=>e.date >= today).sort((a,b)=>a.date.localeCompare(b.date));
         tbody.innerHTML = upcoming.map(ex=>`
-            <tr>
-                <td><strong>${ex.subject}</strong></td>
-                <td>${ex.examName}</td>
-                <td>${ex.date}</td>
-                <td>${ex.time}</td>
-                <td>${ex.duration} mins</td>
-                <td>${ex.venue||'-'}</td>
-            </tr>`).join('') || '<tr><td colspan="6" style="text-align:center; padding:20px;">No upcoming exams</td></tr>';
+            <tr><td><strong>${ex.subject}</strong></td><td>${ex.examName}</td><td>${ex.date}</td>
+            <td>${ex.time}</td><td>${ex.duration} mins</td><td>${ex.venue||'-'}</td></tr>
+        `).join('') || '<tr><td colspan="6" style="text-align:center; padding:20px;">No upcoming exams</td></tr>';
     } catch(e) { tbody.innerHTML = `<tr><td colspan="6" style="color:red;">Error: ${e.message}</td></tr>`; }
 }
-
 async function loadStudentFees() {
     document.getElementById('feesTotal').textContent = `KES ${currentUser.fees_total.toLocaleString()}`;
     document.getElementById('feesPaid').textContent  = `KES ${currentUser.fees_paid.toLocaleString()}`;
@@ -1835,7 +1710,6 @@ async function loadStudentFees() {
         `).join('') || '<tr><td colspan="5" style="text-align:center;">No payment records</td></tr>';
     } catch(e) { tbody.innerHTML = `<tr><td colspan="5" style="color:red;">Error: ${e.message}</td></tr>`; }
 }
-
 async function loadStudentCourses() {
     const tbody = document.getElementById('studentCoursesTable');
     try {
@@ -1847,7 +1721,6 @@ async function loadStudentCourses() {
         }).join('') || '<tr><td colspan="5" style="text-align:center;">No enrolled courses</td></tr>';
     } catch(e) { tbody.innerHTML = `<tr><td colspan="5" style="color:red;">Error: ${e.message}</td></tr>`; }
 }
-
 function loadStudentProfile() {
     document.getElementById('profileAdmNo').value = currentUser.admission_number;
     document.getElementById('profileName').value = currentUser.name;
@@ -1858,14 +1731,10 @@ function loadStudentProfile() {
     document.getElementById('profileIdNumber').value = currentUser.id_number||'';
     const photoEl = document.getElementById('profilePhotoDisplay');
     if (photoEl) {
-        if (currentUser.photo) {
-            photoEl.innerHTML = `<img src="${currentUser.photo}" style="width:100%;height:100%;object-fit:cover;">`;
-        } else {
-            photoEl.textContent = currentUser.name.charAt(0).toUpperCase();
-        }
+        if (currentUser.photo) { photoEl.innerHTML = `<img src="${currentUser.photo}" style="width:100%;height:100%;object-fit:cover;">`; }
+        else { photoEl.textContent = currentUser.name.charAt(0).toUpperCase(); }
     }
 }
-
 async function handleProfilePhotoChange(input) {
     const file = input.files[0];
     if (!file) return;
@@ -1886,7 +1755,6 @@ async function handleProfilePhotoChange(input) {
     };
     reader.readAsDataURL(file);
 }
-
 async function updateStudentProfile(e) {
     e.preventDefault();
     const updated = { ...currentUser,
@@ -1931,7 +1799,6 @@ async function initTeacherDashboard() {
     } catch(e) { hideLoading(); }
     showTeacherSection('overview');
 }
-
 function showTeacherSection(sec) {
     document.querySelectorAll('#teacherDashboard .main-content > div').forEach(d=>d.classList.add('hidden'));
     const el = document.getElementById(`teacher${sec.charAt(0).toUpperCase()+sec.slice(1)}`);
@@ -1945,7 +1812,6 @@ function showTeacherSection(sec) {
     if (sec==='exams') loadTeacherExams();
     if (sec==='admissions') loadTeacherAdmissions();
 }
-
 async function loadTeacherStudents() {
     const tbody = document.getElementById('teacherStudentsTable');
     tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Loading...</td></tr>';
@@ -1953,29 +1819,26 @@ async function loadTeacherStudents() {
         const users = await getUsers();
         const students = users.filter(u=>u.role==='student');
         tbody.innerHTML = students.map(s=>`
-            <tr><td>${s.photo ? `<img src="${s.photo}" class="photo-thumb" alt="">` : `<div style="width:44px;height:44px;border-radius:50%;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;">${s.name.charAt(0)}</div>`}</td>
+            <tr>
+            <td>${s.photo ? `<img src="${s.photo}" class="photo-thumb" alt="">` : `<div style="width:44px;height:44px;border-radius:50%;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;">${s.name.charAt(0)}</div>`}</td>
             <td><strong>${s.admission_number}</strong></td><td>${s.name}</td><td>${s.course}</td><td>${s.phone}</td>
             <td><span class="badge ${s.status==='active'?'badge-success':'badge-danger'}">${s.status}</span></td>
             <td class="table-actions">
-                <button class="delete" onclick="deleteStudent('${s.id}')"><i class="fas fa-trash"></i></button>
+                <button class="delete" onclick="deleteStudentById('${s.id}')"><i class="fas fa-trash"></i></button>
             </td></tr>
         `).join('');
     } catch(e) { tbody.innerHTML = `<tr><td colspan="7" style="color:red;">Error: ${e.message}</td></tr>`; }
 }
-
 function filterStudents() {
     const q = document.getElementById('studentSearch').value.toLowerCase();
     document.querySelectorAll('#teacherStudentsTable tr').forEach(r=>{r.style.display=r.textContent.toLowerCase().includes(q)?'':'none';});
 }
-
 async function openAddStudentModal() {
     document.getElementById('addStudentModal').classList.add('active');
-    const programs = await getPrograms();
     const select = document.getElementById('newStudentCourse');
-    select.innerHTML = '<option value="">-- Select Course --</option>' + programs.map(p=>`<option value="${p.name}">${p.name}</option>`).join('');
+    select.innerHTML = '<option value="">-- Select Course --</option>' + STATIC_PROGRAMS.map(p=>`<option value="${p.name}">${p.name}</option>`).join('');
     document.getElementById('newStudentAdmNo').value = generateAdmissionNumber();
 }
-
 async function handleAddStudent(e) {
     e.preventDefault();
     const firstName = document.getElementById('newStudentFirstName').value;
@@ -1994,21 +1857,18 @@ async function handleAddStudent(e) {
     showLoading('Adding student...');
     try {
         await saveUser(newStudent);
-        hideLoading();
-        closeModal('addStudentModal');
+        hideLoading(); closeModal('addStudentModal');
         document.getElementById('addStudentForm').reset();
         showToast(`Student added. Admission No: ${admNo}`);
         loadTeacherStudents();
     } catch(e) { hideLoading(); showToast('Error: '+e.message,'error'); }
 }
-
-async function deleteStudent(id) {
+async function deleteStudentById(id) {
     if (!confirm('Delete this student permanently?')) return;
     showLoading('Deleting...');
     try { await deleteUser(id); hideLoading(); showToast('Student deleted'); loadTeacherStudents(); }
     catch(e) { hideLoading(); showToast('Error: '+e.message,'error'); }
 }
-
 async function loadResultsManagement() {
     const tbody = document.getElementById('teacherResultsTable');
     tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Loading...</td></tr>';
@@ -2026,7 +1886,6 @@ async function loadResultsManagement() {
         tbody.innerHTML = html || '<tr><td colspan="6" style="text-align:center;">No data</td></tr>';
     } catch(e) { tbody.innerHTML = `<tr><td colspan="6" style="color:red;">Error: ${e.message}</td></tr>`; }
 }
-
 async function openEditResult(studentId, courseId) {
     const [users, courses, results] = await Promise.all([getUsers(), getCourses(), getResults()]);
     const student = users.find(u=>String(u.id)===String(studentId));
@@ -2040,7 +1899,6 @@ async function openEditResult(studentId, courseId) {
     document.getElementById('editResultExam').value = ex?.exam||'';
     document.getElementById('editResultModal').classList.add('active');
 }
-
 async function handleUpdateResult(e) {
     e.preventDefault();
     const studentId = document.getElementById('editResultStudentId').value;
@@ -2054,13 +1912,10 @@ async function handleUpdateResult(e) {
     showLoading('Saving result...');
     try {
         await saveResult({ student_id:studentId, unit_id:unitId, unit_code:course.code, unit_name:course.name, cat, exam, total, grade, remarks:total>=50?'Pass':'Fail' });
-        hideLoading();
-        closeModal('editResultModal');
-        showToast('Result updated');
-        loadResultsManagement();
+        hideLoading(); closeModal('editResultModal');
+        showToast('Result updated'); loadResultsManagement();
     } catch(e) { hideLoading(); showToast('Error: '+e.message,'error'); }
 }
-
 async function loadTeacherFees() {
     const tbody = document.getElementById('teacherFeesTable');
     try {
@@ -2076,9 +1931,7 @@ async function loadTeacherFees() {
             const bal = (s.fees_total||0)-(s.fees_paid||0);
             const pct = s.fees_total ? Math.round((s.fees_paid/s.fees_total)*100) : 0;
             return `<tr>
-                <td><strong>${s.admission_number}</strong></td>
-                <td>${s.name}</td>
-                <td>${s.course||'-'}</td>
+                <td><strong>${s.admission_number}</strong></td><td>${s.name}</td><td>${s.course||'-'}</td>
                 <td>KES ${(s.fees_total||0).toLocaleString()}</td>
                 <td>KES ${(s.fees_paid||0).toLocaleString()}<br><div style="background:var(--border);border-radius:4px;height:6px;margin-top:4px;"><div style="background:var(--success);height:6px;border-radius:4px;width:${pct}%"></div></div></td>
                 <td style="color:${bal>0?'var(--danger)':'var(--success)'}; font-weight:600;">KES ${bal.toLocaleString()}</td>
@@ -2087,11 +1940,9 @@ async function loadTeacherFees() {
         }).join('') || '<tr><td colspan="8" style="text-align:center; padding:20px;">No students found</td></tr>';
     } catch(e) { tbody.innerHTML=`<tr><td colspan="8" style="color:red;">Error: ${e.message}</td></tr>`; }
 }
-
 function filterFeesTable(q) {
     document.querySelectorAll('#teacherFeesTable tr').forEach(r=>{r.style.display=r.textContent.toLowerCase().includes(q.toLowerCase())?'':'none';});
 }
-
 async function openEditFees(studentId) {
     const users = await getUsers();
     const s = users.find(u=>String(u.id)===String(studentId));
@@ -2101,7 +1952,6 @@ async function openEditFees(studentId) {
     document.getElementById('editFeesPaid').value = s.fees_paid;
     document.getElementById('editFeesModal').classList.add('active');
 }
-
 async function handleUpdateFees(e) {
     e.preventDefault();
     const studentId = document.getElementById('editFeesStudentId').value;
@@ -2112,14 +1962,10 @@ async function handleUpdateFees(e) {
     const updated = { ...s, fees_total:total, fees_paid:paid };
     showLoading('Saving fees...');
     try {
-        await saveUser(updated);
-        hideLoading();
-        closeModal('editFeesModal');
-        showToast('Fees updated');
-        loadTeacherFees();
+        await saveUser(updated); hideLoading();
+        closeModal('editFeesModal'); showToast('Fees updated'); loadTeacherFees();
     } catch(e) { hideLoading(); showToast('Error: '+e.message,'error'); }
 }
-
 async function loadTeacherCourses() {
     const tbody = document.getElementById('teacherCoursesTable');
     try {
@@ -2152,7 +1998,6 @@ async function initAdminDashboard() {
     } catch(e) { hideLoading(); }
     showAdminSection('overview');
 }
-
 function showAdminSection(sec) {
     document.querySelectorAll('#adminDashboard .main-content > div').forEach(d=>d.classList.add('hidden'));
     const el = document.getElementById(`admin${sec.charAt(0).toUpperCase()+sec.slice(1)}`);
@@ -2165,7 +2010,6 @@ function showAdminSection(sec) {
     if (sec==='team') loadAdminTeam();
     if (sec==='admissions') loadAdminAdmissions();
 }
-
 async function loadAdminUsers() {
     const tbody = document.getElementById('adminUsersTable');
     try {
@@ -2175,12 +2019,11 @@ async function loadAdminUsers() {
             <td><span class="badge ${u.role==='admin'?'badge-danger':u.role==='teacher'?'badge-warning':'badge-success'}">${u.role}</span></td>
             <td><span class="badge ${u.status==='active'?'badge-success':'badge-danger'}">${u.status}</span></td>
             <td class="table-actions">
-                <button class="delete" onclick="deleteUser('${u.id}')"><i class="fas fa-trash"></i></button>
+                <button class="delete" onclick="deleteUserById('${u.id}')"><i class="fas fa-trash"></i></button>
             </td></tr>
         `).join('');
     } catch(e) {}
 }
-
 async function loadAdminTeachers() {
     const tbody = document.getElementById('adminTeachersTable');
     try {
@@ -2193,7 +2036,6 @@ async function loadAdminTeachers() {
         `).join('');
     } catch(e) {}
 }
-
 async function loadAdminStudents() {
     const tbody = document.getElementById('adminStudentsTable');
     try {
@@ -2203,26 +2045,22 @@ async function loadAdminStudents() {
             return `<tr><td>${s.admission_number}</td><td>${s.name}</td><td>${s.course}</td><td>${s.phone}</td>
                 <td><span class="badge ${bal<=0?'badge-success':'badge-warning'}">${bal<=0?'Cleared':'Balance'}</span></td>
                 <td class="table-actions">
-                    <button class="delete" onclick="deleteUser('${s.id}')"><i class="fas fa-trash"></i></button>
+                    <button class="delete" onclick="deleteUserById('${s.id}')"><i class="fas fa-trash"></i></button>
                 </td></tr>`;
         }).join('');
     } catch(e) {}
 }
-
 function filterAdminStudents(q) {
     document.querySelectorAll('#adminStudentsTable tr').forEach(r=>{r.style.display=r.textContent.toLowerCase().includes(q.toLowerCase())?'':'none';});
 }
-
-async function deleteUser(id) {
+async function deleteUserById(id) {
     if (!confirm('Delete this user permanently?')) return;
     showLoading('Deleting...');
     try { await deleteUser(id); hideLoading(); showToast('User deleted'); loadAdminUsers(); loadAdminStudents(); }
     catch(e) { hideLoading(); showToast('Error: '+e.message,'error'); }
 }
-
 function openAddUserModal() { showToast('Use the Add Student or Add Teacher forms','warning'); }
 function saveContent() { showToast('Website content saved'); }
-
 async function saveSettings() {
     DB.settings.admission_prefix = document.getElementById('admPrefix').value;
     DB.settings.default_password = document.getElementById('defaultPassword').value;
@@ -2230,32 +2068,28 @@ async function saveSettings() {
     try { await saveSettingsToFirebase(DB.settings); } catch(e) {}
     showToast('Settings saved');
 }
-
 async function loadAdminTeam() {
     const tbody = document.getElementById('adminTeamTable');
     try {
-        const team = await getTeam();
+        const team = STATIC_TEAM;
         tbody.innerHTML = team.map(t=>`
             <tr><td>${t.id}</td><td><strong>${t.name}</strong></td><td>${t.role}</td><td>${t.department}</td>
             <td>${t.image?'<span class="badge badge-success">Yes</span>':'<span class="badge badge-warning">No</span>'}</td>
             <td class="table-actions">
                 <button class="edit" onclick="editTeamMember('${t.id}')"><i class="fas fa-edit"></i></button>
-                <button class="delete" onclick="deleteTeamMember('${t.id}')"><i class="fas fa-trash"></i></button>
+                <button class="delete" onclick="deleteTeamMemberAdmin('${t.id}')"><i class="fas fa-trash"></i></button>
             </td></tr>
         `).join('');
     } catch(e) {}
 }
-
 function openAddTeamModal() {
     document.getElementById('teamModalTitle').textContent = 'Add Team Member';
     document.getElementById('teamMemberForm').reset();
     document.getElementById('teamMemberId').value = '';
     document.getElementById('teamMemberModal').classList.add('active');
 }
-
 async function editTeamMember(id) {
-    const team = await getTeam();
-    const m = team.find(t=>String(t.id)===String(id));
+    const m = STATIC_TEAM.find(t=>String(t.id)===String(id));
     if (!m) return;
     document.getElementById('teamModalTitle').textContent = 'Edit Team Member';
     document.getElementById('teamMemberId').value = m.id;
@@ -2267,12 +2101,11 @@ async function editTeamMember(id) {
     document.getElementById('teamMemberPortfolio').value = m.portfolio ? m.portfolio.join('\n') : '';
     document.getElementById('teamMemberModal').classList.add('active');
 }
-
 async function handleSaveTeamMember(e) {
     e.preventDefault();
     const id = document.getElementById('teamMemberId').value;
     const member = {
-        id: id || null,
+        id: id || String(Date.now()),
         name: document.getElementById('teamMemberName').value,
         role: document.getElementById('teamMemberRole').value,
         department: document.getElementById('teamMemberDept').value,
@@ -2283,18 +2116,14 @@ async function handleSaveTeamMember(e) {
     showLoading('Saving...');
     try {
         await saveTeamMember(member);
-        hideLoading();
-        closeModal('teamMemberModal');
-        showToast('Team member saved');
-        loadAdminTeam();
-        loadPublicData();
+        hideLoading(); closeModal('teamMemberModal');
+        showToast('Team member saved'); loadAdminTeam(); loadPublicData();
     } catch(e) { hideLoading(); showToast('Error: '+e.message,'error'); }
 }
-
-async function deleteTeamMember(id) {
+async function deleteTeamMemberAdmin(id) {
     if (!confirm('Delete this team member?')) return;
     showLoading('Deleting...');
-    try { await deleteTeamMember(id); hideLoading(); showToast('Deleted'); loadAdminTeam(); loadPublicData(); }
+    try { await deleteTeamMemberById(id); hideLoading(); showToast('Deleted'); loadAdminTeam(); }
     catch(e) { hideLoading(); showToast('Error: '+e.message,'error'); }
 }
 
@@ -2312,11 +2141,11 @@ function addExamRow(data={}) {
         <button type="button" class="remove-row" onclick="document.getElementById('examRow${id}').remove()"><i class="fas fa-times"></i></button>
         <strong style="color:var(--primary); display:block; margin-bottom:12px;">Exam #${id}</strong>
         <div class="form-row">
-            <div class="form-group"><label>Subject *</label><input type="text" class="exam-subject" required value="${data.subject||''}" placeholder="e.g. Crop Science"></div>
-            <div class="form-group"><label>Exam Name *</label><input type="text" class="exam-name" required value="${data.examName||''}" placeholder="e.g. End of Semester CAT"></div>
+            <div class="form-group"><label>Subject *</label><input type="text" class="exam-subject" required value="${data.subject||''}" placeholder="e.g. Livestock Management"></div>
+            <div class="form-group"><label>Exam Name *</label><input type="text" class="exam-name" required value="${data.examName||''}" placeholder="e.g. End of Semester Exam"></div>
         </div>
         <div class="form-row">
-            <div class="form-group"><label>Course</label><select class="exam-course"><option value="">-- All Courses --</option></select></div>
+            <div class="form-group"><label>Course</label><select class="exam-course"><option value="">-- All Courses --</option>${STATIC_PROGRAMS.map(p=>`<option value="${p.name}"${data.course===p.name?' selected':''}>${p.name}</option>`).join('')}</select></div>
             <div class="form-group"><label>Venue</label><input type="text" class="exam-venue" value="${data.venue||''}" placeholder="e.g. Main Hall, Room 101"></div>
         </div>
         <div class="form-row">
@@ -2325,25 +2154,16 @@ function addExamRow(data={}) {
             <div class="form-group"><label>Duration (mins)</label><input type="number" class="exam-duration" min="30" value="${data.duration||120}" placeholder="120"></div>
         </div>`;
     container.appendChild(row);
-    getPrograms().then(progs => {
-        const sel = row.querySelector('.exam-course');
-        progs.forEach(p=>{ const o=document.createElement('option'); o.value=p.name; o.textContent=p.name; sel.appendChild(o); });
-        if (data.course) sel.value = data.course;
-    });
 }
-
 function openAddExamModal() {
     document.getElementById('examRowsContainer').innerHTML = '';
-    examRowCount = 0;
-    addExamRow();
+    examRowCount = 0; addExamRow();
     document.getElementById('addExamModal').classList.add('active');
 }
-
 async function handleSaveExams() {
     const rows = document.querySelectorAll('.exam-row');
     if (!rows.length) { showToast('Add at least one exam', 'error'); return; }
-    const exams = [];
-    let valid = true;
+    const exams = []; let valid = true;
     rows.forEach(row => {
         const subject = row.querySelector('.exam-subject').value.trim();
         const examName = row.querySelector('.exam-name').value.trim();
@@ -2363,8 +2183,7 @@ async function handleSaveExams() {
     if (!valid) { showToast('Please fill all required fields in each exam', 'error'); return; }
     showLoading('Saving exams...');
     try {
-        await saveExams(exams);
-        hideLoading();
+        await saveExams(exams); hideLoading();
         closeModal('addExamModal');
         showToast(`${exams.length} exam(s) saved successfully!`, 'success');
         loadTeacherExams();
@@ -2372,34 +2191,24 @@ async function handleSaveExams() {
         document.getElementById('teacherTotalExams').textContent = allExams.length.toString();
     } catch(e) { hideLoading(); showToast('Error: '+e.message,'error'); }
 }
-
 async function loadTeacherExams() {
     const tbody = document.getElementById('teacherExamsTable');
     tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">Loading...</td></tr>';
     try {
         const exams = await getExams();
-        if (!exams.length) { tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:20px;">No exams added yet. Click "Add Exams" to get started.</td></tr>'; return; }
+        if (!exams.length) { tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:20px;">No exams added yet.</td></tr>'; return; }
         tbody.innerHTML = exams.map(ex=>`
-            <tr>
-                <td><strong>${ex.subject}</strong></td>
-                <td>${ex.examName}</td>
-                <td>${ex.date}</td>
-                <td>${ex.time}</td>
-                <td>${ex.duration} mins</td>
-                <td>${ex.venue||'-'}</td>
-                <td>${ex.course||'All'}</td>
-                <td class="table-actions">
-                    <button class="delete" onclick="deleteExam('${ex.id}')"><i class="fas fa-trash"></i></button>
-                </td>
-            </tr>`).join('');
+            <tr><td><strong>${ex.subject}</strong></td><td>${ex.examName}</td><td>${ex.date}</td>
+            <td>${ex.time}</td><td>${ex.duration} mins</td><td>${ex.venue||'-'}</td><td>${ex.course||'All'}</td>
+            <td class="table-actions">
+                <button class="delete" onclick="deleteExamById('${ex.id}')"><i class="fas fa-trash"></i></button>
+            </td></tr>`).join('');
     } catch(e) { tbody.innerHTML = `<tr><td colspan="8" style="color:red;">Error: ${e.message}</td></tr>`; }
 }
-
 function filterExamsTable(q) {
     document.querySelectorAll('#teacherExamsTable tr').forEach(r=>{r.style.display=r.textContent.toLowerCase().includes(q.toLowerCase())?'':'none';});
 }
-
-async function deleteExam(id) {
+async function deleteExamById(id) {
     if (!confirm('Delete this exam?')) return;
     showLoading('Deleting...');
     try { await deleteExam(id); hideLoading(); showToast('Exam deleted'); loadTeacherExams(); }
@@ -2407,18 +2216,12 @@ async function deleteExam(id) {
 }
 
 // ============================================================
-//  ADMISSION APPLICATIONS (Teacher & Admin)
+//  ADMISSION APPLICATIONS
 // ============================================================
 let currentReviewApp = null;
-
 async function refreshAdmissionBadges() {
-    try {
-        const apps = await getApplications();
-        const pending = apps.filter(a=>a.status==='pending').length;
-        updateNotifBadges(pending);
-    } catch(e) {}
+    try { const apps = await getApplications(); updateNotifBadges(apps.filter(a=>a.status==='pending').length); } catch(e) {}
 }
-
 function updateNotifBadges(count) {
     ['teacherNotifCount','teacherAdmBadge','adminAdmBadge'].forEach(id=>{
         const el = document.getElementById(id);
@@ -2429,49 +2232,34 @@ function updateNotifBadges(count) {
     const adminPend = document.getElementById('adminPendingAdmCount');
     if (adminPend) adminPend.textContent = `${count} Pending`;
 }
-
 function renderAdmissionsTable(apps, tbodyId) {
     const tbody = document.getElementById(tbodyId);
     if (!tbody) return;
-    const pending = apps.filter(a=>a.status==='pending');
-    updateNotifBadges(pending.length);
+    updateNotifBadges(apps.filter(a=>a.status==='pending').length);
     if (!apps.length) { tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:20px;">No applications yet.</td></tr>'; return; }
     tbody.innerHTML = apps.map(app=>`
         <tr style="${app.status==='pending'?'background:rgba(251,140,0,0.05);':''}">
-            <td><strong>${app.name}</strong></td>
-            <td>${app.email}</td>
-            <td>${app.phone}</td>
-            <td>${app.course}</td>
-            <td>${app.grade||'-'}</td>
-            <td>${app.applied_on}</td>
+            <td><strong>${app.name}</strong></td><td>${app.email}</td><td>${app.phone}</td>
+            <td>${app.course}</td><td>${app.grade||'-'}</td><td>${app.applied_on}</td>
             <td>${app.photo ? `<img src="${app.photo}" class="photo-thumb" alt="photo">` : '<span style="color:var(--text-light);">None</span>'}</td>
-            <td>
-                ${app.status==='pending'
-                    ? `<button class="btn btn-sm btn-primary" onclick="openReviewModal('${app.id}')"><i class="fas fa-eye"></i> Review</button>`
-                    : `<span class="badge ${app.status==='approved'?'badge-success':'badge-danger'}">${app.status}</span>`}
-            </td>
-        </tr>`).join('');
+            <td>${app.status==='pending'
+                ? `<button class="btn btn-sm btn-primary" onclick="openReviewModal('${app.id}')"><i class="fas fa-eye"></i> Review</button>`
+                : `<span class="badge ${app.status==='approved'?'badge-success':'badge-danger'}">${app.status}</span>`}
+            </td></tr>`).join('');
 }
-
 async function loadTeacherAdmissions() {
     const tbody = document.getElementById('teacherAdmissionsTable');
     tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">Loading...</td></tr>';
-    try {
-        const apps = await getApplications();
-        renderAdmissionsTable(apps, 'teacherAdmissionsTable');
-    } catch(e) { tbody.innerHTML = `<tr><td colspan="8" style="color:red;">Error: ${e.message}</td></tr>`; }
+    try { const apps = await getApplications(); renderAdmissionsTable(apps, 'teacherAdmissionsTable'); }
+    catch(e) { tbody.innerHTML = `<tr><td colspan="8" style="color:red;">Error: ${e.message}</td></tr>`; }
 }
-
 async function loadAdminAdmissions() {
     const tbody = document.getElementById('adminAdmissionsTable');
     if (!tbody) return;
     tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">Loading...</td></tr>';
-    try {
-        const apps = await getApplications();
-        renderAdmissionsTable(apps, 'adminAdmissionsTable');
-    } catch(e) { tbody.innerHTML = `<tr><td colspan="8" style="color:red;">Error: ${e.message}</td></tr>`; }
+    try { const apps = await getApplications(); renderAdmissionsTable(apps, 'adminAdmissionsTable'); }
+    catch(e) { tbody.innerHTML = `<tr><td colspan="8" style="color:red;">Error: ${e.message}</td></tr>`; }
 }
-
 async function openReviewModal(appId) {
     const apps = await getApplications();
     const app = apps.find(a=>String(a.id)===String(appId));
@@ -2479,23 +2267,19 @@ async function openReviewModal(appId) {
     currentReviewApp = app;
     document.getElementById('admissionReviewBody').innerHTML = `
         <div style="display:flex; gap:24px; align-items:flex-start; flex-wrap:wrap;">
-            <div>${app.photo ? `<img src="${app.photo}" style="width:100px; height:100px; border-radius:var(--radius-lg); object-fit:cover; border:3px solid var(--primary);">` : `<div style="width:100px; height:100px; border-radius:var(--radius-lg); background:var(--bg-light); display:flex; align-items:center; justify-content:center; font-size:2.5rem; color:var(--primary);"><i class="fas fa-user"></i></div>`}</div>
+            <div>${app.photo ? `<img src="${app.photo}" style="width:100px; height:100px; border-radius:var(--radius-lg); object-fit:cover; border:3px solid var(--primary);">` : `<div style="width:100px;height:100px;border-radius:var(--radius-lg);background:var(--bg-light);display:flex;align-items:center;justify-content:center;font-size:2.5rem;color:var(--primary);"><i class="fas fa-user"></i></div>`}</div>
             <div style="flex:1;">
                 <h3 style="color:var(--primary);">${app.name}</h3>
                 <p style="color:var(--text-light); margin-bottom:12px;">Applied on ${app.applied_on}</p>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; font-size:0.95rem;">
-                    <div><strong>Email:</strong> ${app.email}</div>
-                    <div><strong>Phone:</strong> ${app.phone}</div>
-                    <div><strong>ID No:</strong> ${app.id_number||'-'}</div>
-                    <div><strong>Course:</strong> ${app.course}</div>
-                    <div><strong>KCSE Grade:</strong> ${app.grade||'-'}</div>
-                    <div><strong>Prev. School:</strong> ${app.school||'-'}</div>
+                    <div><strong>Email:</strong> ${app.email}</div><div><strong>Phone:</strong> ${app.phone}</div>
+                    <div><strong>ID No:</strong> ${app.id_number||'-'}</div><div><strong>Course:</strong> ${app.course}</div>
+                    <div><strong>KCSE Grade:</strong> ${app.grade||'-'}</div><div><strong>Prev. School:</strong> ${app.school||'-'}</div>
                 </div>
             </div>
         </div>`;
     document.getElementById('admissionReviewModal').classList.add('active');
 }
-
 async function handleAdmissionAction(action) {
     if (!currentReviewApp) return;
     showLoading(action === 'approve' ? 'Approving and enrolling...' : 'Rejecting...');
@@ -2503,29 +2287,21 @@ async function handleAdmissionAction(action) {
         if (action === 'approve') {
             const admNo = generateAdmissionNumber();
             const newStudent = {
-                username: admNo,
-                password: currentReviewApp.passwordHash,
-                role: 'student',
-                name: currentReviewApp.name,
-                email: currentReviewApp.email,
-                phone: currentReviewApp.phone,
-                id_number: currentReviewApp.id_number,
-                course: currentReviewApp.course,
-                photo: currentReviewApp.photo || '',
-                admission_number: admNo,
-                fees_total: 45000, fees_paid: 0,
-                first_login: false, status: 'active',
+                username: admNo, password: currentReviewApp.passwordHash,
+                role: 'student', name: currentReviewApp.name,
+                email: currentReviewApp.email, phone: currentReviewApp.phone,
+                id_number: currentReviewApp.id_number, course: currentReviewApp.course,
+                photo: currentReviewApp.photo || '', admission_number: admNo,
+                fees_total: 45000, fees_paid: 0, first_login: false, status: 'active',
                 enrollment_date: new Date().toISOString().split('T')[0]
             };
             await saveUser(newStudent);
             await updateApplication({...currentReviewApp, status:'approved', admission_number:admNo});
-            hideLoading();
-            closeModal('admissionReviewModal');
+            hideLoading(); closeModal('admissionReviewModal');
             showToast(`Approved! ${currentReviewApp.name} enrolled as ${admNo}`, 'success');
         } else {
             await updateApplication({...currentReviewApp, status:'rejected'});
-            hideLoading();
-            closeModal('admissionReviewModal');
+            hideLoading(); closeModal('admissionReviewModal');
             showToast('Application rejected.', 'warning');
         }
         currentReviewApp = null;
@@ -2535,7 +2311,7 @@ async function handleAdmissionAction(action) {
     } catch(e) { hideLoading(); showToast('Error: '+e.message,'error'); }
 }
 
-// Photo preview on application form
+// Application form photo preview
 document.addEventListener('DOMContentLoaded', () => {
     const photoInput = document.getElementById('appPhoto');
     if (photoInput) {
@@ -2553,82 +2329,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// ============================================================
-//  PUBLIC WEBSITE DATA
-// ============================================================
-async function loadPublicData() {
-    try {
-        const [programs, team, partners, affiliates] = await Promise.all([
-            getPrograms(), getTeam(), getPartners(), getAffiliates()
-        ]);
-
-        document.getElementById('coursesGrid').innerHTML = programs.map(p=>`
-            <div class="course-card">
-                <div class="course-image"><i class="fas ${p.icon}"></i></div>
-                <div class="course-body">
-                    <h3>${p.name}</h3><p>${p.description}</p>
-                    <div class="course-meta"><span><i class="fas fa-clock"></i> ${p.duration}</span><span><i class="fas fa-layer-group"></i> ${p.level}</span></div>
-                </div>
-            </div>
-        `).join('');
-
-        document.getElementById('teamGrid').innerHTML = team.map(t=>`
-            <div class="team-card" onclick="openTeamModal('${t.id}')">
-                <div class="team-image" style="${t.image?`background:url('${t.image}') center/cover no-repeat`:''}">${t.image?'':'<i class="fas fa-user"></i>'}</div>
-                <div class="team-info">
-                    <h4>${t.name}</h4><p>${t.role}</p><small>${t.department}</small>
-                    <div class="team-view-profile"><i class="fas fa-id-card"></i> View Portfolio</div>
-                </div>
-            </div>
-        `).join('');
-
-        document.getElementById('partnersGrid').innerHTML = partners.map(p=>`
-            <div class="partner-card">
-                <div class="partner-logo"><i class="fas fa-handshake"></i></div>
-                <h4>${p.name}</h4>
-                <span class="badge ${p.type==='Government'?'badge-success':p.type==='NGO'?'badge-warning':'badge-danger'}" style="margin-bottom:8px; display:inline-block;">${p.type}</span>
-                <p>${p.description}</p>
-            </div>
-        `).join('');
-
-        document.getElementById('affiliatesGrid').innerHTML = affiliates.map(a=>`
-            <div class="partner-card">
-                <div class="partner-logo"><i class="fas fa-university"></i></div>
-                <h4>${a.name}</h4>
-                <span class="badge badge-success" style="margin-bottom:8px; display:inline-block;">${a.type}</span>
-                <p>${a.description}</p>
-            </div>
-        `).join('');
-
-        const appSelect = document.getElementById('appCourse');
-        if (appSelect) {
-            appSelect.innerHTML = '<option value="">-- Select Program --</option>' + programs.map(p=>`<option value="${p.name}">${p.name}</option>`).join('');
-        }
-    } catch(e) {
-        showToast('Some data loaded from local cache', 'warning');
-    }
-}
-
-async function openTeamModal(id) {
-    const team = await getTeam();
-    const m = team.find(t=>String(t.id)===String(id));
-    if (!m) return;
-    document.getElementById('teamModalBody').innerHTML = `
-        <div class="team-modal-image" style="${m.image?`background:url('${m.image}') center/cover no-repeat`:''}">${m.image?'':'<i class="fas fa-user"></i>'}</div>
-        <div class="team-modal-info">
-            <h3>${m.name}</h3><div class="role">${m.role}</div>
-            <div class="dept"><i class="fas fa-building"></i> ${m.department}</div>
-            <div class="bio">${m.bio}</div>
-            <div class="portfolio-section">
-                <h4><i class="fas fa-trophy"></i> Portfolio & Achievements</h4>
-                <ul>${m.portfolio.map(i=>`<li><i class="fas fa-star"></i> ${i}</li>`).join('')}</ul>
-            </div>
-        </div>`;
-    document.getElementById('teamPortfolioModal').classList.add('active');
-}
-
 function showApplicationForm() { document.getElementById('applicationModal').classList.add('active'); }
-
 async function handleApplication(e) {
     e.preventDefault();
     const firstName = document.getElementById('appFirstName').value;
@@ -2641,30 +2342,22 @@ async function handleApplication(e) {
     const photoFile = document.getElementById('appPhoto').files[0];
     if (photoFile) {
         if (photoFile.size > 2 * 1024 * 1024) { showToast('Photo must be under 2MB', 'error'); return; }
-        photoData = await new Promise(res => {
-            const reader = new FileReader();
-            reader.onload = e => res(e.target.result);
-            reader.readAsDataURL(photoFile);
-        });
+        photoData = await new Promise(res => { const reader = new FileReader(); reader.onload = e => res(e.target.result); reader.readAsDataURL(photoFile); });
     }
     const application = {
-        firstName, lastName,
-        name: `${firstName} ${lastName}`,
+        firstName, lastName, name: `${firstName} ${lastName}`,
         email: document.getElementById('appEmail').value,
         phone: document.getElementById('appPhone').value,
         id_number: document.getElementById('appIdNumber').value,
         course: document.getElementById('appCourse').value,
         grade: document.getElementById('appGrade').value,
         school: document.getElementById('appSchool').value,
-        passwordHash: hashPassword(password),
-        photo: photoData,
-        status: 'pending',
-        applied_on: new Date().toISOString().split('T')[0]
+        passwordHash: hashPassword(password), photo: photoData,
+        status: 'pending', applied_on: new Date().toISOString().split('T')[0]
     };
     showLoading('Submitting application...');
     try {
-        await saveApplication(application);
-        hideLoading();
+        await saveApplication(application); hideLoading();
         closeModal('applicationModal');
         document.getElementById('applicationForm').reset();
         document.getElementById('appPhotoPreview').style.display = 'none';
@@ -2687,16 +2380,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
     });
 
-    // Load settings from Firebase if available
-    if (isFirebaseConfigured) {
-        try {
-            const settings = await getSettings();
-            if (settings) DB.settings = { ...DB.settings, ...settings };
-        } catch(e) {}
-    }
-
-    // Load public page data
-    await loadPublicData();
+    // Load static public data immediately — no Firebase needed
+    loadPublicData();
 
     // Restore session
     if (currentUser) {

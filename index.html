@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics-compat.js"></script>
     <style>
         :root {
             --primary: #1b5e20;
@@ -1119,15 +1120,16 @@
 //  FIREBASE — PRIMARY DATABASE
 // ============================================================
 const firebaseConfig = {
-    apiKey: "AIzaSyBvhk9fi6E7CmjdGxy4QcqzJJaEOZjy4kQ",
-    authDomain: "kilimopedia.firebaseapp.com",
-    projectId: "kilimopedia",
-    storageBucket: "kilimopedia.firebasestorage.app",
-    messagingSenderId: "687569754083",
-    appId: "1:687569754083:web:561f94fddd70e98c8632d6",
-    measurementId: "G-5PYQRED78Y"
+    apiKey: "AIzaSyBngHGQofez0xb_jndc-fPrPxLG78k9pQY",
+    authDomain: "krac-218ca.firebaseapp.com",
+    projectId: "krac-218ca",
+    storageBucket: "krac-218ca.firebasestorage.app",
+    messagingSenderId: "574134231698",
+    appId: "1:574134231698:web:35c83d5eabe2af29773c4b",
+    measurementId: "G-F9GP0FEFKV"
 };
 firebase.initializeApp(firebaseConfig);
+firebase.analytics();
 const db = firebase.firestore();
 
 // ============================================================

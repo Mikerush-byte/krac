@@ -1134,31 +1134,118 @@ firebase.analytics();
 const db = firebase.database(); // Realtime Database
 
 // ============================================================
-//  REALTIME DATABASE HELPERS
+//  REALTIME DATABASE HELPERS — with localStorage fallback
 // ============================================================
+let USE_LOCAL = false; // flips to true if Firebase fails
+
 async function rtGet(path) {
-    const snap = await db.ref(path).once('value');
-    return snap.val();
+    if (USE_LOCAL) return localGet(path);
+    try {
+        const snap = await Promise.race([
+            db.ref(path).once('value'),
+            new Promise((_,rej) => setTimeout(() => rej(new Error('timeout')), 8000))
+        ]);
+        return snap.val();
+    } catch(e) {
+        console.warn('Firebase rtGet failed, using local:', e.message);
+        USE_LOCAL = true;
+        return localGet(path);
+    }
 }
 async function rtSet(path, data) {
-    await db.ref(path).set(data);
-    return data;
-}
-async function rtUpdate(path, data) {
-    await db.ref(path).update(data);
-    return data;
+    if (USE_LOCAL) return localSet(path, data);
+    try { await db.ref(path).set(data); return data; }
+    catch(e) { USE_LOCAL = true; return localSet(path, data); }
 }
 async function rtPush(path, data) {
-    const ref = db.ref(path).push();
-    await ref.set(data);
-    return { id: ref.key, ...data };
+    if (USE_LOCAL) return localPush(path, data);
+    try {
+        const ref = db.ref(path).push();
+        await ref.set(data);
+        return { id: ref.key, ...data };
+    } catch(e) { USE_LOCAL = true; return localPush(path, data); }
 }
 async function rtDelete(path) {
-    await db.ref(path).remove();
+    if (USE_LOCAL) return localDelete(path);
+    try { await db.ref(path).remove(); }
+    catch(e) { USE_LOCAL = true; localDelete(path); }
 }
 function objToArray(obj) {
     if (!obj) return [];
     return Object.entries(obj).map(([id, val]) => ({ id, ...val }));
+}
+
+// ============================================================
+//  LOCALSTORAGE FALLBACK
+// ============================================================
+const LS = {
+    users: JSON.parse(localStorage.getItem('krac_users') || 'null'),
+    courses: JSON.parse(localStorage.getItem('krac_courses') || 'null'),
+    results: JSON.parse(localStorage.getItem('krac_results') || 'null'),
+    payments: JSON.parse(localStorage.getItem('krac_payments') || 'null'),
+    exams: JSON.parse(localStorage.getItem('krac_exams') || 'null'),
+    applications: JSON.parse(localStorage.getItem('krac_applications') || 'null'),
+    settings: JSON.parse(localStorage.getItem('krac_settings') || 'null')
+};
+function saveLS(key) { localStorage.setItem(`krac_${key}`, JSON.stringify(LS[key])); }
+
+function localGet(path) {
+    const parts = path.split('/');
+    const root = parts[0];
+    if (parts.length === 1) return LS[root] || null;
+    return (LS[root] || {})[parts[1]] || null;
+}
+function localSet(path, data) {
+    const parts = path.split('/');
+    const root = parts[0];
+    if (parts.length === 1) { LS[root] = data; saveLS(root); }
+    else { if (!LS[root]) LS[root] = {}; LS[root][parts[1]] = data; saveLS(root); }
+    return data;
+}
+function localPush(path, data) {
+    const id = 'local_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+    if (!LS[path]) LS[path] = {};
+    LS[path][id] = data;
+    saveLS(path);
+    return { id, ...data };
+}
+function localDelete(path) {
+    const parts = path.split('/');
+    const root = parts[0];
+    if (parts.length > 1 && LS[root]) { delete LS[root][parts[1]]; saveLS(root); }
+}
+
+// Seed localStorage fallback defaults
+function seedLocalDefaults() {
+    if (!LS.users) {
+        LS.users = {};
+        const defaults = [
+            { username:'admin',      password:hashPassword('admin123'),   role:'admin',   name:'System Administrator',    email:'admin@krac.ac.ke',      phone:'+254700000001', first_login:false, status:'active' },
+            { username:'TCH001',     password:hashPassword('teacher123'), role:'teacher', name:'Mr. Vincent Otieno',      email:'v.otieno@krac.ac.ke',   phone:'+254712345001', first_login:false, status:'active' },
+            { username:'TCH002',     password:hashPassword('teacher123'), role:'teacher', name:'Ms. Hope Kanoti Munyoki', email:'h.munyoki@krac.ac.ke',  phone:'+254712345002', first_login:false, status:'active' },
+            { username:'KRAC2026001',password:hashPassword('student123'), role:'student', name:'John Kamau',    email:'john.kamau@email.com',   phone:'+254723456001', id_number:'12345678', course:'Veterinary Assistance Course',       admission_number:'KRAC2026001', fees_total:45000, fees_paid:33000, first_login:true, status:'active', enrollment_date:'2026-01-15' },
+            { username:'KRAC2026002',password:hashPassword('student123'), role:'student', name:'Mary Akinyi',   email:'mary.akinyi@email.com',  phone:'+254723456002', id_number:'87654321', course:'Women Empowerment Program',          admission_number:'KRAC2026002', fees_total:30000, fees_paid:30000, first_login:true, status:'active', enrollment_date:'2026-01-15' },
+            { username:'KRAC2026003',password:hashPassword('student123'), role:'student', name:'Peter Ochieng', email:'peter.ochieng@email.com', phone:'+254723456003', id_number:'45678901', course:'Crop Development & Marketing Course', admission_number:'KRAC2026003', fees_total:33390, fees_paid:20000, first_login:true, status:'active', enrollment_date:'2026-01-15' }
+        ];
+        defaults.forEach(u => { const id = 'u_' + Date.now() + Math.random(); LS.users[id] = u; });
+        saveLS('users');
+    }
+    if (!LS.courses) {
+        LS.courses = {};
+        const courses = [
+            { code:'VET101', name:'Livestock Health Management',         lecturer:'Mr. Vincent Otieno',      duration:'1 Semester', students:20, status:'active' },
+            { code:'WEP201', name:'Poultry & Small Livestock Production',lecturer:'Ms. Hope Kanoti Munyoki', duration:'1 Semester', students:18, status:'active' },
+            { code:'CRP301', name:'Crop Production & Value Addition',    lecturer:'Mr. Vincent Otieno',      duration:'1 Semester', students:22, status:'active' },
+            { code:'AGR401', name:'Agribusiness & Market Access',        lecturer:'Ms. Hope Kanoti Munyoki', duration:'1 Semester', students:15, status:'active' }
+        ];
+        courses.forEach(c => { const id = 'c_' + Date.now() + Math.random(); LS.courses[id] = c; });
+        saveLS('courses');
+    }
+    if (!LS.settings) { LS.settings = DEFAULT_SETTINGS; saveLS('settings'); }
+    if (!LS.results)      { LS.results = {};      saveLS('results'); }
+    if (!LS.payments)     { LS.payments = {};     saveLS('payments'); }
+    if (!LS.exams)        { LS.exams = {};        saveLS('exams'); }
+    if (!LS.applications) { LS.applications = {}; saveLS('applications'); }
 }
 
 // ============================================================
@@ -1174,28 +1261,31 @@ const DEFAULT_SETTINGS = {
 
 // Seed default admin + teachers into Firestore on first run
 async function seedDefaultUsers() {
-    const existing = await rtGet('users');
-    if (existing) return; // already seeded
-    const defaults = [
-        { username:'admin',      password:hashPassword('admin123'),   role:'admin',   name:'System Administrator',    email:'admin@krac.ac.ke',      phone:'+254700000001', first_login:false, status:'active' },
-        { username:'TCH001',     password:hashPassword('teacher123'), role:'teacher', name:'Mr. Vincent Otieno',      email:'v.otieno@krac.ac.ke',   phone:'+254712345001', first_login:false, status:'active' },
-        { username:'TCH002',     password:hashPassword('teacher123'), role:'teacher', name:'Ms. Hope Kanoti Munyoki', email:'h.munyoki@krac.ac.ke',  phone:'+254712345002', first_login:false, status:'active' },
-        { username:'KRAC2026001',password:hashPassword('student123'), role:'student', name:'John Kamau',   email:'john.kamau@email.com',   phone:'+254723456001', id_number:'12345678', course:'Veterinary Assistance Course',      admission_number:'KRAC2026001', fees_total:45000, fees_paid:33000, first_login:true, status:'active', enrollment_date:'2026-01-15' },
-        { username:'KRAC2026002',password:hashPassword('student123'), role:'student', name:'Mary Akinyi',  email:'mary.akinyi@email.com',  phone:'+254723456002', id_number:'87654321', course:'Women Empowerment Program',         admission_number:'KRAC2026002', fees_total:30000, fees_paid:30000, first_login:true, status:'active', enrollment_date:'2026-01-15' },
-        { username:'KRAC2026003',password:hashPassword('student123'), role:'student', name:'Peter Ochieng',email:'peter.ochieng@email.com', phone:'+254723456003', id_number:'45678901', course:'Crop Development & Marketing Course',admission_number:'KRAC2026003', fees_total:33390, fees_paid:20000, first_login:true, status:'active', enrollment_date:'2026-01-15' }
-    ];
-    const courses = [
-        { code:'VET101', name:'Livestock Health Management',         lecturer:'Mr. Vincent Otieno',      duration:'1 Semester', students:20, status:'active' },
-        { code:'WEP201', name:'Poultry & Small Livestock Production',lecturer:'Ms. Hope Kanoti Munyoki', duration:'1 Semester', students:18, status:'active' },
-        { code:'CRP301', name:'Crop Production & Value Addition',    lecturer:'Mr. Vincent Otieno',      duration:'1 Semester', students:22, status:'active' },
-        { code:'AGR401', name:'Agribusiness & Market Access',        lecturer:'Ms. Hope Kanoti Munyoki', duration:'1 Semester', students:15, status:'active' }
-    ];
-    // Write all at once using update for speed
-    const updates = {};
-    defaults.forEach(u => { const key = db.ref('users').push().key; updates[`users/${key}`] = u; });
-    courses.forEach(c => { const key = db.ref('courses').push().key; updates[`courses/${key}`] = c; });
-    updates['settings'] = DEFAULT_SETTINGS;
-    await db.ref('/').update(updates);
+    try {
+        const existing = await rtGet('users');
+        if (existing) return; // already seeded in Firebase
+        const defaults = [
+            { username:'admin',      password:hashPassword('admin123'),   role:'admin',   name:'System Administrator',    email:'admin@krac.ac.ke',      phone:'+254700000001', first_login:false, status:'active' },
+            { username:'TCH001',     password:hashPassword('teacher123'), role:'teacher', name:'Mr. Vincent Otieno',      email:'v.otieno@krac.ac.ke',   phone:'+254712345001', first_login:false, status:'active' },
+            { username:'TCH002',     password:hashPassword('teacher123'), role:'teacher', name:'Ms. Hope Kanoti Munyoki', email:'h.munyoki@krac.ac.ke',  phone:'+254712345002', first_login:false, status:'active' },
+            { username:'KRAC2026001',password:hashPassword('student123'), role:'student', name:'John Kamau',    email:'john.kamau@email.com',   phone:'+254723456001', id_number:'12345678', course:'Veterinary Assistance Course',       admission_number:'KRAC2026001', fees_total:45000, fees_paid:33000, first_login:true, status:'active', enrollment_date:'2026-01-15' },
+            { username:'KRAC2026002',password:hashPassword('student123'), role:'student', name:'Mary Akinyi',   email:'mary.akinyi@email.com',  phone:'+254723456002', id_number:'87654321', course:'Women Empowerment Program',          admission_number:'KRAC2026002', fees_total:30000, fees_paid:30000, first_login:true, status:'active', enrollment_date:'2026-01-15' },
+            { username:'KRAC2026003',password:hashPassword('student123'), role:'student', name:'Peter Ochieng', email:'peter.ochieng@email.com', phone:'+254723456003', id_number:'45678901', course:'Crop Development & Marketing Course', admission_number:'KRAC2026003', fees_total:33390, fees_paid:20000, first_login:true, status:'active', enrollment_date:'2026-01-15' }
+        ];
+        const courses = [
+            { code:'VET101', name:'Livestock Health Management',         lecturer:'Mr. Vincent Otieno',      duration:'1 Semester', students:20, status:'active' },
+            { code:'WEP201', name:'Poultry & Small Livestock Production',lecturer:'Ms. Hope Kanoti Munyoki', duration:'1 Semester', students:18, status:'active' },
+            { code:'CRP301', name:'Crop Production & Value Addition',    lecturer:'Mr. Vincent Otieno',      duration:'1 Semester', students:22, status:'active' },
+            { code:'AGR401', name:'Agribusiness & Market Access',        lecturer:'Ms. Hope Kanoti Munyoki', duration:'1 Semester', students:15, status:'active' }
+        ];
+        const updates = {};
+        defaults.forEach(u => { const key = db.ref('users').push().key; updates[`users/${key}`] = u; });
+        courses.forEach(c => { const key = db.ref('courses').push().key; updates[`courses/${key}`] = c; });
+        updates['settings'] = DEFAULT_SETTINGS;
+        await db.ref('/').update(updates);
+    } catch(e) {
+        console.warn('Firebase seed failed, local fallback active:', e.message);
+    }
 }
 
 // ============================================================

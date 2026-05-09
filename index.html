@@ -6,7 +6,7 @@
     <title>KRAC - Kenya Rural Agribusiness College</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics-compat.js"></script>
     <style>
         :root {
@@ -1122,6 +1122,7 @@
 const firebaseConfig = {
     apiKey: "AIzaSyBngHGQofez0xb_jndc-fPrPxLG78k9pQY",
     authDomain: "krac-218ca.firebaseapp.com",
+    databaseURL: "https://krac-218ca-default-rtdb.firebaseio.com",
     projectId: "krac-218ca",
     storageBucket: "krac-218ca.firebasestorage.app",
     messagingSenderId: "574134231698",
@@ -1130,7 +1131,35 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 firebase.analytics();
-const db = firebase.firestore();
+const db = firebase.database(); // Realtime Database
+
+// ============================================================
+//  REALTIME DATABASE HELPERS
+// ============================================================
+async function rtGet(path) {
+    const snap = await db.ref(path).once('value');
+    return snap.val();
+}
+async function rtSet(path, data) {
+    await db.ref(path).set(data);
+    return data;
+}
+async function rtUpdate(path, data) {
+    await db.ref(path).update(data);
+    return data;
+}
+async function rtPush(path, data) {
+    const ref = db.ref(path).push();
+    await ref.set(data);
+    return { id: ref.key, ...data };
+}
+async function rtDelete(path) {
+    await db.ref(path).remove();
+}
+function objToArray(obj) {
+    if (!obj) return [];
+    return Object.entries(obj).map(([id, val]) => ({ id, ...val }));
+}
 
 // ============================================================
 //  DEFAULT SETTINGS (used only when Firestore has none)
@@ -1145,29 +1174,28 @@ const DEFAULT_SETTINGS = {
 
 // Seed default admin + teachers into Firestore on first run
 async function seedDefaultUsers() {
-    const snap = await db.collection('users').limit(1).get();
-    if (!snap.empty) return; // already seeded
+    const existing = await rtGet('users');
+    if (existing) return; // already seeded
     const defaults = [
-        { username:'admin',  password:hashPassword('admin123'),   role:'admin',   name:'System Administrator',   email:'admin@krac.ac.ke',       phone:'+254700000001', first_login:false, status:'active' },
-        { username:'TCH001', password:hashPassword('teacher123'),  role:'teacher', name:'Mr. Vincent Otieno',     email:'v.otieno@krac.ac.ke',    phone:'+254712345001', first_login:false, status:'active' },
-        { username:'TCH002', password:hashPassword('teacher123'),  role:'teacher', name:'Ms. Hope Kanoti Munyoki',email:'h.munyoki@krac.ac.ke',   phone:'+254712345002', first_login:false, status:'active' },
-        { username:'KRAC2026001', password:hashPassword('student123'), role:'student', name:'John Kamau', email:'john.kamau@email.com', phone:'+254723456001', id_number:'12345678', course:'Veterinary Assistance Course', admission_number:'KRAC2026001', fees_total:45000, fees_paid:33000, first_login:true, status:'active', enrollment_date:'2026-01-15' },
-        { username:'KRAC2026002', password:hashPassword('student123'), role:'student', name:'Mary Akinyi', email:'mary.akinyi@email.com', phone:'+254723456002', id_number:'87654321', course:'Women Empowerment Program', admission_number:'KRAC2026002', fees_total:30000, fees_paid:30000, first_login:true, status:'active', enrollment_date:'2026-01-15' },
-        { username:'KRAC2026003', password:hashPassword('student123'), role:'student', name:'Peter Ochieng', email:'peter.ochieng@email.com', phone:'+254723456003', id_number:'45678901', course:'Crop Development & Marketing Course', admission_number:'KRAC2026003', fees_total:33390, fees_paid:20000, first_login:true, status:'active', enrollment_date:'2026-01-15' }
+        { username:'admin',      password:hashPassword('admin123'),   role:'admin',   name:'System Administrator',    email:'admin@krac.ac.ke',      phone:'+254700000001', first_login:false, status:'active' },
+        { username:'TCH001',     password:hashPassword('teacher123'), role:'teacher', name:'Mr. Vincent Otieno',      email:'v.otieno@krac.ac.ke',   phone:'+254712345001', first_login:false, status:'active' },
+        { username:'TCH002',     password:hashPassword('teacher123'), role:'teacher', name:'Ms. Hope Kanoti Munyoki', email:'h.munyoki@krac.ac.ke',  phone:'+254712345002', first_login:false, status:'active' },
+        { username:'KRAC2026001',password:hashPassword('student123'), role:'student', name:'John Kamau',   email:'john.kamau@email.com',   phone:'+254723456001', id_number:'12345678', course:'Veterinary Assistance Course',      admission_number:'KRAC2026001', fees_total:45000, fees_paid:33000, first_login:true, status:'active', enrollment_date:'2026-01-15' },
+        { username:'KRAC2026002',password:hashPassword('student123'), role:'student', name:'Mary Akinyi',  email:'mary.akinyi@email.com',  phone:'+254723456002', id_number:'87654321', course:'Women Empowerment Program',         admission_number:'KRAC2026002', fees_total:30000, fees_paid:30000, first_login:true, status:'active', enrollment_date:'2026-01-15' },
+        { username:'KRAC2026003',password:hashPassword('student123'), role:'student', name:'Peter Ochieng',email:'peter.ochieng@email.com', phone:'+254723456003', id_number:'45678901', course:'Crop Development & Marketing Course',admission_number:'KRAC2026003', fees_total:33390, fees_paid:20000, first_login:true, status:'active', enrollment_date:'2026-01-15' }
     ];
-    const batch = db.batch();
-    defaults.forEach(u => { const ref = db.collection('users').doc(); batch.set(ref, u); });
-    // Seed default courses
     const courses = [
-        { code:'VET101', name:'Livestock Health Management',        lecturer:'Mr. Vincent Otieno',      duration:'1 Semester', students:20, status:'active' },
+        { code:'VET101', name:'Livestock Health Management',         lecturer:'Mr. Vincent Otieno',      duration:'1 Semester', students:20, status:'active' },
         { code:'WEP201', name:'Poultry & Small Livestock Production',lecturer:'Ms. Hope Kanoti Munyoki', duration:'1 Semester', students:18, status:'active' },
         { code:'CRP301', name:'Crop Production & Value Addition',    lecturer:'Mr. Vincent Otieno',      duration:'1 Semester', students:22, status:'active' },
         { code:'AGR401', name:'Agribusiness & Market Access',        lecturer:'Ms. Hope Kanoti Munyoki', duration:'1 Semester', students:15, status:'active' }
     ];
-    courses.forEach(c => { const ref = db.collection('courses').doc(); batch.set(ref, c); });
-    // Seed settings
-    batch.set(db.collection('settings').doc('main'), DEFAULT_SETTINGS);
-    await batch.commit();
+    // Write all at once using update for speed
+    const updates = {};
+    defaults.forEach(u => { const key = db.ref('users').push().key; updates[`users/${key}`] = u; });
+    courses.forEach(c => { const key = db.ref('courses').push().key; updates[`courses/${key}`] = c; });
+    updates['settings'] = DEFAULT_SETTINGS;
+    await db.ref('/').update(updates);
 }
 
 // ============================================================
@@ -1197,99 +1225,79 @@ const STATIC_AFFILIATES = [
 ];
 
 // ============================================================
-//  FIREBASE DATA LAYER — all reads/writes go to Firestore
+//  FIREBASE DATA LAYER — Realtime Database
 // ============================================================
 async function getUsers() {
-    const snap = await db.collection('users').get();
-    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    return objToArray(await rtGet('users'));
 }
 async function findUser(username, passwordHash, role) {
-    const snap = await db.collection('users').where('username','==',username).get();
-    const users = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    return users.find(u => u.password === passwordHash && u.role === role && u.status === 'active') || null;
+    const users = await getUsers();
+    return users.find(u => u.username === username && u.password === passwordHash && u.role === role && u.status === 'active') || null;
 }
 async function saveUser(user) {
     const { id, ...data } = user;
-    if (id) {
-        await db.collection('users').doc(id).set(data, { merge: true });
-        return user;
-    } else {
-        const ref = await db.collection('users').add(data);
-        return { id: ref.id, ...data };
-    }
+    if (id) { await rtSet(`users/${id}`, data); return user; }
+    else { return await rtPush('users', data); }
 }
 async function deleteUser(userId) {
-    await db.collection('users').doc(userId).delete();
+    await rtDelete(`users/${userId}`);
 }
 async function getResults(studentId = null) {
-    let ref = db.collection('results');
-    if (studentId) ref = ref.where('student_id','==', String(studentId));
-    const snap = await ref.get();
-    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const all = objToArray(await rtGet('results'));
+    return studentId ? all.filter(r => String(r.student_id) === String(studentId)) : all;
 }
 async function saveResult(result) {
     const docId = `${result.student_id}_${result.unit_id}`;
-    await db.collection('results').doc(docId).set(result, { merge: true });
+    await rtSet(`results/${docId}`, result);
     return result;
 }
 async function getPayments(studentId = null) {
-    let ref = db.collection('payments');
-    if (studentId) ref = ref.where('student_id','==', String(studentId));
-    const snap = await ref.get();
-    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const all = objToArray(await rtGet('payments'));
+    return studentId ? all.filter(p => String(p.student_id) === String(studentId)) : all;
 }
 async function savePayment(payment) {
-    const ref = await db.collection('payments').add(payment);
-    return { id: ref.id, ...payment };
+    return await rtPush('payments', payment);
 }
 async function getCourses() {
-    const snap = await db.collection('courses').get();
-    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    return objToArray(await rtGet('courses'));
 }
 async function saveCourse(course) {
     const { id, ...data } = course;
-    if (id) { await db.collection('courses').doc(id).set(data, { merge: true }); return course; }
-    else { const ref = await db.collection('courses').add(data); return { id: ref.id, ...data }; }
+    if (id) { await rtSet(`courses/${id}`, data); return course; }
+    else { return await rtPush('courses', data); }
 }
 async function getSettings() {
-    const doc = await db.collection('settings').doc('main').get();
-    return doc.exists ? doc.data() : DEFAULT_SETTINGS;
+    const s = await rtGet('settings');
+    return s || DEFAULT_SETTINGS;
 }
 async function saveSettingsToFirebase(settings) {
-    await db.collection('settings').doc('main').set(settings, { merge: true });
+    await rtSet('settings', settings);
 }
 async function getExams() {
-    const snap = await db.collection('exams').get();
-    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    return objToArray(await rtGet('exams'));
 }
 async function saveExams(exams) {
-    const batch = db.batch();
-    exams.forEach(exam => {
-        const { id, ...data } = exam;
-        const ref = id ? db.collection('exams').doc(id) : db.collection('exams').doc();
-        batch.set(ref, data);
-    });
-    await batch.commit();
+    for (const exam of exams) {
+        await rtPush('exams', exam);
+    }
     return exams;
 }
 async function deleteExam(examId) {
-    await db.collection('exams').doc(examId).delete();
+    await rtDelete(`exams/${examId}`);
 }
 async function getApplications() {
-    const snap = await db.collection('applications').get();
-    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    return objToArray(await rtGet('applications'));
 }
 async function saveApplication(app) {
-    const ref = await db.collection('applications').add(app);
-    return { id: ref.id, ...app };
+    return await rtPush('applications', app);
 }
 async function updateApplication(app) {
     const { id, ...data } = app;
-    await db.collection('applications').doc(id).set(data, { merge: true });
+    await rtSet(`applications/${id}`, data);
     return app;
 }
 async function deleteApplication(appId) {
-    await db.collection('applications').doc(appId).delete();
+    await rtDelete(`applications/${appId}`);
 }
 
 // ============================================================

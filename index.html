@@ -2026,10 +2026,14 @@ function handleContactSubmit(e) { e.preventDefault(); showToast('Message sent! W
 // ============================================================
 document.addEventListener('DOMContentLoaded', async () => {
     window.addEventListener('scroll', () => { document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50); });
+    
+    // Load public website immediately — no Firebase needed
     loadPublicData();
-    showLoading('Initializing...');
-    try { await seedDefaultUsers(); hideLoading(); }
-    catch(e) { hideLoading(); /* silently continue — data may already exist */ }
+
+    // Seed default users in background — never block the UI
+    seedDefaultUsers().catch(() => {});
+
+    // Restore session if user was logged in
     if (currentUser) {
         redirectToDashboard(currentUser.role);
         if (currentUser.role==='teacher'||currentUser.role==='admin') refreshAdmissionBadges();

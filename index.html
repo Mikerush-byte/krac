@@ -158,6 +158,14 @@ footer{background:var(--primary-dark);color:#fff;padding:55px 20px 22px;}
 .role-opt i{display:block;font-size:22px;margin-bottom:6px;color:var(--primary);}
 .role-opt span{font-size:0.83rem;font-weight:600;}
 
+/* Firebase status indicator */
+.db-status{display:flex;align-items:center;gap:7px;font-size:0.8rem;margin-bottom:16px;padding:8px 12px;border-radius:var(--radius);background:var(--bg-light);}
+.db-dot{width:9px;height:9px;border-radius:50%;background:#ccc;flex-shrink:0;}
+.db-dot.connected{background:var(--success);}
+.db-dot.error{background:var(--danger);}
+.db-dot.checking{background:var(--warning);animation:pulse 1s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+
 /* DASHBOARD */
 .dashboard{display:flex;min-height:100vh;}
 .sidebar{width:270px;background:var(--primary-dark);color:#fff;position:fixed;height:100vh;overflow-y:auto;z-index:100;top:0;}
@@ -446,6 +454,13 @@ tr:hover{background:var(--bg-light);}
       <h2 style="margin-top:14px;">Welcome Back</h2>
       <p>Sign in to access your dashboard</p>
     </div>
+
+    <!-- ✅ FIX: Firebase connection status indicator -->
+    <div class="db-status" id="dbStatus">
+      <div class="db-dot checking" id="dbDot"></div>
+      <span id="dbStatusText">Checking database connection...</span>
+    </div>
+
     <div class="role-selector">
       <div class="role-opt active" data-role="student"><i class="fas fa-user-graduate"></i><span>Student</span></div>
       <div class="role-opt" data-role="teacher"><i class="fas fa-chalkboard-teacher"></i><span>Teacher</span></div>
@@ -454,6 +469,15 @@ tr:hover{background:var(--bg-light);}
     <div class="form-group"><label>Username / Admission No</label><input type="text" id="loginUser" placeholder="Enter username" autocomplete="username"></div>
     <div class="form-group"><label>Password</label><input type="password" id="loginPass" placeholder="Enter password" autocomplete="current-password"></div>
     <button class="btn btn-primary w-full" id="loginBtn" style="justify-content:center;margin-top:6px;"><i class="fas fa-sign-in-alt"></i> Sign In</button>
+
+    <!-- ✅ FIX: Show default credentials hint for first-time setup -->
+    <div id="credHint" style="margin-top:14px;padding:12px;background:#fff8e1;border-radius:var(--radius);border:1px solid #ffe082;font-size:0.82rem;color:#5d4037;display:none;">
+      <strong>Default credentials:</strong><br>
+      Admin: <code>admin</code> / <code>admin123</code><br>
+      Teacher: <code>TCH001</code> / <code>teacher123</code><br>
+      Student: <code>KRAC2026001</code> / <code>student123</code>
+    </div>
+
     <div style="text-align:center;margin-top:16px;"><button class="btn" id="backBtn" style="color:var(--text-light);background:none;font-size:0.9rem;"><i class="fas fa-arrow-left"></i> Back to Website</button></div>
   </div>
 </div>
@@ -802,17 +826,51 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-const fbGet = path => db.ref(path).once('value').then(s => s.val());
-const fbSet = (path, data) => db.ref(path).set(data);
-const fbUpdate = (path, data) => db.ref(path).update(data);
-const fbDelete = path => db.ref(path).remove();
+// ════════════════════════════════════════
+// ✅ FIX 1: Add timeout wrapper for all Firebase reads
+// Prevents the UI from freezing if Firebase hangs
+// ════════════════════════════════════════
+function withTimeout(promise, ms = 12000) {
+    return Promise.race([
+        promise,
+        new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Request timed out. Check your internet connection or Firebase rules.')), ms)
+        )
+    ]);
+}
+
+const fbGet    = path => withTimeout(db.ref(path).once('value').then(s => s.val()));
+const fbSet    = (path, data) => withTimeout(db.ref(path).set(data));
+const fbUpdate = (path, data) => withTimeout(db.ref(path).update(data));
+const fbDelete = path => withTimeout(db.ref(path).remove());
 function fbPush(path, data) {
     const ref = db.ref(path).push();
-    return ref.set(data).then(() => ({ id: ref.key, ...data }));
+    return withTimeout(ref.set(data).then(() => ({ id: ref.key, ...data })));
 }
 function toArr(obj) {
     if (!obj) return [];
     return Object.entries(obj).map(([id, v]) => ({ id, ...v }));
+}
+
+// ════════════════════════════════════════
+// ✅ FIX 2: Firebase connectivity check
+// Shown in the portal login page
+// ════════════════════════════════════════
+function checkDbConnection() {
+    const dot  = document.getElementById('dbDot');
+    const text = document.getElementById('dbStatusText');
+    const hint = document.getElementById('credHint');
+    db.ref('.info/connected').on('value', snap => {
+        if (snap.val() === true) {
+            dot.className  = 'db-dot connected';
+            text.textContent = 'Database connected';
+            hint.style.display = 'block'; // show creds hint when connected
+        } else {
+            dot.className  = 'db-dot error';
+            text.textContent = 'Database offline — check your internet or Firebase rules';
+            hint.style.display = 'none';
+        }
+    });
 }
 
 // ════════════════════════════════════════
@@ -871,7 +929,7 @@ function closeModal(id) { document.getElementById(id).classList.remove('open'); 
 // ════════════════════════════════════════
 // STATE
 // ════════════════════════════════════════
-let CU = JSON.parse(sessionStorage.getItem('krac_u') || 'null'); // current user
+let CU = JSON.parse(sessionStorage.getItem('krac_u') || 'null');
 let selectedRole = 'student';
 let reviewApp = null;
 let examRowN = 0;
@@ -881,21 +939,26 @@ let slideIdx = 0;
 // SEED
 // ════════════════════════════════════════
 async function seedIfEmpty() {
-    const existing = await fbGet('users');
-    if (existing) return;
-    const users = [
-        { username:'admin',      password:hashPwd('admin123'),   role:'admin',   name:'System Administrator',    email:'admin@krac.ac.ke',  phone:'0700000001', first_login:false, status:'active' },
-        { username:'TCH001',     password:hashPwd('teacher123'), role:'teacher', name:'Mr. Vincent Otieno',      email:'v.otieno@krac.ac.ke',phone:'0712345001', first_login:false, status:'active' },
-        { username:'TCH002',     password:hashPwd('teacher123'), role:'teacher', name:'Ms. Hope Kanoti Munyoki', email:'h.munyoki@krac.ac.ke',phone:'0712345002', first_login:false, status:'active' },
-        { username:'KRAC2026001',password:hashPwd('student123'), role:'student', name:'John Kamau',    email:'john@email.com',  phone:'0723456001', course:'Veterinary Assistance Course',        admission_number:'KRAC2026001', fees_total:45000, fees_paid:33000, first_login:true, status:'active', enrollment_date:'2026-01-15' },
-        { username:'KRAC2026002',password:hashPwd('student123'), role:'student', name:'Mary Akinyi',   email:'mary@email.com',  phone:'0723456002', course:'Women Empowerment Program',           admission_number:'KRAC2026002', fees_total:30000, fees_paid:30000, first_login:true, status:'active', enrollment_date:'2026-01-15' },
-        { username:'KRAC2026003',password:hashPwd('student123'), role:'student', name:'Peter Ochieng', email:'peter@email.com', phone:'0723456003', course:'Crop Development & Marketing Course', admission_number:'KRAC2026003', fees_total:33390, fees_paid:20000, first_login:true, status:'active', enrollment_date:'2026-01-15' }
-    ];
-    const batch = {};
-    users.forEach(u => { const k = db.ref('users').push().key; batch[`users/${k}`] = u; });
-    batch['settings'] = { prefix:'KRAC', year:2026, defaultPwd:'student123' };
-    await fbUpdate('/', batch);
-    toast('Database initialized!');
+    try {
+        const existing = await fbGet('users');
+        if (existing) return; // Already seeded, stop
+        const users = [
+            { username:'admin',      password:hashPwd('admin123'),   role:'admin',   name:'System Administrator',    email:'admin@krac.ac.ke',   phone:'0700000001', first_login:false, status:'active' },
+            { username:'TCH001',     password:hashPwd('teacher123'), role:'teacher', name:'Mr. Vincent Otieno',      email:'v.otieno@krac.ac.ke',phone:'0712345001', first_login:false, status:'active' },
+            { username:'TCH002',     password:hashPwd('teacher123'), role:'teacher', name:'Ms. Hope Kanoti Munyoki', email:'h.munyoki@krac.ac.ke',phone:'0712345002', first_login:false, status:'active' },
+            { username:'KRAC2026001',password:hashPwd('student123'), role:'student', name:'John Kamau',    email:'john@email.com',  phone:'0723456001', course:'Veterinary Assistance Course',        admission_number:'KRAC2026001', fees_total:45000, fees_paid:33000, first_login:true, status:'active', enrollment_date:'2026-01-15' },
+            { username:'KRAC2026002',password:hashPwd('student123'), role:'student', name:'Mary Akinyi',   email:'mary@email.com',  phone:'0723456002', course:'Women Empowerment Program',           admission_number:'KRAC2026002', fees_total:30000, fees_paid:30000, first_login:true, status:'active', enrollment_date:'2026-01-15' },
+            { username:'KRAC2026003',password:hashPwd('student123'), role:'student', name:'Peter Ochieng', email:'peter@email.com', phone:'0723456003', course:'Crop Development & Marketing Course', admission_number:'KRAC2026003', fees_total:33390, fees_paid:20000, first_login:true, status:'active', enrollment_date:'2026-01-15' }
+        ];
+        const batch = {};
+        users.forEach(u => { const k = db.ref('users').push().key; batch[`users/${k}`] = u; });
+        batch['settings'] = { prefix:'KRAC', year:2026, defaultPwd:'student123' };
+        await withTimeout(db.ref('/').update(batch));
+        toast('Database initialized with sample data!');
+    } catch(e) {
+        console.warn('Seed skipped or failed:', e.message);
+        // ✅ FIX: Seed errors must NEVER block the UI
+    }
 }
 
 // ════════════════════════════════════════
@@ -944,6 +1007,7 @@ function showPortal() {
     document.getElementById('teacherDash').classList.add('hidden');
     document.getElementById('adminDash').classList.add('hidden');
     window.scrollTo(0, 0);
+    checkDbConnection(); // ✅ FIX: Start connection check when portal opens
 }
 function showDash(role) {
     document.getElementById('site').classList.add('hidden');
@@ -955,7 +1019,6 @@ function showDash(role) {
 }
 function logout() { CU = null; sessionStorage.removeItem('krac_u'); showSite(); toast('Logged out'); }
 
-// Sidebar navigation
 function initSidebarNav(navId, prefix, loader) {
     document.getElementById(navId).querySelectorAll('a[data-sec]').forEach(a => {
         a.addEventListener('click', e => {
@@ -963,7 +1026,6 @@ function initSidebarNav(navId, prefix, loader) {
             const sec = a.dataset.sec;
             document.querySelectorAll(`#${navId} a`).forEach(x => x.classList.remove('active'));
             a.classList.add('active');
-            // hide all sections in this dashboard
             document.querySelectorAll(`#${prefix}Dash .main-content > div`).forEach(d => d.classList.add('hidden'));
             document.getElementById(sec).classList.remove('hidden');
             if (loader) loader(sec);
@@ -982,29 +1044,61 @@ function setSlide(i) {
 setInterval(() => setSlide((slideIdx + 1) % 3), 5000);
 
 // ════════════════════════════════════════
-// AUTH
+// ✅ FIX 3: AUTH — proper finally block so button ALWAYS resets
 // ════════════════════════════════════════
 async function doLogin() {
     const username = document.getElementById('loginUser').value.trim();
     const password = document.getElementById('loginPass').value.trim();
     if (!username || !password) { toast('Enter username and password', 'error'); return; }
+
     const btn = document.getElementById('loginBtn');
-    btn.disabled = true; btn.textContent = 'Signing in...';
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...';
     showLoad('Signing in...');
+
     try {
-        const all = toArr(await fbGet('users'));
-        const user = all.find(u => u.username === username && u.password === hashPwd(password) && u.role === selectedRole && u.status === 'active');
-        hideLoad();
-        btn.disabled = false; btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
-        if (!user) { toast('Wrong username, password, or role', 'error'); return; }
-        CU = user; sessionStorage.setItem('krac_u', JSON.stringify(CU));
-        if (user.first_login) { openModal('firstLoginModal'); }
-        else { initDash(user.role); }
+        const raw = await fbGet('users'); // ✅ Now has 12s timeout
+        const all = toArr(raw);
+
+        if (all.length === 0) {
+            toast('No users found. Database may be empty — try again in a moment.', 'warning');
+            return;
+        }
+
+        const user = all.find(u =>
+            u.username === username &&
+            u.password === hashPwd(password) &&
+            u.role === selectedRole &&
+            u.status === 'active'
+        );
+
+        if (!user) {
+            toast('Wrong username, password, or role. Please check and try again.', 'error');
+            return;
+        }
+
+        CU = user;
+        sessionStorage.setItem('krac_u', JSON.stringify(CU));
+
+        if (user.first_login) {
+            openModal('firstLoginModal');
+        } else {
+            initDash(user.role);
+        }
+
     } catch(e) {
-        hideLoad(); btn.disabled = false; btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
-        toast('Error: ' + e.message, 'error');
+        const msg = e.message.includes('timed out')
+            ? 'Connection timed out. Check your internet or Firebase Realtime Database rules.'
+            : 'Login error: ' + e.message;
+        toast(msg, 'error');
+    } finally {
+        // ✅ FIX: This ALWAYS runs — button and loader always reset
+        hideLoad();
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
     }
 }
+
 async function doPasswordChange() {
     const np = document.getElementById('newPwd').value;
     const cp = document.getElementById('confirmPwd').value;
@@ -1015,10 +1109,16 @@ async function doPasswordChange() {
         await fbUpdate(`users/${CU.id}`, { password: hashPwd(np), first_login: false });
         CU.password = hashPwd(np); CU.first_login = false;
         sessionStorage.setItem('krac_u', JSON.stringify(CU));
-        hideLoad(); closeModal('firstLoginModal');
-        toast('Password updated!'); initDash(CU.role);
-    } catch(e) { hideLoad(); toast('Error: ' + e.message, 'error'); }
+        closeModal('firstLoginModal');
+        toast('Password updated!');
+        initDash(CU.role);
+    } catch(e) {
+        toast('Error: ' + e.message, 'error');
+    } finally {
+        hideLoad();
+    }
 }
+
 function initDash(role) {
     showDash(role);
     if (role === 'student') initStudentDash();
@@ -1043,7 +1143,8 @@ async function doApply() {
     if (pwd.length < 6) { toast('Password must be at least 6 characters', 'error'); return; }
     if (pwd !== pwd2) { toast('Passwords do not match', 'error'); return; }
     const btn = document.getElementById('submitAppBtn');
-    btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
     try {
         await fbPush('applications', {
             name:`${fn} ${ln}`, firstName:fn, lastName:ln, email, phone,
@@ -1058,8 +1159,12 @@ async function doApply() {
         document.getElementById('aCourse').value = '';
         document.getElementById('aGrade').value = '';
         toast('Application submitted! We will review and contact you.');
-    } catch(e) { toast('Failed: ' + e.message, 'error'); }
-    finally { btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Application'; }
+    } catch(e) {
+        toast('Failed: ' + e.message, 'error');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Application';
+    }
 }
 
 // ════════════════════════════════════════
@@ -1071,7 +1176,6 @@ async function initStudentDash() {
     showLoad('Loading...');
     try {
         const results = toArr(await fbGet('results')).filter(r => r.student_id === CU.id);
-        hideLoad();
         const gpa = results.length ? (results.reduce((s,r)=>s+(r.total/100)*4,0)/results.length).toFixed(2) : '0.00';
         document.getElementById('sGPA').textContent = gpa;
         document.getElementById('sBalance').textContent = `KES ${((CU.fees_total||0)-(CU.fees_paid||0)).toLocaleString()}`;
@@ -1080,15 +1184,17 @@ async function initStudentDash() {
             `<tr><td>${r.unit_name}</td><td>${r.unit_code}</td><td><strong>${r.grade}</strong></td>
             <td><span class="badge ${r.total>=50?'badge-success':'badge-danger'}">${r.total>=50?'Pass':'Fail'}</span></td></tr>`
         ).join('') || '<tr><td colspan="4" style="text-align:center;padding:18px;">No results yet</td></tr>';
-    } catch(e) { hideLoad(); toast('Error: '+e.message,'error'); }
-
+    } catch(e) {
+        toast('Error loading dashboard: '+e.message,'error');
+    } finally {
+        hideLoad();
+    }
     initSidebarNav('studentNav', 'student', sec => {
         if (sec==='sResults') loadSResults();
         if (sec==='sExams') loadSExams();
         if (sec==='sFees') loadSFees();
         if (sec==='sProfile') loadSProfile();
     });
-    // Activate first nav item
     document.querySelector('#studentNav a[data-sec="sOverview"]').classList.add('active');
 }
 async function loadSResults() {
@@ -1135,9 +1241,13 @@ async function saveProfile() {
         if (np && np.length >= 6) upd.password = hashPwd(np);
         await fbUpdate(`users/${CU.id}`, upd);
         Object.assign(CU, upd); sessionStorage.setItem('krac_u', JSON.stringify(CU));
-        hideLoad(); toast('Profile updated');
+        toast('Profile updated');
         document.getElementById('pPwd').value = '';
-    } catch(e) { hideLoad(); toast('Error: '+e.message,'error'); }
+    } catch(e) {
+        toast('Error: '+e.message,'error');
+    } finally {
+        hideLoad();
+    }
 }
 
 // ════════════════════════════════════════
@@ -1151,14 +1261,16 @@ async function initTeacherDash() {
         const [uSnap, eSnap, aSnap] = await Promise.all([fbGet('users'), fbGet('exams'), fbGet('applications')]);
         const studs = toArr(uSnap).filter(u=>u.role==='student');
         const pend = toArr(aSnap).filter(a=>a.status==='pending');
-        hideLoad();
         document.getElementById('tStudCount').textContent = studs.length;
         document.getElementById('tExamCount').textContent = toArr(eSnap).length;
         document.getElementById('tFeesPaid').textContent  = `KES ${studs.reduce((s,u)=>s+(u.fees_paid||0),0).toLocaleString()}`;
         document.getElementById('tPendAdm').textContent   = pend.length;
         setBadges(pend.length);
-    } catch(e) { hideLoad(); toast('Error: '+e.message,'error'); }
-
+    } catch(e) {
+        toast('Error: '+e.message,'error');
+    } finally {
+        hideLoad();
+    }
     initSidebarNav('teacherNav', 'teacher', sec => {
         if (sec==='tStudents') loadTStudents();
         if (sec==='tResults') loadTResults();
@@ -1206,15 +1318,20 @@ async function saveStudent() {
     showLoad('Adding student...');
     try {
         await fbPush('users', { username:admNo, password:hashPwd(settings.defaultPwd||'student123'), role:'student', name:`${fn} ${ln}`, email:document.getElementById('nEmail').value.trim(), phone:document.getElementById('nPhone').value.trim(), course, admission_number:admNo, fees_total:45000, fees_paid:0, first_login:true, status:'active', enrollment_date:new Date().toISOString().split('T')[0] });
-        hideLoad(); closeModal('addStudModal');
+        closeModal('addStudModal');
         toast(`Student added. Adm No: ${admNo}`); loadTStudents();
-    } catch(e) { hideLoad(); toast('Error: '+e.message,'error'); }
+    } catch(e) {
+        toast('Error: '+e.message,'error');
+    } finally {
+        hideLoad();
+    }
 }
 async function delStudent(id) {
     if (!confirm('Delete this student?')) return;
     showLoad('Deleting...');
-    try { await fbDelete(`users/${id}`); hideLoad(); toast('Deleted'); loadTStudents(); }
-    catch(e) { hideLoad(); toast('Error: '+e.message,'error'); }
+    try { await fbDelete(`users/${id}`); toast('Deleted'); loadTStudents(); }
+    catch(e) { toast('Error: '+e.message,'error'); }
+    finally { hideLoad(); }
 }
 async function loadTResults() {
     const tbody = document.getElementById('tResultsBody');
@@ -1255,8 +1372,12 @@ async function saveResult() {
     showLoad('Saving...');
     try {
         await fbSet(`results/${sId}_${uId}`, { student_id:sId, unit_id:uId, unit_code:uId, unit_name:uName, cat, exam, total, grade, remarks:total>=50?'Pass':'Fail' });
-        hideLoad(); closeModal('resultModal'); toast('Result updated'); loadTResults();
-    } catch(e) { hideLoad(); toast('Error: '+e.message,'error'); }
+        closeModal('resultModal'); toast('Result updated'); loadTResults();
+    } catch(e) {
+        toast('Error: '+e.message,'error');
+    } finally {
+        hideLoad();
+    }
 }
 async function loadTFees() {
     const tbody = document.getElementById('tFeesBody');
@@ -1292,8 +1413,14 @@ async function saveFees() {
     const total = parseInt(document.getElementById('feesTotal').value)||0;
     const paid  = parseInt(document.getElementById('feesPaid').value)||0;
     showLoad('Saving...');
-    try { await fbUpdate(`users/${id}`, { fees_total:total, fees_paid:paid }); hideLoad(); closeModal('feesModal'); toast('Fees updated'); loadTFees(); }
-    catch(e) { hideLoad(); toast('Error: '+e.message,'error'); }
+    try {
+        await fbUpdate(`users/${id}`, { fees_total:total, fees_paid:paid });
+        closeModal('feesModal'); toast('Fees updated'); loadTFees();
+    } catch(e) {
+        toast('Error: '+e.message,'error');
+    } finally {
+        hideLoad();
+    }
 }
 function addExamRow() {
     examRowN++;
@@ -1328,8 +1455,14 @@ async function saveExams() {
     });
     if (!valid) { toast('Fill all required fields','error'); return; }
     showLoad('Saving...');
-    try { for(const e of exams) await fbPush('exams',e); hideLoad(); closeModal('examModal'); toast(`${exams.length} exam(s) saved!`); loadTExams(); }
-    catch(e) { hideLoad(); toast('Error: '+e.message,'error'); }
+    try {
+        for(const e of exams) await fbPush('exams',e);
+        closeModal('examModal'); toast(`${exams.length} exam(s) saved!`); loadTExams();
+    } catch(e) {
+        toast('Error: '+e.message,'error');
+    } finally {
+        hideLoad();
+    }
 }
 async function loadTExams() {
     const tbody = document.getElementById('tExamBody');
@@ -1345,12 +1478,13 @@ function filterExams(q) { document.querySelectorAll('#tExamBody tr').forEach(r=>
 async function delExam(id) {
     if (!confirm('Delete this exam?')) return;
     showLoad('Deleting...');
-    try { await fbDelete(`exams/${id}`); hideLoad(); toast('Deleted'); loadTExams(); }
-    catch(e) { hideLoad(); toast('Error: '+e.message,'error'); }
+    try { await fbDelete(`exams/${id}`); toast('Deleted'); loadTExams(); }
+    catch(e) { toast('Error: '+e.message,'error'); }
+    finally { hideLoad(); }
 }
 
 // ════════════════════════════════════════
-// ADMISSIONS (shared teacher + admin)
+// ADMISSIONS
 // ════════════════════════════════════════
 function setBadges(n) {
     ['tAdmBadge','aAdmBadge'].forEach(id=>{ const el=document.getElementById(id); if(el){ el.textContent=n; el.style.display=n>0?'inline-block':'none'; } });
@@ -1395,20 +1529,28 @@ async function doApprove() {
         const admNo = `${settings.prefix||'KRAC'}${max+1}`;
         await fbPush('users', { username:admNo, password:reviewApp.passwordHash, role:'student', name:reviewApp.name, email:reviewApp.email, phone:reviewApp.phone, course:reviewApp.course, admission_number:admNo, fees_total:45000, fees_paid:0, first_login:false, status:'active', enrollment_date:new Date().toISOString().split('T')[0] });
         await fbUpdate(`applications/${reviewApp.id}`, { status:'approved', admission_number:admNo });
-        hideLoad(); closeModal('reviewModal'); reviewApp=null;
+        closeModal('reviewModal'); reviewApp=null;
         toast(`Approved! ${admNo} enrolled`); loadAdmissions('t'); loadAdmissions('a');
         const apps = toArr(await fbGet('applications')); setBadges(apps.filter(a=>a.status==='pending').length);
-    } catch(e) { hideLoad(); toast('Error: '+e.message,'error'); }
+    } catch(e) {
+        toast('Error: '+e.message,'error');
+    } finally {
+        hideLoad();
+    }
 }
 async function doReject() {
     if (!reviewApp) return;
     showLoad('Rejecting...');
     try {
         await fbUpdate(`applications/${reviewApp.id}`, { status:'rejected' });
-        hideLoad(); closeModal('reviewModal'); reviewApp=null;
+        closeModal('reviewModal'); reviewApp=null;
         toast('Application rejected','warning'); loadAdmissions('t'); loadAdmissions('a');
         const apps = toArr(await fbGet('applications')); setBadges(apps.filter(a=>a.status==='pending').length);
-    } catch(e) { hideLoad(); toast('Error: '+e.message,'error'); }
+    } catch(e) {
+        toast('Error: '+e.message,'error');
+    } finally {
+        hideLoad();
+    }
 }
 
 // ════════════════════════════════════════
@@ -1421,14 +1563,17 @@ async function initAdminDash() {
         const [uSnap, aSnap] = await Promise.all([fbGet('users'), fbGet('applications')]);
         const users = toArr(uSnap);
         const studs = users.filter(u=>u.role==='student');
-        hideLoad();
         document.getElementById('aTotalStud').textContent  = studs.length;
         document.getElementById('aTotalTeach').textContent = users.filter(u=>u.role==='teacher').length;
         document.getElementById('aRevenue').textContent    = `KES ${studs.reduce((s,u)=>s+(u.fees_paid||0),0).toLocaleString()}`;
         const pend = toArr(aSnap).filter(a=>a.status==='pending');
         document.getElementById('aPendAdm').textContent = pend.length;
         setBadges(pend.length);
-    } catch(e) { hideLoad(); toast('Error: '+e.message,'error'); }
+    } catch(e) {
+        toast('Error: '+e.message,'error');
+    } finally {
+        hideLoad();
+    }
     initSidebarNav('adminNav','admin', sec=>{
         if(sec==='aStudents') loadAdminStudents();
         if(sec==='aAdmissions') loadAdmissions('a');
@@ -1453,24 +1598,27 @@ async function saveSettings() {
     showLoad('Saving...');
     try {
         await fbUpdate('settings', { prefix:document.getElementById('setPrefix').value, year:2026, defaultPwd:document.getElementById('setDefPwd').value, academic_year:document.getElementById('setYear').value });
-        hideLoad(); toast('Settings saved');
-    } catch(e) { hideLoad(); toast('Error: '+e.message,'error'); }
+        toast('Settings saved');
+    } catch(e) {
+        toast('Error: '+e.message,'error');
+    } finally {
+        hideLoad();
+    }
 }
 
 // ════════════════════════════════════════
 // WIRE UP ALL BUTTONS ON DOM READY
 // ════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
-    // Render public site
     renderPublic();
 
-    // Seed Firebase if empty (background)
-    seedIfEmpty().catch(console.error);
+    // ✅ FIX: Seed runs in background ONLY — never blocks login
+    setTimeout(() => seedIfEmpty().catch(console.warn), 2000);
 
-    // Restore session
+    // Restore session if exists
     if (CU) { showDash(CU.role); initDash(CU.role); }
 
-    // NAV buttons
+    // NAV
     document.getElementById('portalBtn').addEventListener('click', showPortal);
     document.getElementById('menuBtn').addEventListener('click', () => document.getElementById('navLinks').classList.toggle('open'));
     document.getElementById('applyHeroBtn').addEventListener('click', () => openModal('appModal'));
@@ -1492,7 +1640,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('loginPass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
     document.getElementById('loginUser').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
 
-    // First login password change
+    // Password change
     document.getElementById('savePwdBtn').addEventListener('click', doPasswordChange);
 
     // Application
@@ -1506,10 +1654,10 @@ document.addEventListener('DOMContentLoaded', () => {
         ['cFname','cLname','cEmail','cSubject','cMsg'].forEach(id=>document.getElementById(id).value='');
     });
 
-    // Student dashboard
+    // Student
     document.getElementById('saveProfileBtn').addEventListener('click', saveProfile);
 
-    // Teacher dashboard
+    // Teacher
     document.getElementById('addStudBtn').addEventListener('click', openAddStudent);
     document.getElementById('saveStudBtn').addEventListener('click', saveStudent);
     document.getElementById('studSearch').addEventListener('input', filterStudents);
@@ -1524,7 +1672,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Admin
     document.getElementById('saveSettingsBtn').addEventListener('click', saveSettings);
 
-    // Admissions review
+    // Admissions
     document.getElementById('approveBtn').addEventListener('click', doApprove);
     document.getElementById('rejectBtn').addEventListener('click', doReject);
 
@@ -1545,13 +1693,13 @@ document.addEventListener('DOMContentLoaded', () => {
         openModal('teamModal');
     });
 
-    // Close buttons (data-close attribute)
+    // Modal close
     document.addEventListener('click', e => {
         if (e.target.dataset.close) closeModal(e.target.dataset.close);
         if (e.target.classList.contains('modal-overlay') && e.target.classList.contains('open')) e.target.classList.remove('open');
     });
 
-    // Scroll nav effect
+    // Scroll nav
     window.addEventListener('scroll', () => document.querySelector('.navbar').style.boxShadow = window.scrollY>50?'0 2px 20px rgba(0,0,0,0.1)':'');
 });
 </script>

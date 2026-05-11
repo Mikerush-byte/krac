@@ -14,9 +14,10 @@ html{scroll-behavior:smooth;}
 body{font-family:'Segoe UI',sans-serif;background:var(--bg-light);color:var(--text-dark);line-height:1.6;overflow-x:hidden;}
 @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 @keyframes spin{to{transform:rotate(360deg)}}
+@keyframes marquee{from{transform:translateX(100%)}to{transform:translateX(-100%)}}
 
 /* NAV */
-.navbar{position:fixed;top:0;left:0;right:0;background:rgba(255,255,255,0.97);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);z-index:1000;}
+.navbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(255,255,255,0.97);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);}
 .nav-container{max-width:1400px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:70px;}
 .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.2rem;color:var(--primary);text-decoration:none;}
 .logo img{width:44px;height:44px;border-radius:50%;border:2px solid var(--secondary);}
@@ -25,15 +26,23 @@ body{font-family:'Segoe UI',sans-serif;background:var(--bg-light);color:var(--te
 .nav-links a{text-decoration:none;color:var(--text-dark);font-weight:500;padding:8px 14px;border-radius:var(--radius);transition:all 0.2s;}
 .nav-links a:hover{color:var(--primary);background:rgba(27,94,32,0.08);}
 .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;border-radius:var(--radius);font-weight:600;font-size:0.95rem;cursor:pointer;border:none;transition:all 0.2s;text-decoration:none;font-family:inherit;}
-.btn-primary{background:var(--primary);color:#fff;}
-.btn-primary:hover{background:var(--primary-dark);}
+.btn-primary{background:var(--primary);color:#fff;}.btn-primary:hover{background:var(--primary-dark);}
 .btn-secondary{background:var(--secondary);color:var(--text-dark);}
 .btn-outline{background:transparent;border:2px solid currentColor;}
 .btn-danger{background:var(--danger);color:#fff;}
+.btn-warning{background:var(--warning);color:#fff;}
 .btn-sm{padding:6px 14px;font-size:0.85rem;}
 .btn-white{background:#fff;color:var(--primary);}
 .w-full{width:100%;}
 .mobile-btn{display:none;background:none;border:none;font-size:24px;cursor:pointer;color:var(--primary);}
+
+/* ANNOUNCEMENT TICKER */
+.announcement-bar{background:var(--primary);color:#fff;height:34px;overflow:hidden;display:flex;align-items:center;}
+.announcement-bar.hidden-bar{display:none;}
+.ann-label{background:var(--secondary);color:var(--text-dark);font-weight:700;font-size:0.82rem;padding:0 14px;height:100%;display:flex;align-items:center;white-space:nowrap;flex-shrink:0;gap:6px;}
+.ann-ticker{flex:1;overflow:hidden;position:relative;}
+.ann-text{display:inline-block;white-space:nowrap;animation:marquee 25s linear infinite;font-size:0.88rem;padding-left:100%;}
+.ann-text:hover{animation-play-state:paused;}
 
 /* HERO */
 .hero{position:relative;height:100vh;min-height:580px;display:flex;align-items:center;justify-content:center;overflow:hidden;}
@@ -136,6 +145,10 @@ section{padding:75px 20px;max-width:1400px;margin:0 auto;}
 .form-group input:focus,.form-group textarea:focus,.form-group select:focus{outline:none;border-color:var(--primary);}
 .form-group textarea{resize:vertical;min-height:110px;}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.pwd-wrap{position:relative;}
+.pwd-wrap input{padding-right:44px;}
+.pwd-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-light);font-size:1rem;padding:4px;}
+.pwd-toggle:hover{color:var(--primary);}
 
 /* FOOTER */
 footer{background:var(--primary-dark);color:#fff;padding:55px 20px 22px;}
@@ -146,7 +159,6 @@ footer{background:var(--primary-dark);color:#fff;padding:55px 20px 22px;}
 .footer-bottom{max-width:1400px;margin:36px auto 0;padding-top:22px;border-top:1px solid rgba(255,255,255,0.1);text-align:center;color:rgba(255,255,255,0.6);font-size:0.88rem;}
 
 /* PORTAL */
-.page{min-height:100vh;}
 .portal-page{display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--primary-dark),var(--primary));padding:24px;min-height:100vh;}
 .portal-card{background:#fff;border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);width:100%;max-width:460px;padding:44px;animation:fadeIn 0.4s ease-out;}
 .portal-header{text-align:center;margin-bottom:28px;}
@@ -157,8 +169,6 @@ footer{background:var(--primary-dark);color:#fff;padding:55px 20px 22px;}
 .role-opt:hover,.role-opt.active{border-color:var(--primary);background:rgba(27,94,32,0.05);}
 .role-opt i{display:block;font-size:22px;margin-bottom:6px;color:var(--primary);}
 .role-opt span{font-size:0.83rem;font-weight:600;}
-
-/* Firebase status indicator */
 .db-status{display:flex;align-items:center;gap:7px;font-size:0.8rem;margin-bottom:16px;padding:8px 12px;border-radius:var(--radius);background:var(--bg-light);}
 .db-dot{width:9px;height:9px;border-radius:50%;background:#ccc;flex-shrink:0;}
 .db-dot.connected{background:var(--success);}
@@ -249,21 +259,31 @@ tr:hover{background:var(--bg-light);}
 .portfolio-list li:last-child{border-bottom:none;}
 .portfolio-list li i{color:var(--secondary);margin-top:2px;}
 
+/* Announcement editor */
+.ann-editor{background:rgba(27,94,32,0.05);border:2px solid rgba(27,94,32,0.15);border-radius:var(--radius-lg);padding:24px;margin-bottom:24px;}
+.ann-editor h4{color:var(--primary);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.ann-list{list-style:none;margin-bottom:14px;}
+.ann-list li{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;background:#fff;border-radius:var(--radius);border:1px solid var(--border);margin-bottom:8px;gap:10px;}
+.ann-list li span{flex:1;font-size:0.93rem;}
+.ann-list li button{background:none;border:none;cursor:pointer;color:var(--danger);font-size:14px;}
+
 @media(max-width:1024px){.about-grid,.adm-grid,.contact-grid{grid-template-columns:1fr;}.sidebar{transform:translateX(-100%);transition:transform 0.3s;}.sidebar.open{transform:translateX(0);}.main-content{margin-left:0;}}
 @media(max-width:768px){.nav-links{display:none;position:absolute;top:70px;left:0;right:0;background:#fff;flex-direction:column;padding:14px;box-shadow:var(--shadow);}.nav-links.open{display:flex;}.mobile-btn{display:block;}.hero-content h1{font-size:1.9rem;}.mv-grid,.gi-grid{grid-template-columns:1fr;}.form-row{grid-template-columns:1fr;}.role-selector{grid-template-columns:1fr 1fr 1fr;}.dash-grid{grid-template-columns:1fr;}.team-modal-body{grid-template-columns:1fr;}.team-modal-img{margin:0 auto;}}
 </style>
 </head>
 <body>
 
-<!-- LOADING -->
 <div class="loading" id="loading"><div class="spinner"></div><p id="loadingTxt">Loading...</p></div>
-<!-- TOASTS -->
 <div class="toast-wrap" id="toasts"></div>
 
-<!-- ═══════════════════════════════════════════
-     PUBLIC WEBSITE
-═══════════════════════════════════════════ -->
+<!-- ═══ PUBLIC WEBSITE ═══ -->
 <div id="site">
+
+<!-- ANNOUNCEMENT BAR -->
+<div class="announcement-bar hidden-bar" id="annBar">
+  <div class="ann-label"><i class="fas fa-bullhorn"></i> NOTICE</div>
+  <div class="ann-ticker"><span class="ann-text" id="annText"></span></div>
+</div>
 
 <nav class="navbar">
   <div class="nav-container">
@@ -288,7 +308,6 @@ tr:hover{background:var(--bg-light);}
   </div>
 </nav>
 
-<!-- HERO -->
 <section class="hero" id="home" style="padding:0;max-width:100%;">
   <div id="heroSlider">
     <div class="hero-slide active" style="background-image:url('https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=1920')"></div>
@@ -310,7 +329,6 @@ tr:hover{background:var(--bg-light);}
   </div>
 </section>
 
-<!-- STATS -->
 <section style="padding:40px 20px;max-width:1400px;margin:0 auto;">
   <div class="stats-grid">
     <div class="stat-card" style="background:var(--primary);color:#fff;"><h3>50+</h3><p>Enrolled Students</p></div>
@@ -320,13 +338,11 @@ tr:hover{background:var(--bg-light);}
   </div>
 </section>
 
-<!-- COURSES -->
 <section id="courses">
   <div class="section-header"><h2>Our Programs</h2><p>Practical, market-driven agribusiness training designed to transform rural livelihoods.</p></div>
   <div class="courses-grid" id="coursesGrid"></div>
 </section>
 
-<!-- ABOUT -->
 <section id="about">
   <div class="section-header"><h2>About KRAC</h2><p>Building capacity, transforming communities, and leading agricultural innovation in Kenya.</p></div>
   <div class="about-grid">
@@ -363,25 +379,21 @@ tr:hover{background:var(--bg-light);}
   </div>
 </section>
 
-<!-- TEAM -->
 <section id="team">
   <div class="section-header"><h2>Our Leadership</h2><p>Meet the dedicated professionals leading KRAC's mission.</p></div>
   <div class="team-grid" id="teamGrid"></div>
 </section>
 
-<!-- PARTNERS -->
 <section id="partners">
   <div class="section-header"><h2>Our Partners</h2><p>Collaborating with NGOs and industry leaders.</p></div>
   <div class="partners-grid" id="partnersGrid"></div>
 </section>
 
-<!-- AFFILIATES -->
 <section id="affiliates">
   <div class="section-header"><h2>Affiliated Institutions</h2><p>Connected with leading agricultural and research institutions.</p></div>
   <div class="partners-grid" id="affiliatesGrid"></div>
 </section>
 
-<!-- ADMISSIONS -->
 <section id="admissions">
   <div class="section-header"><h2>Admissions</h2><p>Begin your journey. Admissions Open — Intake Ongoing.</p></div>
   <div class="adm-grid">
@@ -408,7 +420,6 @@ tr:hover{background:var(--bg-light);}
   </div>
 </section>
 
-<!-- CONTACT -->
 <section id="contact">
   <div class="section-header"><h2>Contact Us</h2><p>Get in touch for inquiries, partnerships, or campus visits.</p></div>
   <div class="contact-grid">
@@ -441,12 +452,9 @@ tr:hover{background:var(--bg-light);}
   </div>
   <div class="footer-bottom"><p>&copy; 2026 Kenya Rural Agribusiness College (KRAC). All rights reserved.</p></div>
 </footer>
+</div>
 
-</div><!-- end #site -->
-
-<!-- ═══════════════════════════════════════════
-     PORTAL LOGIN
-═══════════════════════════════════════════ -->
+<!-- ═══ PORTAL LOGIN ═══ -->
 <div id="portalPage" class="portal-page hidden">
   <div class="portal-card">
     <div class="portal-header">
@@ -454,23 +462,24 @@ tr:hover{background:var(--bg-light);}
       <h2 style="margin-top:14px;">Welcome Back</h2>
       <p>Sign in to access your dashboard</p>
     </div>
-
-    <!-- ✅ FIX: Firebase connection status indicator -->
     <div class="db-status" id="dbStatus">
       <div class="db-dot checking" id="dbDot"></div>
       <span id="dbStatusText">Checking database connection...</span>
     </div>
-
     <div class="role-selector">
       <div class="role-opt active" data-role="student"><i class="fas fa-user-graduate"></i><span>Student</span></div>
       <div class="role-opt" data-role="teacher"><i class="fas fa-chalkboard-teacher"></i><span>Teacher</span></div>
       <div class="role-opt" data-role="admin"><i class="fas fa-shield-alt"></i><span>Admin</span></div>
     </div>
     <div class="form-group"><label>Username / Admission No</label><input type="text" id="loginUser" placeholder="Enter username" autocomplete="username"></div>
-    <div class="form-group"><label>Password</label><input type="password" id="loginPass" placeholder="Enter password" autocomplete="current-password"></div>
+    <div class="form-group">
+      <label>Password</label>
+      <div class="pwd-wrap">
+        <input type="password" id="loginPass" placeholder="Enter password" autocomplete="current-password">
+        <button class="pwd-toggle" data-target="loginPass" title="Show/hide password"><i class="fas fa-eye"></i></button>
+      </div>
+    </div>
     <button class="btn btn-primary w-full" id="loginBtn" style="justify-content:center;margin-top:6px;"><i class="fas fa-sign-in-alt"></i> Sign In</button>
-
-
     <div style="text-align:center;margin-top:16px;"><button class="btn" id="backBtn" style="color:var(--text-light);background:none;font-size:0.9rem;"><i class="fas fa-arrow-left"></i> Back to Website</button></div>
   </div>
 </div>
@@ -481,16 +490,18 @@ tr:hover{background:var(--bg-light);}
     <div class="modal-hdr"><h3><i class="fas fa-key"></i> Change Password</h3></div>
     <div class="modal-body">
       <p style="color:var(--text-light);margin-bottom:18px;">Please change your system-generated password to continue.</p>
-      <div class="form-group"><label>New Password</label><input type="password" id="newPwd" placeholder="Minimum 6 characters"></div>
-      <div class="form-group"><label>Confirm Password</label><input type="password" id="confirmPwd" placeholder="Repeat password"></div>
+      <div class="form-group"><label>New Password</label>
+        <div class="pwd-wrap"><input type="password" id="newPwd" placeholder="Minimum 6 characters"><button class="pwd-toggle" data-target="newPwd"><i class="fas fa-eye"></i></button></div>
+      </div>
+      <div class="form-group"><label>Confirm Password</label>
+        <div class="pwd-wrap"><input type="password" id="confirmPwd" placeholder="Repeat password"><button class="pwd-toggle" data-target="confirmPwd"><i class="fas fa-eye"></i></button></div>
+      </div>
     </div>
     <div class="modal-ftr"><button class="btn btn-primary w-full" id="savePwdBtn" style="justify-content:center;"><i class="fas fa-save"></i> Update Password</button></div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     STUDENT DASHBOARD
-═══════════════════════════════════════════ -->
+<!-- ═══ STUDENT DASHBOARD ═══ -->
 <div id="studentDash" class="dashboard hidden">
   <aside class="sidebar">
     <div class="sidebar-header"><a href="#" class="logo"><img src="https://via.placeholder.com/44/1b5e20/ffffff?text=K" alt=""><div>KRAC <span>Portal</span></div></a></div>
@@ -541,15 +552,15 @@ tr:hover{background:var(--bg-light);}
       <div class="form-group"><label>Course</label><input type="text" id="pCourse" disabled style="background:var(--bg-light);"></div>
       <div class="form-group"><label>Email <small style="color:var(--accent);">(editable)</small></label><input type="email" id="pEmail"></div>
       <div class="form-group"><label>Phone <small style="color:var(--accent);">(editable)</small></label><input type="tel" id="pPhone"></div>
-      <div class="form-group"><label>New Password <small style="color:var(--text-light);">(leave blank to keep)</small></label><input type="password" id="pPwd" placeholder="New password"></div>
+      <div class="form-group"><label>New Password <small style="color:var(--text-light);">(leave blank to keep)</small></label>
+        <div class="pwd-wrap"><input type="password" id="pPwd" placeholder="New password"><button class="pwd-toggle" data-target="pPwd"><i class="fas fa-eye"></i></button></div>
+      </div>
       <button class="btn btn-primary" id="saveProfileBtn"><i class="fas fa-save"></i> Save Changes</button>
     </div></div></div>
   </main>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     TEACHER DASHBOARD
-═══════════════════════════════════════════ -->
+<!-- ═══ TEACHER DASHBOARD ═══ -->
 <div id="teacherDash" class="dashboard hidden">
   <aside class="sidebar">
     <div class="sidebar-header"><a href="#" class="logo"><img src="https://via.placeholder.com/44/1b5e20/ffffff?text=K" alt=""><div>KRAC <span>Portal</span></div></a></div>
@@ -560,6 +571,7 @@ tr:hover{background:var(--bg-light);}
       <li><a data-sec="tResults"><i class="fas fa-graduation-cap"></i> Update Results</a></li>
       <li><a data-sec="tFees"><i class="fas fa-money-bill-wave"></i> Fees Overview</a></li>
       <li><a data-sec="tAdmissions"><i class="fas fa-user-check"></i> Admissions <span class="notif" id="tAdmBadge" style="display:none;"></span></a></li>
+      <li><a data-sec="tAnnouncements"><i class="fas fa-bullhorn"></i> Announcements</a></li>
     </ul>
     <div class="sidebar-footer"><a onclick="logout()" style="color:rgba(255,255,255,0.8);text-decoration:none;display:flex;align-items:center;gap:8px;cursor:pointer;"><i class="fas fa-sign-out-alt"></i> Logout</a></div>
   </aside>
@@ -612,12 +624,22 @@ tr:hover{background:var(--bg-light);}
       <div class="tbl-wrap"><table><thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Course</th><th>Grade</th><th>Date</th><th>Action</th></tr></thead>
       <tbody id="tAdmBody"></tbody></table></div>
     </div>
+    <!-- TEACHER ANNOUNCEMENTS -->
+    <div id="tAnnouncements" class="hidden">
+      <div class="ann-editor">
+        <h4><i class="fas fa-bullhorn"></i> Manage Announcements</h4>
+        <p style="color:var(--text-light);font-size:0.9rem;margin-bottom:14px;">Announcements scroll across the top of the website. Visitors see all active announcements.</p>
+        <div style="display:flex;gap:10px;margin-bottom:14px;">
+          <input type="text" id="newAnnText" placeholder="Type announcement here..." style="flex:1;padding:10px 14px;border:2px solid var(--border);border-radius:var(--radius);font-family:inherit;font-size:0.95rem;">
+          <button class="btn btn-primary" id="addAnnBtn"><i class="fas fa-plus"></i> Add</button>
+        </div>
+        <ul class="ann-list" id="annList"></ul>
+      </div>
+    </div>
   </main>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     ADMIN DASHBOARD
-═══════════════════════════════════════════ -->
+<!-- ═══ ADMIN DASHBOARD ═══ -->
 <div id="adminDash" class="dashboard hidden">
   <aside class="sidebar">
     <div class="sidebar-header"><a href="#" class="logo"><img src="https://via.placeholder.com/44/1b5e20/ffffff?text=K" alt=""><div>KRAC <span>Admin</span></div></a></div>
@@ -625,6 +647,8 @@ tr:hover{background:var(--bg-light);}
       <li><a data-sec="aOverview"><i class="fas fa-home"></i> Overview</a></li>
       <li><a data-sec="aStudents"><i class="fas fa-user-graduate"></i> All Students</a></li>
       <li><a data-sec="aAdmissions"><i class="fas fa-user-check"></i> Admissions <span class="notif" id="aAdmBadge" style="display:none;"></span></a></li>
+      <li><a data-sec="aUsers"><i class="fas fa-users-cog"></i> Manage Users</a></li>
+      <li><a data-sec="aAnnouncements"><i class="fas fa-bullhorn"></i> Announcements</a></li>
       <li><a data-sec="aSettings"><i class="fas fa-cog"></i> Settings</a></li>
     </ul>
     <div class="sidebar-footer"><a onclick="logout()" style="color:rgba(255,255,255,0.8);text-decoration:none;display:flex;align-items:center;gap:8px;cursor:pointer;"><i class="fas fa-sign-out-alt"></i> Logout</a></div>
@@ -650,18 +674,43 @@ tr:hover{background:var(--bg-light);}
       <div class="tbl-wrap"><table><thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Course</th><th>Grade</th><th>Date</th><th>Action</th></tr></thead>
       <tbody id="aAdmBody"></tbody></table></div>
     </div>
+    <!-- ADMIN USER MANAGEMENT -->
+    <div id="aUsers" class="hidden">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;">
+        <h3 style="color:var(--primary);">User Management</h3>
+      </div>
+      <div class="tbl-wrap"><div class="tbl-head"><h3>All Users</h3><div class="search-box"><i class="fas fa-search"></i><input type="text" placeholder="Search..." oninput="filterUsers(this.value)"></div></div>
+      <table><thead><tr><th>Username</th><th>Name</th><th>Role</th><th>Email</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody id="aUsersBody"></tbody></table></div>
+    </div>
+    <!-- ADMIN ANNOUNCEMENTS -->
+    <div id="aAnnouncements" class="hidden">
+      <div class="ann-editor">
+        <h4><i class="fas fa-bullhorn"></i> Manage Announcements</h4>
+        <p style="color:var(--text-light);font-size:0.9rem;margin-bottom:14px;">Announcements scroll across the top of the website. Visitors see all active announcements.</p>
+        <div style="display:flex;gap:10px;margin-bottom:14px;">
+          <input type="text" id="aNewAnnText" placeholder="Type announcement here..." style="flex:1;padding:10px 14px;border:2px solid var(--border);border-radius:var(--radius);font-family:inherit;font-size:0.95rem;">
+          <button class="btn btn-primary" id="aAddAnnBtn"><i class="fas fa-plus"></i> Add</button>
+        </div>
+        <ul class="ann-list" id="aAnnList"></ul>
+      </div>
+    </div>
     <div id="aSettings" class="hidden"><div class="card">
       <h3 style="color:var(--primary);margin-bottom:22px;"><i class="fas fa-cog"></i> System Settings</h3>
       <div class="form-group"><label>Academic Year</label><input type="text" id="setYear" value="2026/2027"></div>
       <div class="form-group"><label>Admission Prefix</label><input type="text" id="setPrefix" value="KRAC"></div>
       <div class="form-group"><label>Default Student Password</label><input type="text" id="setDefPwd" value="student123"></div>
       <button class="btn btn-primary" id="saveSettingsBtn"><i class="fas fa-save"></i> Save Settings</button>
+
+      <hr style="margin:28px 0;border:none;border-top:1px solid var(--border);">
+      <h4 style="color:var(--primary);margin-bottom:14px;"><i class="fas fa-tools"></i> Fix / Add Missing Users</h4>
+      <p style="color:var(--text-light);font-size:0.9rem;margin-bottom:16px;">Use this if a user cannot log in or was not seeded correctly. This will add or reset the user in Firebase.</p>
+      <button class="btn btn-warning" id="addTch003Btn" style="color:#fff;"><i class="fas fa-user-plus"></i> Add / Fix TCH003 (Mr. Onyango — teacher123)</button>
     </div></div>
   </main>
 </div>
 
 <!-- ═══ MODALS ═══ -->
-<!-- APPLICATION -->
 <div class="modal-overlay" id="appModal">
   <div class="modal">
     <div class="modal-hdr"><h3><i class="fas fa-user-plus"></i> Online Application</h3><button class="modal-close" data-close="appModal">&times;</button></div>
@@ -686,14 +735,17 @@ tr:hover{background:var(--bg-light);}
         <select id="aGrade">
           <option value="">-- Select Grade --</option>
           <option>A</option><option>A-</option><option>B+</option><option>B</option>
-          <option>B-</option><option>C+</option><option>C</option><option>C-</option><option>D+</option>
-             <option>D</option><option>D-</option><option>E</option><option>N/A</option>
+          <option>B-</option><option>C+</option><option>C</option><option>C-</option>
         </select>
       </div>
       <div class="form-group"><label>Previous School</label><input type="text" id="aSchool" placeholder="Previous institution"></div>
       <div class="form-row">
-        <div class="form-group"><label>Password *</label><input type="password" id="aPwd" placeholder="Min 6 characters"></div>
-        <div class="form-group"><label>Confirm Password *</label><input type="password" id="aPwd2" placeholder="Repeat password"></div>
+        <div class="form-group"><label>Password *</label>
+          <div class="pwd-wrap"><input type="password" id="aPwd" placeholder="Min 6 characters"><button class="pwd-toggle" data-target="aPwd"><i class="fas fa-eye"></i></button></div>
+        </div>
+        <div class="form-group"><label>Confirm Password *</label>
+          <div class="pwd-wrap"><input type="password" id="aPwd2" placeholder="Repeat password"><button class="pwd-toggle" data-target="aPwd2"><i class="fas fa-eye"></i></button></div>
+        </div>
       </div>
     </div>
     <div class="modal-ftr">
@@ -703,7 +755,6 @@ tr:hover{background:var(--bg-light);}
   </div>
 </div>
 
-<!-- ADD STUDENT -->
 <div class="modal-overlay" id="addStudModal">
   <div class="modal">
     <div class="modal-hdr"><h3><i class="fas fa-user-plus"></i> Add New Student</h3><button class="modal-close" data-close="addStudModal">&times;</button></div>
@@ -732,7 +783,6 @@ tr:hover{background:var(--bg-light);}
   </div>
 </div>
 
-<!-- EDIT RESULT -->
 <div class="modal-overlay" id="resultModal">
   <div class="modal" style="max-width:420px;">
     <div class="modal-hdr"><h3><i class="fas fa-edit"></i> Update Result</h3><button class="modal-close" data-close="resultModal">&times;</button></div>
@@ -752,7 +802,6 @@ tr:hover{background:var(--bg-light);}
   </div>
 </div>
 
-<!-- EDIT FEES -->
 <div class="modal-overlay" id="feesModal">
   <div class="modal" style="max-width:420px;">
     <div class="modal-hdr"><h3><i class="fas fa-money-bill-wave"></i> Update Fees</h3><button class="modal-close" data-close="feesModal">&times;</button></div>
@@ -769,7 +818,6 @@ tr:hover{background:var(--bg-light);}
   </div>
 </div>
 
-<!-- ADD EXAM -->
 <div class="modal-overlay" id="examModal">
   <div class="modal" style="max-width:660px;">
     <div class="modal-hdr"><h3><i class="fas fa-file-alt"></i> Add Exams</h3><button class="modal-close" data-close="examModal">&times;</button></div>
@@ -784,7 +832,6 @@ tr:hover{background:var(--bg-light);}
   </div>
 </div>
 
-<!-- REVIEW APPLICATION -->
 <div class="modal-overlay" id="reviewModal">
   <div class="modal" style="max-width:560px;">
     <div class="modal-hdr"><h3><i class="fas fa-user-check"></i> Review Application</h3><button class="modal-close" data-close="reviewModal">&times;</button></div>
@@ -796,7 +843,29 @@ tr:hover{background:var(--bg-light);}
   </div>
 </div>
 
-<!-- TEAM PORTFOLIO -->
+<!-- EDIT USER PASSWORD MODAL -->
+<div class="modal-overlay" id="editUserModal">
+  <div class="modal" style="max-width:440px;">
+    <div class="modal-hdr"><h3><i class="fas fa-user-edit"></i> Edit User</h3><button class="modal-close" data-close="editUserModal">&times;</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="editUserId">
+      <div class="form-group"><label>Name</label><input type="text" id="editUserName" disabled style="background:var(--bg-light);"></div>
+      <div class="form-group"><label>Username</label><input type="text" id="editUserUsername" disabled style="background:var(--bg-light);"></div>
+      <div class="form-group"><label>Role</label><input type="text" id="editUserRole" disabled style="background:var(--bg-light);"></div>
+      <div class="form-group"><label>New Password</label>
+        <div class="pwd-wrap"><input type="password" id="editUserPwd" placeholder="Enter new password (min 6 chars)"><button class="pwd-toggle" data-target="editUserPwd"><i class="fas fa-eye"></i></button></div>
+      </div>
+      <div class="form-group"><label>Confirm New Password</label>
+        <div class="pwd-wrap"><input type="password" id="editUserPwd2" placeholder="Repeat new password"><button class="pwd-toggle" data-target="editUserPwd2"><i class="fas fa-eye"></i></button></div>
+      </div>
+    </div>
+    <div class="modal-ftr">
+      <button class="btn btn-outline" data-close="editUserModal">Cancel</button>
+      <button class="btn btn-primary" id="saveUserPwdBtn"><i class="fas fa-save"></i> Update Password</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="teamModal">
   <div class="modal" style="max-width:660px;">
     <div class="modal-hdr"><h3><i class="fas fa-id-card"></i> Team Portfolio</h3><button class="modal-close" data-close="teamModal">&times;</button></div>
@@ -820,210 +889,230 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// ════════════════════════════════════════
-// ✅ FIX 1: Add timeout wrapper for all Firebase reads
-// Prevents the UI from freezing if Firebase hangs
-// ════════════════════════════════════════
-function withTimeout(promise, ms = 12000) {
-    return Promise.race([
-        promise,
-        new Promise((_, reject) =>
-            setTimeout(() => reject(new Error('Request timed out. Check your internet connection or Firebase rules.')), ms)
-        )
-    ]);
+function withTimeout(promise, ms=12000) {
+    return Promise.race([promise, new Promise((_,rej)=>setTimeout(()=>rej(new Error('Request timed out. Check your internet or Firebase rules.')),ms))]);
 }
-
-const fbGet    = path => withTimeout(db.ref(path).once('value').then(s => s.val()));
-const fbSet    = (path, data) => withTimeout(db.ref(path).set(data));
-const fbUpdate = (path, data) => withTimeout(db.ref(path).update(data));
+const fbGet    = path => withTimeout(db.ref(path).once('value').then(s=>s.val()));
+const fbSet    = (path,data) => withTimeout(db.ref(path).set(data));
+const fbUpdate = (path,data) => withTimeout(db.ref(path).update(data));
 const fbDelete = path => withTimeout(db.ref(path).remove());
-function fbPush(path, data) {
-    const ref = db.ref(path).push();
-    return withTimeout(ref.set(data).then(() => ({ id: ref.key, ...data })));
-}
-function toArr(obj) {
-    if (!obj) return [];
-    return Object.entries(obj).map(([id, v]) => ({ id, ...v }));
-}
-
-// ════════════════════════════════════════
-// ✅ FIX 2: Firebase connectivity check
-// Shown in the portal login page
-// ════════════════════════════════════════
-function checkDbConnection() {
-    const dot  = document.getElementById('dbDot');
-    const text = document.getElementById('dbStatusText');
-    const hint = document.getElementById('credHint');
-    db.ref('.info/connected').on('value', snap => {
-        if (snap.val() === true) {
-            dot.className  = 'db-dot connected';
-            text.textContent = 'Database connected';
-            hint.style.display = 'block'; // show creds hint when connected
-        } else {
-            dot.className  = 'db-dot error';
-            text.textContent = 'Database offline — check your internet or Firebase rules';
-            hint.style.display = 'none';
-        }
-    });
-}
+function fbPush(path,data){ const ref=db.ref(path).push(); return withTimeout(ref.set(data).then(()=>({id:ref.key,...data}))); }
+function toArr(obj){ if(!obj) return []; return Object.entries(obj).map(([id,v])=>({id,...v})); }
 
 // ════════════════════════════════════════
 // STATIC DATA
 // ════════════════════════════════════════
-const PROGRAMS = [
-    { name:"General Animal Production", duration:"6–15 Months", level:"Certificate", fee:"KES 7,000 – 84,000", desc:"Practical livestock health and management training covering animal disease prevention, treatment techniques, and herd management.", icon:"fa-horse-head" },
-    { name:"Women Empowerment Program", duration:"10 Months", level:"Certificate", fee:"KES 3,000 – 30,000", desc:"Focus on value chains and livestock industries including poultry, goats, rabbits, and agribusiness skills.", icon:"fa-female" },
-    { name:"Junior Agripreneur Course", duration:"Holiday Program", level:"Short Course", fee:"KES 1,500 – 3,000", desc:"Hands-on agriculture and entrepreneurship for young learners during school holidays.", icon:"fa-seedling" },
-    { name:"Crop Development & Marketing Course", duration:"12 Months", level:"Certificate", fee:"KES 33,390", desc:"Modern farming techniques, value addition, and market access training.", icon:"fa-chart-line" }
+const PROGRAMS=[
+    {name:"General Animal Production",duration:"6–15 Months",level:"Certificate",fee:"KES 7,000 – 84,000",desc:"Practical livestock health and management training covering animal disease prevention, treatment techniques, and herd management.",icon:"fa-horse-head"},
+    {name:"Women Empowerment Program",duration:"10 Months",level:"Certificate",fee:"KES 3,000 – 30,000",desc:"Focus on value chains and livestock industries including poultry, goats, rabbits, and agribusiness skills.",icon:"fa-female"},
+    {name:"Junior Agripreneur Course",duration:"Holiday Program",level:"Short Course",fee:"KES 1,500 – 3,000",desc:"Hands-on agriculture and entrepreneurship for young learners during school holidays.",icon:"fa-seedling"},
+    {name:"Crop Development & Marketing Course",duration:"12 Months",level:"Certificate",fee:"KES 33,390",desc:"Modern farming techniques, value addition, and market access training.",icon:"fa-chart-line"}
 ];
-const TEAM = [
-    { id:"1", name:"Mr. Vincent Otieno", role:"Principal & Head of AITAP Business Project", dept:"Executive", bio:"Mr. Otieno provides overall leadership, strategic direction, and institutional growth for KRAC and the AITAP Business Project.", img:"", portfolio:["Diploma in Agricultural Extension — Bukura Agricultural College","Diploma in Technical Instructor Education — Bukura Agricultural College","Field Technician & Extension Officer — ICIPE","Trainer at Bukura Agricultural College","Six-month internship in Southern Germany"] },
-    { id:"2", name:"Ms. Hope Kanoti Munyoki", role:"Head of Academics / Dean of Studies", dept:"Administration", bio:"Ms. Hope leads all academic programs, curriculum development, and student affairs.", img:"", portfolio:["BSc in Agriculture — Egerton University","Farm Supervisor — Integrated Farm Tech Company","Experiment Supervisor — Karlo Research Station","Field Attachment — Baraka College, Molo"] },
-    { id:"3", name:"Mr. Onyango Elly Omondi", role:"Head of Departments Coordination", dept:"Administration", bio:"Mr. Onyango oversees coordination across all academic and operational departments.", img:"", portfolio:["BSc in Agriculture — Kisii University","Volunteer — Ministry of Agriculture","Ugenya Sub County Coordinator — Siaya Youths in Agribusiness"] }
+const TEAM=[
+    {id:"1",name:"Mr. Vincent Otieno",role:"Principal & Head of AITAP Business Project",dept:"Executive",bio:"Mr. Otieno provides overall leadership, strategic direction, and institutional growth for KRAC and the AITAP Business Project.",img:"",portfolio:["Diploma in Agricultural Extension — Bukura Agricultural College","Diploma in Technical Instructor Education — Bukura Agricultural College","Field Technician & Extension Officer — ICIPE","Trainer at Bukura Agricultural College","Six-month internship in Southern Germany"]},
+    {id:"2",name:"Ms. Hope Kanoti Munyoki",role:"Head of Academics / Dean of Studies",dept:"Administration",bio:"Ms. Hope leads all academic programs, curriculum development, and student affairs.",img:"",portfolio:["BSc in Agriculture — Egerton University","Farm Supervisor — Integrated Farm Tech Company","Experiment Supervisor — Karlo Research Station","Field Attachment — Baraka College, Molo"]},
+    {id:"3",name:"Mr. Onyango Elly Omondi",role:"Head of Departments Coordination",dept:"Administration",bio:"Mr. Onyango oversees coordination across all academic and operational departments.",img:"",portfolio:["BSc in Agriculture — Kisii University","Volunteer — Ministry of Agriculture","Ugenya Sub County Coordinator — Siaya Youths in Agribusiness"]}
 ];
-const PARTNERS = [
-    { name:"Pesira Limited", type:"NGO", desc:"Policy support and curriculum alignment." },
-    { name:"Mercy Corps", type:"Agricultural Company", desc:"Research collaboration and farming technologies." },
-    { name:"ICIPE", type:"NGO", desc:"Research partnerships and funding support." },
-    { name:"APA", type:"Insurance", desc:"Agricultural insurance and risk management." },
-    { name:"Croplife Farmers SACCO", type:"SACCO", desc:"Market linkage and cooperative financial services." }
+const PARTNERS=[
+    {name:"Pesira Limited",type:"NGO",desc:"Policy support and curriculum alignment."},
+    {name:"Mercy Corps",type:"Agricultural Company",desc:"Research collaboration and farming technologies."},
+    {name:"ICIPE",type:"NGO",desc:"Research partnerships and funding support."},
+    {name:"APA",type:"Insurance",desc:"Agricultural insurance and risk management."},
+    {name:"Croplife Farmers SACCO",type:"SACCO",desc:"Market linkage and cooperative financial services."}
 ];
-const AFFILIATES = [
-    { name:"Kenya Rural Food Centre (KRFC)", type:"KRFC", desc:"Joint food security programs and resource sharing." },
-    { name:"AITAP", type:"AITAP", desc:"Technical training and agribusiness innovation partnership." }
+const AFFILIATES=[
+    {name:"Kenya Rural Food Centre (KRFC)",type:"KRFC",desc:"Joint food security programs and resource sharing."},
+    {name:"AITAP",type:"AITAP",desc:"Technical training and agribusiness innovation partnership."}
 ];
-const UNITS = [
-    { id:"VET101", name:"Livestock Health Management" },
-    { id:"WEP201", name:"Poultry & Small Livestock Production" },
-    { id:"CRP301", name:"Crop Production & Value Addition" },
-    { id:"AGR401", name:"Agribusiness & Market Access" }
+const UNITS=[
+    {id:"VET101",name:"Livestock Health Management"},
+    {id:"WEP201",name:"Poultry & Small Livestock Production"},
+    {id:"CRP301",name:"Crop Production & Value Addition"},
+    {id:"AGR401",name:"Agribusiness & Market Access"}
 ];
 
 // ════════════════════════════════════════
 // UTILS
 // ════════════════════════════════════════
-function hashPwd(p) {
-    let h = 0;
-    for (let i = 0; i < p.length; i++) { h = ((h << 5) - h) + p.charCodeAt(i); h |= 0; }
-    return 'h_' + Math.abs(h);
+function hashPwd(p){let h=0;for(let i=0;i<p.length;i++){h=((h<<5)-h)+p.charCodeAt(i);h|=0;}return 'h_'+Math.abs(h);}
+function showLoad(t='Loading...'){document.getElementById('loadingTxt').textContent=t;document.getElementById('loading').classList.add('on');}
+function hideLoad(){document.getElementById('loading').classList.remove('on');}
+function toast(msg,type='success'){
+    const wrap=document.getElementById('toasts');const el=document.createElement('div');
+    el.className=`toast ${type}`;
+    el.innerHTML=`<i class="fas ${type==='success'?'fa-check-circle':type==='error'?'fa-times-circle':'fa-exclamation-triangle'}"></i><span>${msg}</span>`;
+    wrap.appendChild(el);setTimeout(()=>{el.style.opacity='0';setTimeout(()=>el.remove(),300);},4000);
 }
-function showLoad(t='Loading...') { document.getElementById('loadingTxt').textContent = t; document.getElementById('loading').classList.add('on'); }
-function hideLoad() { document.getElementById('loading').classList.remove('on'); }
-function toast(msg, type='success') {
-    const wrap = document.getElementById('toasts');
-    const el = document.createElement('div');
-    el.className = `toast ${type}`;
-    el.innerHTML = `<i class="fas ${type==='success'?'fa-check-circle':type==='error'?'fa-times-circle':'fa-exclamation-triangle'}"></i><span>${msg}</span>`;
-    wrap.appendChild(el);
-    setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 300); }, 4000);
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+
+// Show/hide password toggle — works for any input with data-target
+function initPwdToggles(){
+    document.querySelectorAll('.pwd-toggle').forEach(btn=>{
+        btn.addEventListener('click',()=>{
+            const inp=document.getElementById(btn.dataset.target);
+            if(!inp) return;
+            const show=inp.type==='password';
+            inp.type=show?'text':'password';
+            btn.querySelector('i').className=show?'fas fa-eye-slash':'fas fa-eye';
+        });
+    });
 }
-function openModal(id) { document.getElementById(id).classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
 // ════════════════════════════════════════
 // STATE
 // ════════════════════════════════════════
-let CU = JSON.parse(sessionStorage.getItem('krac_u') || 'null');
-let selectedRole = 'student';
-let reviewApp = null;
-let examRowN = 0;
-let slideIdx = 0;
+let CU=JSON.parse(sessionStorage.getItem('krac_u')||'null');
+let selectedRole='student';
+let reviewApp=null;
+let examRowN=0;
+let slideIdx=0;
+
+// ════════════════════════════════════════
+// DB CONNECTION CHECK
+// ════════════════════════════════════════
+function checkDbConnection(){
+    const dot=document.getElementById('dbDot');
+    const text=document.getElementById('dbStatusText');
+    db.ref('.info/connected').on('value',snap=>{
+        if(snap.val()===true){dot.className='db-dot connected';text.textContent='Database connected ✓';}
+        else{dot.className='db-dot error';text.textContent='Database offline — check internet or Firebase rules';}
+    });
+}
 
 // ════════════════════════════════════════
 // SEED
 // ════════════════════════════════════════
-async function seedIfEmpty() {
-    try {
-        const existing = await fbGet('users');
-        if (existing) return; // Already seeded, stop
-        const users = [
-            { username:'admin',      password:hashPwd('admin123'),   role:'admin',   name:'System Administrator',    email:'admin@krac.ac.ke',   phone:'0700000001', first_login:false, status:'active' },
-            { username:'TCH001',     password:hashPwd('teacher123'), role:'teacher', name:'Mr. Vincent Otieno',      email:'v.otieno@krac.ac.ke',phone:'0712345001', first_login:false, status:'active' },
-            { username:'TCH002',     password:hashPwd('teacher123'), role:'teacher', name:'Ms. Hope Kanoti Munyoki',  email:'h.munyoki@krac.ac.ke',phone:'0712345002', first_login:false, status:'active' },
-            { username:'TCH003',     password:hashPwd('teacher123'), role:'teacher', name:'Mr. Onyango Elly Omondi',  email:'e.onyango@krac.ac.ke',phone:'0712345002', first_login:false, status:'active' },
-            { username:'KRAC2026001',password:hashPwd('student123'), role:'student', name:'John Kamau',    email:'john@email.com',  phone:'0723456001', course:'Veterinary Assistance Course',        admission_number:'KRAC2026001', fees_total:45000, fees_paid:33000, first_login:true, status:'active', enrollment_date:'2026-01-15' },
-            { username:'KRAC2026002',password:hashPwd('student123'), role:'student', name:'Mary Akinyi',   email:'mary@email.com',  phone:'0723456002', course:'Women Empowerment Program',           admission_number:'KRAC2026002', fees_total:30000, fees_paid:30000, first_login:true, status:'active', enrollment_date:'2026-01-15' },
-            { username:'KRAC2026003',password:hashPwd('student123'), role:'student', name:'Peter Ochieng', email:'peter@email.com', phone:'0723456003', course:'Crop Development & Marketing Course', admission_number:'KRAC2026003', fees_total:33390, fees_paid:20000, first_login:true, status:'active', enrollment_date:'2026-01-15' }
+async function seedIfEmpty(){
+    try{
+        const existing=await fbGet('users');
+        if(existing) return;
+        const users=[
+            {username:'admin',     password:hashPwd('admin123'),   role:'admin',   name:'System Administrator',    email:'admin@krac.ac.ke',    phone:'0700000001',first_login:false,status:'active'},
+            {username:'TCH001',    password:hashPwd('teacher123'),  role:'teacher', name:'Mr. Vincent Otieno',      email:'v.otieno@krac.ac.ke', phone:'0712345001',first_login:false,status:'active'},
+            {username:'TCH002',    password:hashPwd('teacher123'),  role:'teacher', name:'Ms. Hope Kanoti Munyoki', email:'h.munyoki@krac.ac.ke',phone:'0712345002',first_login:false,status:'active'},
+            {username:'TCH003',    password:hashPwd('teacher123'),  role:'teacher', name:'Mr. Onyango Elly Omondi', email:'e.onyango@krac.ac.ke', phone:'0712345003',first_login:false,status:'active'},
+            {username:'KRAC2026001',password:hashPwd('student123'),role:'student',name:'John Kamau',   email:'john@email.com', phone:'0723456001',course:'General Animal Production',        admission_number:'KRAC2026001',fees_total:45000,fees_paid:33000,first_login:true,status:'active',enrollment_date:'2026-01-15'},
+            {username:'KRAC2026002',password:hashPwd('student123'),role:'student',name:'Mary Akinyi',  email:'mary@email.com', phone:'0723456002',course:'Women Empowerment Program',       admission_number:'KRAC2026002',fees_total:30000,fees_paid:30000,first_login:true,status:'active',enrollment_date:'2026-01-15'},
+            {username:'KRAC2026003',password:hashPwd('student123'),role:'student',name:'Peter Ochieng',email:'peter@email.com',phone:'0723456003',course:'Crop Development & Marketing Course',admission_number:'KRAC2026003',fees_total:33390,fees_paid:20000,first_login:true,status:'active',enrollment_date:'2026-01-15'}
         ];
-        const batch = {};
-        users.forEach(u => { const k = db.ref('users').push().key; batch[`users/${k}`] = u; });
-        batch['settings'] = { prefix:'KRAC', year:2026, defaultPwd:'student123' };
+        const batch={};
+        users.forEach(u=>{const k=db.ref('users').push().key;batch[`users/${k}`]=u;});
+        batch['settings']={prefix:'KRAC',year:2026,defaultPwd:'student123'};
         await withTimeout(db.ref('/').update(batch));
-        toast('Database initialized with sample data!');
-    } catch(e) {
-        console.warn('Seed skipped or failed:', e.message);
-        // ✅ FIX: Seed errors must NEVER block the UI
-    }
+        toast('Database initialized!');
+    }catch(e){console.warn('Seed skipped:',e.message);}
+}
+
+// ════════════════════════════════════════
+// ANNOUNCEMENTS
+// ════════════════════════════════════════
+async function loadAnnouncements(){
+    try{
+        const data=await fbGet('announcements');
+        const items=toArr(data);
+        // Update ticker on public site
+        const bar=document.getElementById('annBar');
+        const annText=document.getElementById('annText');
+        if(items.length>0){
+            annText.textContent=items.map(a=>a.text).join('   ✦   ');
+            bar.classList.remove('hidden-bar');
+        } else {
+            bar.classList.add('hidden-bar');
+        }
+        // Render editor lists
+        renderAnnList('annList',items);
+        renderAnnList('aAnnList',items);
+    }catch(e){console.warn('Ann load:',e.message);}
+}
+function renderAnnList(listId,items){
+    const ul=document.getElementById(listId);
+    if(!ul) return;
+    if(!items.length){ul.innerHTML='<li style="color:var(--text-light);font-size:0.9rem;padding:8px 0;">No announcements yet.</li>';return;}
+    ul.innerHTML=items.map(a=>`<li><span>${a.text}</span><button data-del-ann="${a.id}" title="Delete"><i class="fas fa-trash"></i></button></li>`).join('');
+    ul.querySelectorAll('[data-del-ann]').forEach(btn=>btn.addEventListener('click',()=>deleteAnnouncement(btn.dataset.delAnn)));
+}
+async function addAnnouncement(text){
+    if(!text.trim()){toast('Please type an announcement','error');return;}
+    showLoad('Saving...');
+    try{
+        await fbPush('announcements',{text:text.trim(),createdBy:CU.name,createdAt:new Date().toISOString()});
+        toast('Announcement added!');
+        await loadAnnouncements();
+    }catch(e){toast('Error: '+e.message,'error');}
+    finally{hideLoad();}
+}
+async function deleteAnnouncement(id){
+    if(!confirm('Delete this announcement?')) return;
+    showLoad('Deleting...');
+    try{await fbDelete(`announcements/${id}`);toast('Deleted');await loadAnnouncements();}
+    catch(e){toast('Error: '+e.message,'error');}
+    finally{hideLoad();}
 }
 
 // ════════════════════════════════════════
 // PUBLIC WEBSITE RENDER
 // ════════════════════════════════════════
-function renderPublic() {
-    document.getElementById('coursesGrid').innerHTML = PROGRAMS.map(p => `
-        <div class="course-card">
-            <div class="course-img"><i class="fas ${p.icon}"></i></div>
-            <div class="course-body"><h3>${p.name}</h3><p>${p.desc}</p>
-            <div class="course-meta"><span><i class="fas fa-clock"></i> ${p.duration}</span><span><i class="fas fa-layer-group"></i> ${p.level}</span></div>
-            <div class="course-fee"><i class="fas fa-tag"></i> ${p.fee}</div></div>
-        </div>`).join('');
+function renderPublic(){
+    document.getElementById('coursesGrid').innerHTML=PROGRAMS.map(p=>`
+        <div class="course-card"><div class="course-img"><i class="fas ${p.icon}"></i></div>
+        <div class="course-body"><h3>${p.name}</h3><p>${p.desc}</p>
+        <div class="course-meta"><span><i class="fas fa-clock"></i> ${p.duration}</span><span><i class="fas fa-layer-group"></i> ${p.level}</span></div>
+        <div class="course-fee"><i class="fas fa-tag"></i> ${p.fee}</div></div></div>`).join('');
 
-    document.getElementById('teamGrid').innerHTML = TEAM.map(t => `
+    document.getElementById('teamGrid').innerHTML=TEAM.map(t=>`
         <div class="team-card" data-teamid="${t.id}">
-            <div class="team-img">${t.img ? `<img src="${t.img}" alt="${t.name}">` : '<i class="fas fa-user"></i>'}</div>
-            <div class="team-info"><h4>${t.name}</h4><p>${t.role}</p><small>${t.dept}</small>
-            <div class="view-profile"><i class="fas fa-id-card"></i> View Portfolio</div></div>
-        </div>`).join('');
+        <div class="team-img">${t.img?`<img src="${t.img}" alt="${t.name}">`:'<i class="fas fa-user"></i>'}</div>
+        <div class="team-info"><h4>${t.name}</h4><p>${t.role}</p><small>${t.dept}</small>
+        <div class="view-profile"><i class="fas fa-id-card"></i> View Portfolio</div></div></div>`).join('');
 
-    document.getElementById('partnersGrid').innerHTML = PARTNERS.map(p => `
+    document.getElementById('partnersGrid').innerHTML=PARTNERS.map(p=>`
         <div class="partner-card"><div class="partner-logo"><i class="fas fa-handshake"></i></div>
         <h4>${p.name}</h4><span class="badge badge-warning" style="margin-bottom:7px;display:inline-block;">${p.type}</span><p>${p.desc}</p></div>`).join('');
 
-    document.getElementById('affiliatesGrid').innerHTML = AFFILIATES.map(a => `
+    document.getElementById('affiliatesGrid').innerHTML=AFFILIATES.map(a=>`
         <div class="partner-card"><div class="partner-logo"><i class="fas fa-university"></i></div>
         <h4>${a.name}</h4><span class="badge badge-success" style="margin-bottom:7px;display:inline-block;">${a.type}</span><p>${a.desc}</p></div>`).join('');
 }
 
 // ════════════════════════════════════════
-// NAVIGATION HELPERS
+// NAVIGATION
 // ════════════════════════════════════════
-function showSite() {
+function showSite(){
     document.getElementById('site').classList.remove('hidden');
     document.getElementById('portalPage').classList.add('hidden');
     document.getElementById('studentDash').classList.add('hidden');
     document.getElementById('teacherDash').classList.add('hidden');
     document.getElementById('adminDash').classList.add('hidden');
-    CU = null; sessionStorage.removeItem('krac_u');
+    CU=null;sessionStorage.removeItem('krac_u');
 }
-function showPortal() {
+function showPortal(){
     document.getElementById('site').classList.add('hidden');
     document.getElementById('portalPage').classList.remove('hidden');
     document.getElementById('studentDash').classList.add('hidden');
     document.getElementById('teacherDash').classList.add('hidden');
     document.getElementById('adminDash').classList.add('hidden');
-    window.scrollTo(0, 0);
-    checkDbConnection(); // ✅ FIX: Start connection check when portal opens
+    window.scrollTo(0,0);checkDbConnection();
 }
-function showDash(role) {
+function showDash(role){
     document.getElementById('site').classList.add('hidden');
     document.getElementById('portalPage').classList.add('hidden');
-    document.getElementById('studentDash').classList.toggle('hidden', role !== 'student');
-    document.getElementById('teacherDash').classList.toggle('hidden', role !== 'teacher');
-    document.getElementById('adminDash').classList.toggle('hidden', role !== 'admin');
-    window.scrollTo(0, 0);
+    document.getElementById('studentDash').classList.toggle('hidden',role!=='student');
+    document.getElementById('teacherDash').classList.toggle('hidden',role!=='teacher');
+    document.getElementById('adminDash').classList.toggle('hidden',role!=='admin');
+    window.scrollTo(0,0);
 }
-function logout() { CU = null; sessionStorage.removeItem('krac_u'); showSite(); toast('Logged out'); }
+function logout(){CU=null;sessionStorage.removeItem('krac_u');showSite();toast('Logged out');}
 
-function initSidebarNav(navId, prefix, loader) {
-    document.getElementById(navId).querySelectorAll('a[data-sec]').forEach(a => {
-        a.addEventListener('click', e => {
-            e.preventDefault();
-            const sec = a.dataset.sec;
-            document.querySelectorAll(`#${navId} a`).forEach(x => x.classList.remove('active'));
+function initSidebarNav(navId,prefix,loader){
+    document.getElementById(navId).querySelectorAll('a[data-sec]').forEach(a=>{
+        a.addEventListener('click',e=>{
+            e.preventDefault();const sec=a.dataset.sec;
+            document.querySelectorAll(`#${navId} a`).forEach(x=>x.classList.remove('active'));
             a.classList.add('active');
-            document.querySelectorAll(`#${prefix}Dash .main-content > div`).forEach(d => d.classList.add('hidden'));
+            document.querySelectorAll(`#${prefix}Dash .main-content > div`).forEach(d=>d.classList.add('hidden'));
             document.getElementById(sec).classList.remove('hidden');
-            if (loader) loader(sec);
+            if(loader) loader(sec);
         });
     });
 }
@@ -1031,361 +1120,275 @@ function initSidebarNav(navId, prefix, loader) {
 // ════════════════════════════════════════
 // HERO SLIDER
 // ════════════════════════════════════════
-function setSlide(i) {
-    document.querySelectorAll('.hero-slide').forEach((s, idx) => s.classList.toggle('active', idx === i));
-    document.querySelectorAll('#heroDots .dot').forEach((d, idx) => d.classList.toggle('active', idx === i));
-    slideIdx = i;
+function setSlide(i){
+    document.querySelectorAll('.hero-slide').forEach((s,idx)=>s.classList.toggle('active',idx===i));
+    document.querySelectorAll('#heroDots .dot').forEach((d,idx)=>d.classList.toggle('active',idx===i));
+    slideIdx=i;
 }
-setInterval(() => setSlide((slideIdx + 1) % 3), 5000);
+setInterval(()=>setSlide((slideIdx+1)%3),5000);
 
 // ════════════════════════════════════════
-// ✅ FIX 3: AUTH — proper finally block so button ALWAYS resets
+// AUTH
 // ════════════════════════════════════════
-async function doLogin() {
-    const username = document.getElementById('loginUser').value.trim();
-    const password = document.getElementById('loginPass').value.trim();
-    if (!username || !password) { toast('Enter username and password', 'error'); return; }
-
-    const btn = document.getElementById('loginBtn');
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...';
+async function doLogin(){
+    const username=document.getElementById('loginUser').value.trim();
+    const password=document.getElementById('loginPass').value.trim();
+    if(!username||!password){toast('Enter username and password','error');return;}
+    const btn=document.getElementById('loginBtn');
+    btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Signing in...';
     showLoad('Signing in...');
-
-    try {
-        const raw = await fbGet('users'); // ✅ Now has 12s timeout
-        const all = toArr(raw);
-
-        if (all.length === 0) {
-            toast('No users found. Database may be empty — try again in a moment.', 'warning');
-            return;
-        }
-
-        const user = all.find(u =>
-            u.username === username &&
-            u.password === hashPwd(password) &&
-            u.role === selectedRole &&
-            u.status === 'active'
-        );
-
-        if (!user) {
-            toast('Wrong username, password, or role. Please check and try again.', 'error');
-            return;
-        }
-
-        CU = user;
-        sessionStorage.setItem('krac_u', JSON.stringify(CU));
-
-        if (user.first_login) {
-            openModal('firstLoginModal');
-        } else {
-            initDash(user.role);
-        }
-
-    } catch(e) {
-        const msg = e.message.includes('timed out')
-            ? 'Connection timed out. Check your internet or Firebase Realtime Database rules.'
-            : 'Login error: ' + e.message;
-        toast(msg, 'error');
-    } finally {
-        // ✅ FIX: This ALWAYS runs — button and loader always reset
-        hideLoad();
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
-    }
+    try{
+        const raw=await fbGet('users');const all=toArr(raw);
+        if(all.length===0){toast('No users found. Try again in a moment.','warning');return;}
+        const user=all.find(u=>u.username===username&&u.password===hashPwd(password)&&u.role===selectedRole&&u.status==='active');
+        if(!user){toast('Wrong username, password, or role.','error');return;}
+        CU=user;sessionStorage.setItem('krac_u',JSON.stringify(CU));
+        if(user.first_login){openModal('firstLoginModal');}else{initDash(user.role);}
+    }catch(e){
+        toast(e.message.includes('timed out')?'Connection timed out. Check internet or Firebase rules.':'Error: '+e.message,'error');
+    }finally{hideLoad();btn.disabled=false;btn.innerHTML='<i class="fas fa-sign-in-alt"></i> Sign In';}
 }
 
-async function doPasswordChange() {
-    const np = document.getElementById('newPwd').value;
-    const cp = document.getElementById('confirmPwd').value;
-    if (np.length < 6) { toast('Password must be at least 6 characters', 'error'); return; }
-    if (np !== cp) { toast('Passwords do not match', 'error'); return; }
+async function doPasswordChange(){
+    const np=document.getElementById('newPwd').value;
+    const cp=document.getElementById('confirmPwd').value;
+    if(np.length<6){toast('Password must be at least 6 characters','error');return;}
+    if(np!==cp){toast('Passwords do not match','error');return;}
     showLoad('Updating...');
-    try {
-        await fbUpdate(`users/${CU.id}`, { password: hashPwd(np), first_login: false });
-        CU.password = hashPwd(np); CU.first_login = false;
-        sessionStorage.setItem('krac_u', JSON.stringify(CU));
-        closeModal('firstLoginModal');
-        toast('Password updated!');
-        initDash(CU.role);
-    } catch(e) {
-        toast('Error: ' + e.message, 'error');
-    } finally {
-        hideLoad();
-    }
+    try{
+        await fbUpdate(`users/${CU.id}`,{password:hashPwd(np),first_login:false});
+        CU.password=hashPwd(np);CU.first_login=false;
+        sessionStorage.setItem('krac_u',JSON.stringify(CU));
+        closeModal('firstLoginModal');toast('Password updated!');initDash(CU.role);
+    }catch(e){toast('Error: '+e.message,'error');}
+    finally{hideLoad();}
 }
 
-function initDash(role) {
+function initDash(role){
     showDash(role);
-    if (role === 'student') initStudentDash();
-    else if (role === 'teacher') initTeacherDash();
+    if(role==='student') initStudentDash();
+    else if(role==='teacher') initTeacherDash();
     else initAdminDash();
 }
 
 // ════════════════════════════════════════
 // APPLICATION FORM
 // ════════════════════════════════════════
-async function doApply() {
-    const fn = document.getElementById('aFname').value.trim();
-    const ln = document.getElementById('aLname').value.trim();
-    const email = document.getElementById('aEmail').value.trim();
-    const phone = document.getElementById('aPhone').value.trim();
-    const idNum = document.getElementById('aIdNum').value.trim();
-    const course = document.getElementById('aCourse').value;
-    const grade = document.getElementById('aGrade').value;
-    const pwd = document.getElementById('aPwd').value;
-    const pwd2 = document.getElementById('aPwd2').value;
-    if (!fn||!ln||!email||!phone||!idNum||!course||!grade||!pwd) { toast('Please fill all required fields', 'error'); return; }
-    if (pwd.length < 6) { toast('Password must be at least 6 characters', 'error'); return; }
-    if (pwd !== pwd2) { toast('Passwords do not match', 'error'); return; }
-    const btn = document.getElementById('submitAppBtn');
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
-    try {
-        await fbPush('applications', {
-            name:`${fn} ${ln}`, firstName:fn, lastName:ln, email, phone,
-            id_number:idNum, course, grade,
-            school: document.getElementById('aSchool').value.trim(),
-            passwordHash: hashPwd(pwd),
-            status:'pending',
-            applied_on: new Date().toISOString().split('T')[0]
-        });
+async function doApply(){
+    const fn=document.getElementById('aFname').value.trim();
+    const ln=document.getElementById('aLname').value.trim();
+    const email=document.getElementById('aEmail').value.trim();
+    const phone=document.getElementById('aPhone').value.trim();
+    const idNum=document.getElementById('aIdNum').value.trim();
+    const course=document.getElementById('aCourse').value;
+    const grade=document.getElementById('aGrade').value;
+    const pwd=document.getElementById('aPwd').value;
+    const pwd2=document.getElementById('aPwd2').value;
+    if(!fn||!ln||!email||!phone||!idNum||!course||!grade||!pwd){toast('Please fill all required fields','error');return;}
+    if(pwd.length<6){toast('Password must be at least 6 characters','error');return;}
+    if(pwd!==pwd2){toast('Passwords do not match','error');return;}
+    const btn=document.getElementById('submitAppBtn');
+    btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Submitting...';
+    try{
+        await fbPush('applications',{name:`${fn} ${ln}`,firstName:fn,lastName:ln,email,phone,id_number:idNum,course,grade,school:document.getElementById('aSchool').value.trim(),passwordHash:hashPwd(pwd),status:'pending',applied_on:new Date().toISOString().split('T')[0]});
         closeModal('appModal');
-        ['aFname','aLname','aEmail','aPhone','aIdNum','aSchool','aPwd','aPwd2'].forEach(id => document.getElementById(id).value = '');
-        document.getElementById('aCourse').value = '';
-        document.getElementById('aGrade').value = '';
+        ['aFname','aLname','aEmail','aPhone','aIdNum','aSchool','aPwd','aPwd2'].forEach(id=>document.getElementById(id).value='');
+        document.getElementById('aCourse').value='';document.getElementById('aGrade').value='';
         toast('Application submitted! We will review and contact you.');
-    } catch(e) {
-        toast('Failed: ' + e.message, 'error');
-    } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Application';
-    }
+    }catch(e){toast('Failed: '+e.message,'error');}
+    finally{btn.disabled=false;btn.innerHTML='<i class="fas fa-paper-plane"></i> Submit Application';}
 }
 
 // ════════════════════════════════════════
 // STUDENT DASHBOARD
 // ════════════════════════════════════════
-async function initStudentDash() {
-    document.getElementById('sName').textContent = CU.name;
-    document.getElementById('sAvatar').textContent = CU.name.charAt(0);
+async function initStudentDash(){
+    document.getElementById('sName').textContent=CU.name;
+    document.getElementById('sAvatar').textContent=CU.name.charAt(0);
     showLoad('Loading...');
-    try {
-        const results = toArr(await fbGet('results')).filter(r => r.student_id === CU.id);
-        const gpa = results.length ? (results.reduce((s,r)=>s+(r.total/100)*4,0)/results.length).toFixed(2) : '0.00';
-        document.getElementById('sGPA').textContent = gpa;
-        document.getElementById('sBalance').textContent = `KES ${((CU.fees_total||0)-(CU.fees_paid||0)).toLocaleString()}`;
-        document.getElementById('sCourses').textContent = results.length;
-        document.getElementById('sRecentResults').innerHTML = results.slice(0,5).map(r =>
-            `<tr><td>${r.unit_name}</td><td>${r.unit_code}</td><td><strong>${r.grade}</strong></td>
-            <td><span class="badge ${r.total>=50?'badge-success':'badge-danger'}">${r.total>=50?'Pass':'Fail'}</span></td></tr>`
-        ).join('') || '<tr><td colspan="4" style="text-align:center;padding:18px;">No results yet</td></tr>';
-    } catch(e) {
-        toast('Error loading dashboard: '+e.message,'error');
-    } finally {
-        hideLoad();
-    }
-    initSidebarNav('studentNav', 'student', sec => {
-        if (sec==='sResults') loadSResults();
-        if (sec==='sExams') loadSExams();
-        if (sec==='sFees') loadSFees();
-        if (sec==='sProfile') loadSProfile();
+    try{
+        const results=toArr(await fbGet('results')).filter(r=>r.student_id===CU.id);
+        const gpa=results.length?(results.reduce((s,r)=>s+(r.total/100)*4,0)/results.length).toFixed(2):'0.00';
+        document.getElementById('sGPA').textContent=gpa;
+        document.getElementById('sBalance').textContent=`KES ${((CU.fees_total||0)-(CU.fees_paid||0)).toLocaleString()}`;
+        document.getElementById('sCourses').textContent=results.length;
+        document.getElementById('sRecentResults').innerHTML=results.slice(0,5).map(r=>`<tr><td>${r.unit_name}</td><td>${r.unit_code}</td><td><strong>${r.grade}</strong></td><td><span class="badge ${r.total>=50?'badge-success':'badge-danger'}">${r.total>=50?'Pass':'Fail'}</span></td></tr>`).join('')||'<tr><td colspan="4" style="text-align:center;padding:18px;">No results yet</td></tr>';
+    }catch(e){toast('Error: '+e.message,'error');}
+    finally{hideLoad();}
+    initSidebarNav('studentNav','student',sec=>{
+        if(sec==='sResults') loadSResults();
+        if(sec==='sExams') loadSExams();
+        if(sec==='sFees') loadSFees();
+        if(sec==='sProfile') loadSProfile();
     });
     document.querySelector('#studentNav a[data-sec="sOverview"]').classList.add('active');
 }
-async function loadSResults() {
-    const tbody = document.getElementById('sResultsBody');
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Loading...</td></tr>';
-    try {
-        const r = toArr(await fbGet('results')).filter(r => r.student_id === CU.id);
-        tbody.innerHTML = r.map(r=>`<tr><td>${r.unit_code}</td><td>${r.unit_name}</td><td>${r.cat}</td><td>${r.exam}</td><td><strong>${r.total}</strong></td><td><span class="badge badge-success">${r.grade}</span></td><td>${r.remarks}</td></tr>`).join('') || '<tr><td colspan="7" style="text-align:center;">No results yet</td></tr>';
-    } catch(e) { tbody.innerHTML = `<tr><td colspan="7" style="color:red;">${e.message}</td></tr>`; }
+async function loadSResults(){
+    const tbody=document.getElementById('sResultsBody');
+    tbody.innerHTML='<tr><td colspan="7" style="text-align:center;">Loading...</td></tr>';
+    try{
+        const r=toArr(await fbGet('results')).filter(r=>r.student_id===CU.id);
+        tbody.innerHTML=r.map(r=>`<tr><td>${r.unit_code}</td><td>${r.unit_name}</td><td>${r.cat}</td><td>${r.exam}</td><td><strong>${r.total}</strong></td><td><span class="badge badge-success">${r.grade}</span></td><td>${r.remarks}</td></tr>`).join('')||'<tr><td colspan="7" style="text-align:center;">No results yet</td></tr>';
+    }catch(e){tbody.innerHTML=`<tr><td colspan="7" style="color:red;">${e.message}</td></tr>`;}
 }
-async function loadSExams() {
-    const tbody = document.getElementById('sExamsBody');
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Loading...</td></tr>';
-    try {
-        const today = new Date().toISOString().split('T')[0];
-        const exams = toArr(await fbGet('exams')).filter(e=>e.date>=today).sort((a,b)=>a.date.localeCompare(b.date));
-        tbody.innerHTML = exams.map(e=>`<tr><td><strong>${e.subject}</strong></td><td>${e.examName}</td><td>${e.date}</td><td>${e.time}</td><td>${e.duration} mins</td><td>${e.venue||'-'}</td></tr>`).join('') || '<tr><td colspan="6" style="text-align:center;padding:18px;">No upcoming exams</td></tr>';
-    } catch(e) { tbody.innerHTML = `<tr><td colspan="6" style="color:red;">${e.message}</td></tr>`; }
+async function loadSExams(){
+    const tbody=document.getElementById('sExamsBody');
+    tbody.innerHTML='<tr><td colspan="6" style="text-align:center;">Loading...</td></tr>';
+    try{
+        const today=new Date().toISOString().split('T')[0];
+        const exams=toArr(await fbGet('exams')).filter(e=>e.date>=today).sort((a,b)=>a.date.localeCompare(b.date));
+        tbody.innerHTML=exams.map(e=>`<tr><td><strong>${e.subject}</strong></td><td>${e.examName}</td><td>${e.date}</td><td>${e.time}</td><td>${e.duration} mins</td><td>${e.venue||'-'}</td></tr>`).join('')||'<tr><td colspan="6" style="text-align:center;padding:18px;">No upcoming exams</td></tr>';
+    }catch(e){tbody.innerHTML=`<tr><td colspan="6" style="color:red;">${e.message}</td></tr>`;}
 }
-async function loadSFees() {
-    document.getElementById('fTotal').textContent = `KES ${(CU.fees_total||0).toLocaleString()}`;
-    document.getElementById('fPaid').textContent  = `KES ${(CU.fees_paid||0).toLocaleString()}`;
-    document.getElementById('fBal').textContent   = `KES ${((CU.fees_total||0)-(CU.fees_paid||0)).toLocaleString()}`;
-    const tbody = document.getElementById('sPayBody');
-    try {
-        const pays = toArr(await fbGet('payments')).filter(p=>p.student_id===CU.id);
-        tbody.innerHTML = pays.map(p=>`<tr><td>${p.date}</td><td>${p.reference||'-'}</td><td>KES ${(p.amount||0).toLocaleString()}</td><td>${p.method||'-'}</td><td><span class="badge badge-success">${p.status||'paid'}</span></td></tr>`).join('') || '<tr><td colspan="5" style="text-align:center;">No payments yet</td></tr>';
-    } catch(e) { tbody.innerHTML = `<tr><td colspan="5" style="color:red;">${e.message}</td></tr>`; }
+async function loadSFees(){
+    document.getElementById('fTotal').textContent=`KES ${(CU.fees_total||0).toLocaleString()}`;
+    document.getElementById('fPaid').textContent=`KES ${(CU.fees_paid||0).toLocaleString()}`;
+    document.getElementById('fBal').textContent=`KES ${((CU.fees_total||0)-(CU.fees_paid||0)).toLocaleString()}`;
+    const tbody=document.getElementById('sPayBody');
+    try{
+        const pays=toArr(await fbGet('payments')).filter(p=>p.student_id===CU.id);
+        tbody.innerHTML=pays.map(p=>`<tr><td>${p.date}</td><td>${p.reference||'-'}</td><td>KES ${(p.amount||0).toLocaleString()}</td><td>${p.method||'-'}</td><td><span class="badge badge-success">${p.status||'paid'}</span></td></tr>`).join('')||'<tr><td colspan="5" style="text-align:center;">No payments yet</td></tr>';
+    }catch(e){tbody.innerHTML=`<tr><td colspan="5" style="color:red;">${e.message}</td></tr>`;}
 }
-function loadSProfile() {
-    document.getElementById('pAdmNo').value  = CU.admission_number||'';
-    document.getElementById('pName').value   = CU.name||'';
-    document.getElementById('pCourse').value = CU.course||'';
-    document.getElementById('pEmail').value  = CU.email||'';
-    document.getElementById('pPhone').value  = CU.phone||'';
+function loadSProfile(){
+    document.getElementById('pAdmNo').value=CU.admission_number||'';
+    document.getElementById('pName').value=CU.name||'';
+    document.getElementById('pCourse').value=CU.course||'';
+    document.getElementById('pEmail').value=CU.email||'';
+    document.getElementById('pPhone').value=CU.phone||'';
 }
-async function saveProfile() {
-    const email = document.getElementById('pEmail').value.trim();
-    const phone = document.getElementById('pPhone').value.trim();
-    const np = document.getElementById('pPwd').value;
+async function saveProfile(){
+    const email=document.getElementById('pEmail').value.trim();
+    const phone=document.getElementById('pPhone').value.trim();
+    const np=document.getElementById('pPwd').value;
     showLoad('Saving...');
-    try {
-        const upd = { email, phone };
-        if (np && np.length >= 6) upd.password = hashPwd(np);
-        await fbUpdate(`users/${CU.id}`, upd);
-        Object.assign(CU, upd); sessionStorage.setItem('krac_u', JSON.stringify(CU));
-        toast('Profile updated');
-        document.getElementById('pPwd').value = '';
-    } catch(e) {
-        toast('Error: '+e.message,'error');
-    } finally {
-        hideLoad();
-    }
+    try{
+        const upd={email,phone};
+        if(np&&np.length>=6) upd.password=hashPwd(np);
+        await fbUpdate(`users/${CU.id}`,upd);
+        Object.assign(CU,upd);sessionStorage.setItem('krac_u',JSON.stringify(CU));
+        toast('Profile updated');document.getElementById('pPwd').value='';
+    }catch(e){toast('Error: '+e.message,'error');}
+    finally{hideLoad();}
 }
 
 // ════════════════════════════════════════
 // TEACHER DASHBOARD
 // ════════════════════════════════════════
-async function initTeacherDash() {
-    document.getElementById('tName').textContent = CU.name;
-    document.getElementById('tAvatar').textContent = CU.name.charAt(0);
+async function initTeacherDash(){
+    document.getElementById('tName').textContent=CU.name;
+    document.getElementById('tAvatar').textContent=CU.name.charAt(0);
     showLoad('Loading...');
-    try {
-        const [uSnap, eSnap, aSnap] = await Promise.all([fbGet('users'), fbGet('exams'), fbGet('applications')]);
-        const studs = toArr(uSnap).filter(u=>u.role==='student');
-        const pend = toArr(aSnap).filter(a=>a.status==='pending');
-        document.getElementById('tStudCount').textContent = studs.length;
-        document.getElementById('tExamCount').textContent = toArr(eSnap).length;
-        document.getElementById('tFeesPaid').textContent  = `KES ${studs.reduce((s,u)=>s+(u.fees_paid||0),0).toLocaleString()}`;
-        document.getElementById('tPendAdm').textContent   = pend.length;
+    try{
+        const [uSnap,eSnap,aSnap]=await Promise.all([fbGet('users'),fbGet('exams'),fbGet('applications')]);
+        const studs=toArr(uSnap).filter(u=>u.role==='student');
+        const pend=toArr(aSnap).filter(a=>a.status==='pending');
+        document.getElementById('tStudCount').textContent=studs.length;
+        document.getElementById('tExamCount').textContent=toArr(eSnap).length;
+        document.getElementById('tFeesPaid').textContent=`KES ${studs.reduce((s,u)=>s+(u.fees_paid||0),0).toLocaleString()}`;
+        document.getElementById('tPendAdm').textContent=pend.length;
         setBadges(pend.length);
-    } catch(e) {
-        toast('Error: '+e.message,'error');
-    } finally {
-        hideLoad();
-    }
-    initSidebarNav('teacherNav', 'teacher', sec => {
-        if (sec==='tStudents') loadTStudents();
-        if (sec==='tResults') loadTResults();
-        if (sec==='tFees') loadTFees();
-        if (sec==='tExams') loadTExams();
-        if (sec==='tAdmissions') loadAdmissions('t');
+    }catch(e){toast('Error: '+e.message,'error');}
+    finally{hideLoad();}
+    initSidebarNav('teacherNav','teacher',sec=>{
+        if(sec==='tStudents') loadTStudents();
+        if(sec==='tResults') loadTResults();
+        if(sec==='tFees') loadTFees();
+        if(sec==='tExams') loadTExams();
+        if(sec==='tAdmissions') loadAdmissions('t');
+        if(sec==='tAnnouncements') loadAnnouncements();
     });
     document.querySelector('#teacherNav a[data-sec="tOverview"]').classList.add('active');
-    document.getElementById('tAdmCard').onclick = () => {
-        document.querySelector('#teacherNav a[data-sec="tAdmissions"]').click();
-    };
+    document.getElementById('tAdmCard').onclick=()=>document.querySelector('#teacherNav a[data-sec="tAdmissions"]').click();
 }
-async function loadTStudents() {
-    const tbody = document.getElementById('tStudBody');
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Loading...</td></tr>';
-    try {
-        const studs = toArr(await fbGet('users')).filter(u=>u.role==='student');
-        tbody.innerHTML = studs.map(s=>`<tr>
-            <td><strong>${s.admission_number}</strong></td><td>${s.name}</td><td>${s.course||'-'}</td><td>${s.phone||'-'}</td>
-            <td><span class="badge ${s.status==='active'?'badge-success':'badge-danger'}">${s.status}</span></td>
-            <td class="tbl-actions"><button class="del" data-del="${s.id}"><i class="fas fa-trash"></i></button></td></tr>`).join('');
-        tbody.querySelectorAll('[data-del]').forEach(btn => btn.onclick = () => delStudent(btn.dataset.del));
-    } catch(e) { tbody.innerHTML = `<tr><td colspan="6" style="color:red;">${e.message}</td></tr>`; }
+async function loadTStudents(){
+    const tbody=document.getElementById('tStudBody');
+    tbody.innerHTML='<tr><td colspan="6" style="text-align:center;">Loading...</td></tr>';
+    try{
+        const studs=toArr(await fbGet('users')).filter(u=>u.role==='student');
+        tbody.innerHTML=studs.map(s=>`<tr><td><strong>${s.admission_number}</strong></td><td>${s.name}</td><td>${s.course||'-'}</td><td>${s.phone||'-'}</td><td><span class="badge ${s.status==='active'?'badge-success':'badge-danger'}">${s.status}</span></td><td class="tbl-actions"><button class="del" data-del="${s.id}"><i class="fas fa-trash"></i></button></td></tr>`).join('');
+        tbody.querySelectorAll('[data-del]').forEach(btn=>btn.onclick=()=>delStudent(btn.dataset.del));
+    }catch(e){tbody.innerHTML=`<tr><td colspan="6" style="color:red;">${e.message}</td></tr>`;}
 }
-function filterStudents() {
-    const q = document.getElementById('studSearch').value.toLowerCase();
-    document.querySelectorAll('#tStudBody tr').forEach(r => r.style.display = r.textContent.toLowerCase().includes(q)?'':'none');
+function filterStudents(){const q=document.getElementById('studSearch').value.toLowerCase();document.querySelectorAll('#tStudBody tr').forEach(r=>r.style.display=r.textContent.toLowerCase().includes(q)?'':'none');}
+async function openAddStudent(){
+    const settings=await fbGet('settings')||{prefix:'KRAC',year:2026};
+    const users=toArr(await fbGet('users')).filter(u=>u.role==='student'&&u.admission_number);
+    const max=users.reduce((m,u)=>Math.max(m,parseInt(u.admission_number.replace(/\D/g,''))||0),(settings.year||2026)*1000);
+    document.getElementById('nAdmNo').value=`${settings.prefix||'KRAC'}${max+1}`;
+    ['nFname','nLname','nEmail','nPhone'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('nCourse').value='';openModal('addStudModal');
 }
-async function openAddStudent() {
-    const settings = await fbGet('settings') || { prefix:'KRAC', year:2026 };
-    const users = toArr(await fbGet('users')).filter(u=>u.role==='student'&&u.admission_number);
-    const max = users.reduce((m,u)=>Math.max(m, parseInt(u.admission_number.replace(/\D/g,''))||0), (settings.year||2026)*1000);
-    document.getElementById('nAdmNo').value = `${settings.prefix||'KRAC'}${max+1}`;
-    ['nFname','nLname','nEmail','nPhone'].forEach(id => document.getElementById(id).value = '');
-    document.getElementById('nCourse').value = '';
-    openModal('addStudModal');
-}
-async function saveStudent() {
-    const fn = document.getElementById('nFname').value.trim();
-    const ln = document.getElementById('nLname').value.trim();
-    const course = document.getElementById('nCourse').value;
-    const admNo = document.getElementById('nAdmNo').value;
-    if (!fn||!ln||!course) { toast('Fill required fields','error'); return; }
-    const settings = await fbGet('settings') || { defaultPwd:'student123' };
+async function saveStudent(){
+    const fn=document.getElementById('nFname').value.trim();
+    const ln=document.getElementById('nLname').value.trim();
+    const course=document.getElementById('nCourse').value;
+    const admNo=document.getElementById('nAdmNo').value;
+    if(!fn||!ln||!course){toast('Fill required fields','error');return;}
+    const settings=await fbGet('settings')||{defaultPwd:'student123'};
     showLoad('Adding student...');
-    try {
-        await fbPush('users', { username:admNo, password:hashPwd(settings.defaultPwd||'student123'), role:'student', name:`${fn} ${ln}`, email:document.getElementById('nEmail').value.trim(), phone:document.getElementById('nPhone').value.trim(), course, admission_number:admNo, fees_total:45000, fees_paid:0, first_login:true, status:'active', enrollment_date:new Date().toISOString().split('T')[0] });
-        closeModal('addStudModal');
-        toast(`Student added. Adm No: ${admNo}`); loadTStudents();
-    } catch(e) {
-        toast('Error: '+e.message,'error');
-    } finally {
-        hideLoad();
-    }
+    try{
+        await fbPush('users',{username:admNo,password:hashPwd(settings.defaultPwd||'student123'),role:'student',name:`${fn} ${ln}`,email:document.getElementById('nEmail').value.trim(),phone:document.getElementById('nPhone').value.trim(),course,admission_number:admNo,fees_total:45000,fees_paid:0,first_login:true,status:'active',enrollment_date:new Date().toISOString().split('T')[0]});
+        closeModal('addStudModal');toast(`Student added. Adm No: ${admNo}`);loadTStudents();
+    }catch(e){toast('Error: '+e.message,'error');}
+    finally{hideLoad();}
 }
-async function delStudent(id) {
-    if (!confirm('Delete this student?')) return;
+async function delStudent(id){
+    if(!confirm('Delete this student?')) return;
     showLoad('Deleting...');
-    try { await fbDelete(`users/${id}`); toast('Deleted'); loadTStudents(); }
-    catch(e) { toast('Error: '+e.message,'error'); }
-    finally { hideLoad(); }
+    try{await fbDelete(`users/${id}`);toast('Deleted');loadTStudents();}
+    catch(e){toast('Error: '+e.message,'error');}
+    finally{hideLoad();}
 }
-async function loadTResults() {
-    const tbody = document.getElementById('tResultsBody');
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Loading...</td></tr>';
-    try {
-        const [uSnap, rSnap] = await Promise.all([fbGet('users'), fbGet('results')]);
-        const studs = toArr(uSnap).filter(u=>u.role==='student');
-        const results = toArr(rSnap);
-        let html = '';
-        studs.forEach(s => UNITS.forEach(u => {
-            const ex = results.find(r=>r.student_id===s.id&&r.unit_id===u.id);
-            html += `<tr><td>${s.name}</td><td>${u.name}</td><td>${ex?.cat||'-'}</td><td>${ex?.exam||'-'}</td><td>${ex?.total||'-'}</td>
-                <td><button class="btn btn-sm btn-primary" data-sid="${s.id}" data-uid="${u.id}" data-sn="${s.name}" data-un="${u.name}"><i class="fas fa-edit"></i> Edit</button></td></tr>`;
+async function loadTResults(){
+    const tbody=document.getElementById('tResultsBody');
+    tbody.innerHTML='<tr><td colspan="6" style="text-align:center;">Loading...</td></tr>';
+    try{
+        const [uSnap,rSnap]=await Promise.all([fbGet('users'),fbGet('results')]);
+        const studs=toArr(uSnap).filter(u=>u.role==='student');
+        const results=toArr(rSnap);
+        let html='';
+        studs.forEach(s=>UNITS.forEach(u=>{
+            const ex=results.find(r=>r.student_id===s.id&&r.unit_id===u.id);
+            html+=`<tr><td>${s.name}</td><td>${u.name}</td><td>${ex?.cat||'-'}</td><td>${ex?.exam||'-'}</td><td>${ex?.total||'-'}</td><td><button class="btn btn-sm btn-primary" data-sid="${s.id}" data-uid="${u.id}" data-sn="${s.name}" data-un="${u.name}"><i class="fas fa-edit"></i> Edit</button></td></tr>`;
         }));
-        tbody.innerHTML = html || '<tr><td colspan="6" style="text-align:center;">No students</td></tr>';
-        tbody.querySelectorAll('button[data-sid]').forEach(btn => btn.onclick = () => openEditResult(btn.dataset.sid, btn.dataset.uid, btn.dataset.sn, btn.dataset.un));
-    } catch(e) { tbody.innerHTML = `<tr><td colspan="6" style="color:red;">${e.message}</td></tr>`; }
+        tbody.innerHTML=html||'<tr><td colspan="6" style="text-align:center;">No students</td></tr>';
+        tbody.querySelectorAll('button[data-sid]').forEach(btn=>btn.onclick=()=>openEditResult(btn.dataset.sid,btn.dataset.uid,btn.dataset.sn,btn.dataset.un));
+    }catch(e){tbody.innerHTML=`<tr><td colspan="6" style="color:red;">${e.message}</td></tr>`;}
 }
-async function openEditResult(sId, uId, sName, uName) {
-    const results = toArr(await fbGet('results'));
-    const ex = results.find(r=>r.student_id===sId&&r.unit_id===uId);
-    document.getElementById('rStudId').value  = sId;
-    document.getElementById('rUnitId').value  = uId;
-    document.getElementById('rStudName').value = sName;
-    document.getElementById('rUnitName').value = uName;
-    document.getElementById('rCat').value  = ex?.cat||'';
-    document.getElementById('rExam').value = ex?.exam||'';
+async function openEditResult(sId,uId,sName,uName){
+    const results=toArr(await fbGet('results'));
+    const ex=results.find(r=>r.student_id===sId&&r.unit_id===uId);
+    document.getElementById('rStudId').value=sId;document.getElementById('rUnitId').value=uId;
+    document.getElementById('rStudName').value=sName;document.getElementById('rUnitName').value=uName;
+    document.getElementById('rCat').value=ex?.cat||'';document.getElementById('rExam').value=ex?.exam||'';
     openModal('resultModal');
 }
-async function saveResult() {
-    const sId = document.getElementById('rStudId').value;
-    const uId = document.getElementById('rUnitId').value;
-    const uName = document.getElementById('rUnitName').value;
-    const cat  = parseInt(document.getElementById('rCat').value)||0;
-    const exam = parseInt(document.getElementById('rExam').value)||0;
-    const total = cat + exam;
-    let grade='F'; if(total>=70)grade='A'; else if(total>=60)grade='B'; else if(total>=50)grade='C'; else if(total>=40)grade='D';
+async function saveResult(){
+    const sId=document.getElementById('rStudId').value;const uId=document.getElementById('rUnitId').value;
+    const uName=document.getElementById('rUnitName').value;
+    const cat=parseInt(document.getElementById('rCat').value)||0;
+    const exam=parseInt(document.getElementById('rExam').value)||0;
+    const total=cat+exam;
+    let grade='F';if(total>=70)grade='A';else if(total>=60)grade='B';else if(total>=50)grade='C';else if(total>=40)grade='D';
     showLoad('Saving...');
-    try {
-        await fbSet(`results/${sId}_${uId}`, { student_id:sId, unit_id:uId, unit_code:uId, unit_name:uName, cat, exam, total, grade, remarks:total>=50?'Pass':'Fail' });
-        closeModal('resultModal'); toast('Result updated'); loadTResults();
-    } catch(e) {
-        toast('Error: '+e.message,'error');
-    } finally {
-        hideLoad();
-    }
+    try{
+        await fbSet(`results/${sId}_${uId}`,{student_id:sId,unit_id:uId,unit_code:uId,unit_name:uName,cat,exam,total,grade,remarks:total>=50?'Pass':'Fail'});
+        closeModal('resultModal');toast('Result updated');loadTResults();
+    }catch(e){toast('Error: '+e.message,'error');}
+    finally{hideLoad();}
 }
-async function loadTFees() {
-    const tbody = document.getElementById('tFeesBody');
-    try {
-        const studs = toArr(await fbGet('users')).filter(u=>u.role==='student');
-        const totExp  = studs.reduce((s,u)=>s+(u.fees_total||0),0);
-        const totPaid = studs.reduce((s,u)=>s+(u.fees_paid||0),0);
-        document.getElementById('tFeeExp').textContent = `KES ${totExp.toLocaleString()}`;
-        document.getElementById('tFeeCol').textContent = `KES ${totPaid.toLocaleString()}`;
-        document.getElementById('tFeeOut').textContent = `KES ${(totExp-totPaid).toLocaleString()}`;
-        tbody.innerHTML = studs.map(s => {
-            const bal=(s.fees_total||0)-(s.fees_paid||0);
-            const pct=s.fees_total?Math.round(s.fees_paid/s.fees_total*100):0;
+async function loadTFees(){
+    const tbody=document.getElementById('tFeesBody');
+    try{
+        const studs=toArr(await fbGet('users')).filter(u=>u.role==='student');
+        const totExp=studs.reduce((s,u)=>s+(u.fees_total||0),0);
+        const totPaid=studs.reduce((s,u)=>s+(u.fees_paid||0),0);
+        document.getElementById('tFeeExp').textContent=`KES ${totExp.toLocaleString()}`;
+        document.getElementById('tFeeCol').textContent=`KES ${totPaid.toLocaleString()}`;
+        document.getElementById('tFeeOut').textContent=`KES ${(totExp-totPaid).toLocaleString()}`;
+        tbody.innerHTML=studs.map(s=>{
+            const bal=(s.fees_total||0)-(s.fees_paid||0);const pct=s.fees_total?Math.round(s.fees_paid/s.fees_total*100):0;
             return `<tr><td><strong>${s.admission_number}</strong></td><td>${s.name}</td><td>${s.course||'-'}</td>
                 <td>KES ${(s.fees_total||0).toLocaleString()}</td>
                 <td>KES ${(s.fees_paid||0).toLocaleString()}<div style="background:var(--border);height:4px;border-radius:4px;margin-top:4px;"><div style="background:var(--success);height:4px;border-radius:4px;width:${pct}%"></div></div></td>
@@ -1393,36 +1396,29 @@ async function loadTFees() {
                 <td><span class="badge ${bal<=0?'badge-success':pct>=50?'badge-warning':'badge-danger'}">${bal<=0?'Cleared':pct>=50?'Partial':'Low'}</span></td>
                 <td><button class="btn btn-sm btn-primary" data-fid="${s.id}" data-fn="${s.name}" data-ft="${s.fees_total||0}" data-fp="${s.fees_paid||0}"><i class="fas fa-edit"></i></button></td></tr>`;
         }).join('');
-        tbody.querySelectorAll('button[data-fid]').forEach(btn => btn.onclick = () => {
-            document.getElementById('feesStudId').value   = btn.dataset.fid;
-            document.getElementById('feesStudName').value = btn.dataset.fn;
-            document.getElementById('feesTotal').value    = btn.dataset.ft;
-            document.getElementById('feesPaid').value     = btn.dataset.fp;
+        tbody.querySelectorAll('button[data-fid]').forEach(btn=>btn.onclick=()=>{
+            document.getElementById('feesStudId').value=btn.dataset.fid;
+            document.getElementById('feesStudName').value=btn.dataset.fn;
+            document.getElementById('feesTotal').value=btn.dataset.ft;
+            document.getElementById('feesPaid').value=btn.dataset.fp;
             openModal('feesModal');
         });
-    } catch(e) { tbody.innerHTML = `<tr><td colspan="8" style="color:red;">${e.message}</td></tr>`; }
+    }catch(e){tbody.innerHTML=`<tr><td colspan="8" style="color:red;">${e.message}</td></tr>`;}
 }
-function filterFees(q) { document.querySelectorAll('#tFeesBody tr').forEach(r=>r.style.display=r.textContent.toLowerCase().includes(q.toLowerCase())?'':'none'); }
-async function saveFees() {
-    const id    = document.getElementById('feesStudId').value;
-    const total = parseInt(document.getElementById('feesTotal').value)||0;
-    const paid  = parseInt(document.getElementById('feesPaid').value)||0;
+function filterFees(q){document.querySelectorAll('#tFeesBody tr').forEach(r=>r.style.display=r.textContent.toLowerCase().includes(q.toLowerCase())?'':'none');}
+async function saveFees(){
+    const id=document.getElementById('feesStudId').value;
+    const total=parseInt(document.getElementById('feesTotal').value)||0;
+    const paid=parseInt(document.getElementById('feesPaid').value)||0;
     showLoad('Saving...');
-    try {
-        await fbUpdate(`users/${id}`, { fees_total:total, fees_paid:paid });
-        closeModal('feesModal'); toast('Fees updated'); loadTFees();
-    } catch(e) {
-        toast('Error: '+e.message,'error');
-    } finally {
-        hideLoad();
-    }
+    try{await fbUpdate(`users/${id}`,{fees_total:total,fees_paid:paid});closeModal('feesModal');toast('Fees updated');loadTFees();}
+    catch(e){toast('Error: '+e.message,'error');}
+    finally{hideLoad();}
 }
-function addExamRow() {
-    examRowN++;
-    const n = examRowN;
-    const row = document.createElement('div');
-    row.className = 'exam-row'; row.id = `er${n}`;
-    row.innerHTML = `<button class="rm" onclick="document.getElementById('er${n}').remove()"><i class="fas fa-times"></i></button>
+function addExamRow(){
+    examRowN++;const n=examRowN;
+    const row=document.createElement('div');row.className='exam-row';row.id=`er${n}`;
+    row.innerHTML=`<button class="rm" onclick="document.getElementById('er${n}').remove()"><i class="fas fa-times"></i></button>
         <strong style="color:var(--primary);display:block;margin-bottom:10px;">Exam #${n}</strong>
         <div class="form-row">
             <div class="form-group"><label>Subject *</label><input type="text" class="eSubj" placeholder="e.g. Livestock Management"></div>
@@ -1436,75 +1432,66 @@ function addExamRow() {
         <div class="form-group"><label>Venue</label><input type="text" class="eVenue" placeholder="e.g. Main Hall"></div>`;
     document.getElementById('examRows').appendChild(row);
 }
-async function saveExams() {
-    const rows = document.querySelectorAll('.exam-row');
-    if (!rows.length) { toast('Add at least one exam','error'); return; }
-    const exams=[]; let valid=true;
+async function saveExams(){
+    const rows=document.querySelectorAll('.exam-row');
+    if(!rows.length){toast('Add at least one exam','error');return;}
+    const exams=[];let valid=true;
     rows.forEach(row=>{
-        const s=row.querySelector('.eSubj').value.trim();
-        const n=row.querySelector('.eName').value.trim();
-        const d=row.querySelector('.eDate').value;
-        const t=row.querySelector('.eTime').value;
+        const s=row.querySelector('.eSubj').value.trim();const n=row.querySelector('.eName').value.trim();
+        const d=row.querySelector('.eDate').value;const t=row.querySelector('.eTime').value;
         if(!s||!n||!d||!t){valid=false;return;}
         exams.push({subject:s,examName:n,date:d,time:t,duration:row.querySelector('.eDur').value||120,venue:row.querySelector('.eVenue').value.trim(),createdBy:CU.name,createdAt:new Date().toISOString()});
     });
-    if (!valid) { toast('Fill all required fields','error'); return; }
+    if(!valid){toast('Fill all required fields','error');return;}
     showLoad('Saving...');
-    try {
-        for(const e of exams) await fbPush('exams',e);
-        closeModal('examModal'); toast(`${exams.length} exam(s) saved!`); loadTExams();
-    } catch(e) {
-        toast('Error: '+e.message,'error');
-    } finally {
-        hideLoad();
-    }
+    try{for(const e of exams) await fbPush('exams',e);closeModal('examModal');toast(`${exams.length} exam(s) saved!`);loadTExams();}
+    catch(e){toast('Error: '+e.message,'error');}
+    finally{hideLoad();}
 }
-async function loadTExams() {
-    const tbody = document.getElementById('tExamBody');
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Loading...</td></tr>';
-    try {
-        const exams = toArr(await fbGet('exams'));
-        tbody.innerHTML = exams.map(e=>`<tr><td><strong>${e.subject}</strong></td><td>${e.examName}</td><td>${e.date}</td><td>${e.time}</td><td>${e.duration} mins</td><td>${e.venue||'-'}</td>
-            <td class="tbl-actions"><button class="del" data-eid="${e.id}"><i class="fas fa-trash"></i></button></td></tr>`).join('') || '<tr><td colspan="7" style="text-align:center;padding:18px;">No exams yet</td></tr>';
+async function loadTExams(){
+    const tbody=document.getElementById('tExamBody');
+    tbody.innerHTML='<tr><td colspan="7" style="text-align:center;">Loading...</td></tr>';
+    try{
+        const exams=toArr(await fbGet('exams'));
+        tbody.innerHTML=exams.map(e=>`<tr><td><strong>${e.subject}</strong></td><td>${e.examName}</td><td>${e.date}</td><td>${e.time}</td><td>${e.duration} mins</td><td>${e.venue||'-'}</td><td class="tbl-actions"><button class="del" data-eid="${e.id}"><i class="fas fa-trash"></i></button></td></tr>`).join('')||'<tr><td colspan="7" style="text-align:center;padding:18px;">No exams yet</td></tr>';
         tbody.querySelectorAll('[data-eid]').forEach(btn=>btn.onclick=()=>delExam(btn.dataset.eid));
-    } catch(e) { tbody.innerHTML = `<tr><td colspan="7" style="color:red;">${e.message}</td></tr>`; }
+    }catch(e){tbody.innerHTML=`<tr><td colspan="7" style="color:red;">${e.message}</td></tr>`;}
 }
-function filterExams(q) { document.querySelectorAll('#tExamBody tr').forEach(r=>r.style.display=r.textContent.toLowerCase().includes(q.toLowerCase())?'':'none'); }
-async function delExam(id) {
-    if (!confirm('Delete this exam?')) return;
+function filterExams(q){document.querySelectorAll('#tExamBody tr').forEach(r=>r.style.display=r.textContent.toLowerCase().includes(q.toLowerCase())?'':'none');}
+async function delExam(id){
+    if(!confirm('Delete this exam?')) return;
     showLoad('Deleting...');
-    try { await fbDelete(`exams/${id}`); toast('Deleted'); loadTExams(); }
-    catch(e) { toast('Error: '+e.message,'error'); }
-    finally { hideLoad(); }
+    try{await fbDelete(`exams/${id}`);toast('Deleted');loadTExams();}
+    catch(e){toast('Error: '+e.message,'error');}
+    finally{hideLoad();}
 }
 
 // ════════════════════════════════════════
 // ADMISSIONS
 // ════════════════════════════════════════
-function setBadges(n) {
-    ['tAdmBadge','aAdmBadge'].forEach(id=>{ const el=document.getElementById(id); if(el){ el.textContent=n; el.style.display=n>0?'inline-block':'none'; } });
-    const tc=document.getElementById('tPendCount'); if(tc) tc.textContent=`${n} Pending`;
-    const ac=document.getElementById('aPendCount'); if(ac) ac.textContent=`${n} Pending`;
+function setBadges(n){
+    ['tAdmBadge','aAdmBadge'].forEach(id=>{const el=document.getElementById(id);if(el){el.textContent=n;el.style.display=n>0?'inline-block':'none';}});
+    const tc=document.getElementById('tPendCount');if(tc)tc.textContent=`${n} Pending`;
+    const ac=document.getElementById('aPendCount');if(ac)ac.textContent=`${n} Pending`;
 }
-async function loadAdmissions(prefix) {
-    const tbody = document.getElementById(`${prefix}AdmBody`);
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Loading...</td></tr>';
-    try {
-        const apps = toArr(await fbGet('applications'));
+async function loadAdmissions(prefix){
+    const tbody=document.getElementById(`${prefix}AdmBody`);
+    tbody.innerHTML='<tr><td colspan="7" style="text-align:center;">Loading...</td></tr>';
+    try{
+        const apps=toArr(await fbGet('applications'));
         setBadges(apps.filter(a=>a.status==='pending').length);
-        tbody.innerHTML = apps.map(app=>`<tr style="${app.status==='pending'?'background:rgba(251,140,0,0.05);':''}">
+        tbody.innerHTML=apps.map(app=>`<tr style="${app.status==='pending'?'background:rgba(251,140,0,0.05);':''}">
             <td><strong>${app.name}</strong></td><td>${app.email}</td><td>${app.phone}</td>
             <td>${app.course}</td><td>${app.grade||'-'}</td><td>${app.applied_on}</td>
             <td>${app.status==='pending'?`<button class="btn btn-sm btn-primary" data-aid="${app.id}"><i class="fas fa-eye"></i> Review</button>`:`<span class="badge ${app.status==='approved'?'badge-success':'badge-danger'}">${app.status}</span>`}</td></tr>`
-        ).join('') || '<tr><td colspan="7" style="text-align:center;padding:18px;">No applications yet</td></tr>';
+        ).join('')||'<tr><td colspan="7" style="text-align:center;padding:18px;">No applications yet</td></tr>';
         tbody.querySelectorAll('[data-aid]').forEach(btn=>btn.onclick=()=>openReview(btn.dataset.aid));
-    } catch(e) { tbody.innerHTML = `<tr><td colspan="7" style="color:red;">${e.message}</td></tr>`; }
+    }catch(e){tbody.innerHTML=`<tr><td colspan="7" style="color:red;">${e.message}</td></tr>`;}
 }
-async function openReview(appId) {
-    const apps = toArr(await fbGet('applications'));
-    reviewApp = apps.find(a=>a.id===appId);
-    if (!reviewApp) return;
-    document.getElementById('reviewBody').innerHTML = `
+async function openReview(appId){
+    const apps=toArr(await fbGet('applications'));
+    reviewApp=apps.find(a=>a.id===appId);if(!reviewApp) return;
+    document.getElementById('reviewBody').innerHTML=`
         <div style="font-size:0.95rem;"><h3 style="color:var(--primary);margin-bottom:10px;">${reviewApp.name}</h3>
         <p style="color:var(--text-light);margin-bottom:14px;">Applied on ${reviewApp.applied_on}</p>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
@@ -1514,170 +1501,260 @@ async function openReview(appId) {
         </div></div>`;
     openModal('reviewModal');
 }
-async function doApprove() {
-    if (!reviewApp) return;
+async function doApprove(){
+    if(!reviewApp) return;
     showLoad('Approving...');
-    try {
-        const settings = await fbGet('settings') || { prefix:'KRAC', year:2026 };
-        const users = toArr(await fbGet('users')).filter(u=>u.role==='student'&&u.admission_number);
-        const max = users.reduce((m,u)=>Math.max(m,parseInt(u.admission_number.replace(/\D/g,''))||0),(settings.year||2026)*1000);
-        const admNo = `${settings.prefix||'KRAC'}${max+1}`;
-        await fbPush('users', { username:admNo, password:reviewApp.passwordHash, role:'student', name:reviewApp.name, email:reviewApp.email, phone:reviewApp.phone, course:reviewApp.course, admission_number:admNo, fees_total:45000, fees_paid:0, first_login:false, status:'active', enrollment_date:new Date().toISOString().split('T')[0] });
-        await fbUpdate(`applications/${reviewApp.id}`, { status:'approved', admission_number:admNo });
-        closeModal('reviewModal'); reviewApp=null;
-        toast(`Approved! ${admNo} enrolled`); loadAdmissions('t'); loadAdmissions('a');
-        const apps = toArr(await fbGet('applications')); setBadges(apps.filter(a=>a.status==='pending').length);
-    } catch(e) {
-        toast('Error: '+e.message,'error');
-    } finally {
-        hideLoad();
-    }
+    try{
+        const settings=await fbGet('settings')||{prefix:'KRAC',year:2026};
+        const users=toArr(await fbGet('users')).filter(u=>u.role==='student'&&u.admission_number);
+        const max=users.reduce((m,u)=>Math.max(m,parseInt(u.admission_number.replace(/\D/g,''))||0),(settings.year||2026)*1000);
+        const admNo=`${settings.prefix||'KRAC'}${max+1}`;
+        await fbPush('users',{username:admNo,password:reviewApp.passwordHash,role:'student',name:reviewApp.name,email:reviewApp.email,phone:reviewApp.phone,course:reviewApp.course,admission_number:admNo,fees_total:45000,fees_paid:0,first_login:false,status:'active',enrollment_date:new Date().toISOString().split('T')[0]});
+        await fbUpdate(`applications/${reviewApp.id}`,{status:'approved',admission_number:admNo});
+        closeModal('reviewModal');reviewApp=null;
+        toast(`Approved! ${admNo} enrolled`);loadAdmissions('t');loadAdmissions('a');
+        const apps=toArr(await fbGet('applications'));setBadges(apps.filter(a=>a.status==='pending').length);
+    }catch(e){toast('Error: '+e.message,'error');}
+    finally{hideLoad();}
 }
-async function doReject() {
-    if (!reviewApp) return;
+async function doReject(){
+    if(!reviewApp) return;
     showLoad('Rejecting...');
-    try {
-        await fbUpdate(`applications/${reviewApp.id}`, { status:'rejected' });
-        closeModal('reviewModal'); reviewApp=null;
-        toast('Application rejected','warning'); loadAdmissions('t'); loadAdmissions('a');
-        const apps = toArr(await fbGet('applications')); setBadges(apps.filter(a=>a.status==='pending').length);
-    } catch(e) {
-        toast('Error: '+e.message,'error');
-    } finally {
-        hideLoad();
-    }
+    try{
+        await fbUpdate(`applications/${reviewApp.id}`,{status:'rejected'});
+        closeModal('reviewModal');reviewApp=null;
+        toast('Application rejected','warning');loadAdmissions('t');loadAdmissions('a');
+        const apps=toArr(await fbGet('applications'));setBadges(apps.filter(a=>a.status==='pending').length);
+    }catch(e){toast('Error: '+e.message,'error');}
+    finally{hideLoad();}
 }
 
 // ════════════════════════════════════════
 // ADMIN DASHBOARD
 // ════════════════════════════════════════
-async function initAdminDash() {
-    document.getElementById('aName').textContent = CU.name;
+async function initAdminDash(){
+    document.getElementById('aName').textContent=CU.name;
     showLoad('Loading...');
-    try {
-        const [uSnap, aSnap] = await Promise.all([fbGet('users'), fbGet('applications')]);
-        const users = toArr(uSnap);
-        const studs = users.filter(u=>u.role==='student');
-        document.getElementById('aTotalStud').textContent  = studs.length;
-        document.getElementById('aTotalTeach').textContent = users.filter(u=>u.role==='teacher').length;
-        document.getElementById('aRevenue').textContent    = `KES ${studs.reduce((s,u)=>s+(u.fees_paid||0),0).toLocaleString()}`;
-        const pend = toArr(aSnap).filter(a=>a.status==='pending');
-        document.getElementById('aPendAdm').textContent = pend.length;
-        setBadges(pend.length);
-    } catch(e) {
-        toast('Error: '+e.message,'error');
-    } finally {
-        hideLoad();
-    }
-    initSidebarNav('adminNav','admin', sec=>{
+    try{
+        const [uSnap,aSnap]=await Promise.all([fbGet('users'),fbGet('applications')]);
+        const users=toArr(uSnap);const studs=users.filter(u=>u.role==='student');
+        document.getElementById('aTotalStud').textContent=studs.length;
+        document.getElementById('aTotalTeach').textContent=users.filter(u=>u.role==='teacher').length;
+        document.getElementById('aRevenue').textContent=`KES ${studs.reduce((s,u)=>s+(u.fees_paid||0),0).toLocaleString()}`;
+        const pend=toArr(aSnap).filter(a=>a.status==='pending');
+        document.getElementById('aPendAdm').textContent=pend.length;setBadges(pend.length);
+    }catch(e){toast('Error: '+e.message,'error');}
+    finally{hideLoad();}
+    initSidebarNav('adminNav','admin',sec=>{
         if(sec==='aStudents') loadAdminStudents();
         if(sec==='aAdmissions') loadAdmissions('a');
+        if(sec==='aUsers') loadAdminUsers();
+        if(sec==='aAnnouncements') loadAnnouncements();
     });
     document.querySelector('#adminNav a[data-sec="aOverview"]').classList.add('active');
-    document.getElementById('aAdmCard').onclick = ()=>document.querySelector('#adminNav a[data-sec="aAdmissions"]').click();
+    document.getElementById('aAdmCard').onclick=()=>document.querySelector('#adminNav a[data-sec="aAdmissions"]').click();
 }
-async function loadAdminStudents() {
-    const tbody = document.getElementById('aStudBody');
-    try {
-        const studs = toArr(await fbGet('users')).filter(u=>u.role==='student');
-        tbody.innerHTML = studs.map(s=>{ const bal=(s.fees_total||0)-(s.fees_paid||0);
+async function loadAdminStudents(){
+    const tbody=document.getElementById('aStudBody');
+    try{
+        const studs=toArr(await fbGet('users')).filter(u=>u.role==='student');
+        tbody.innerHTML=studs.map(s=>{const bal=(s.fees_total||0)-(s.fees_paid||0);
             return `<tr><td>${s.admission_number}</td><td>${s.name}</td><td>${s.course||'-'}</td><td>${s.phone||'-'}</td>
                 <td><span class="badge ${bal<=0?'badge-success':'badge-warning'}">${bal<=0?'Cleared':'Balance'}</span></td>
                 <td class="tbl-actions"><button class="del" data-id="${s.id}"><i class="fas fa-trash"></i></button></td></tr>`;
         }).join('');
         tbody.querySelectorAll('[data-id]').forEach(btn=>btn.onclick=()=>delStudent(btn.dataset.id));
-    } catch(e) { tbody.innerHTML=`<tr><td colspan="6" style="color:red;">${e.message}</td></tr>`; }
+    }catch(e){tbody.innerHTML=`<tr><td colspan="6" style="color:red;">${e.message}</td></tr>`;}
 }
-function filterAdminStudents(q) { document.querySelectorAll('#aStudBody tr').forEach(r=>r.style.display=r.textContent.toLowerCase().includes(q.toLowerCase())?'':'none'); }
-async function saveSettings() {
+function filterAdminStudents(q){document.querySelectorAll('#aStudBody tr').forEach(r=>r.style.display=r.textContent.toLowerCase().includes(q.toLowerCase())?'':'none');}
+
+// ════════════════════════════════════════
+// ADMIN USER MANAGEMENT (reset passwords)
+// ════════════════════════════════════════
+async function loadAdminUsers(){
+    const tbody=document.getElementById('aUsersBody');
+    tbody.innerHTML='<tr><td colspan="6" style="text-align:center;">Loading...</td></tr>';
+    try{
+        const users=toArr(await fbGet('users'));
+        tbody.innerHTML=users.map(u=>`<tr>
+            <td><strong>${u.username}</strong></td><td>${u.name}</td>
+            <td><span class="badge ${u.role==='admin'?'badge-danger':u.role==='teacher'?'badge-warning':'badge-success'}">${u.role}</span></td>
+            <td>${u.email||'-'}</td>
+            <td><span class="badge ${u.status==='active'?'badge-success':'badge-danger'}">${u.status||'active'}</span></td>
+            <td class="tbl-actions">
+                <button class="edit" data-uid="${u.id}" data-uname="${u.name}" data-uuser="${u.username}" data-urole="${u.role}" title="Edit Password"><i class="fas fa-key"></i></button>
+                ${u.role!=='admin'?`<button class="del" data-del="${u.id}" title="Delete"><i class="fas fa-trash"></i></button>`:''}
+            </td></tr>`).join('');
+        tbody.querySelectorAll('button.edit[data-uid]').forEach(btn=>btn.onclick=()=>{
+            document.getElementById('editUserId').value=btn.dataset.uid;
+            document.getElementById('editUserName').value=btn.dataset.uname;
+            document.getElementById('editUserUsername').value=btn.dataset.uuser;
+            document.getElementById('editUserRole').value=btn.dataset.urole;
+            document.getElementById('editUserPwd').value='';
+            document.getElementById('editUserPwd2').value='';
+            openModal('editUserModal');
+        });
+        tbody.querySelectorAll('button.del[data-del]').forEach(btn=>btn.onclick=async()=>{
+            if(!confirm('Delete this user?')) return;
+            showLoad('Deleting...');
+            try{await fbDelete(`users/${btn.dataset.del}`);toast('User deleted');loadAdminUsers();}
+            catch(e){toast('Error: '+e.message,'error');}
+            finally{hideLoad();}
+        });
+    }catch(e){tbody.innerHTML=`<tr><td colspan="6" style="color:red;">${e.message}</td></tr>`;}
+}
+function filterUsers(q){document.querySelectorAll('#aUsersBody tr').forEach(r=>r.style.display=r.textContent.toLowerCase().includes(q.toLowerCase())?'':'none');}
+async function saveUserPassword(){
+    const id=document.getElementById('editUserId').value;
+    const np=document.getElementById('editUserPwd').value;
+    const cp=document.getElementById('editUserPwd2').value;
+    if(!np||np.length<6){toast('Password must be at least 6 characters','error');return;}
+    if(np!==cp){toast('Passwords do not match','error');return;}
+    showLoad('Updating password...');
+    try{
+        await fbUpdate(`users/${id}`,{password:hashPwd(np),first_login:false});
+        closeModal('editUserModal');toast('Password updated successfully!');
+    }catch(e){toast('Error: '+e.message,'error');}
+    finally{hideLoad();}
+}
+
+async function saveSettings(){
     showLoad('Saving...');
-    try {
-        await fbUpdate('settings', { prefix:document.getElementById('setPrefix').value, year:2026, defaultPwd:document.getElementById('setDefPwd').value, academic_year:document.getElementById('setYear').value });
+    try{
+        await fbUpdate('settings',{prefix:document.getElementById('setPrefix').value,year:2026,defaultPwd:document.getElementById('setDefPwd').value,academic_year:document.getElementById('setYear').value});
         toast('Settings saved');
-    } catch(e) {
-        toast('Error: '+e.message,'error');
-    } finally {
-        hideLoad();
-    }
+    }catch(e){toast('Error: '+e.message,'error');}
+    finally{hideLoad();}
+}
+
+// Add TCH003 directly — call this once from admin settings
+async function addMissingTeacher(){
+    showLoad('Adding TCH003...');
+    try{
+        // Check if TCH003 already exists
+        const all = toArr(await fbGet('users'));
+        const exists = all.find(u=>u.username==='TCH003');
+        if(exists){
+            // Just reset the password to make sure it is correct
+            await fbUpdate(`users/${exists.id}`,{password:hashPwd('teacher123'),role:'teacher',status:'active',first_login:false});
+            toast('TCH003 password reset to teacher123 ✓');
+        } else {
+            await fbPush('users',{
+                username:'TCH003',
+                password:hashPwd('teacher123'),
+                role:'teacher',
+                name:'Mr. Onyango Elly Omondi',
+                email:'e.onyango@krac.ac.ke',
+                phone:'0712345003',
+                first_login:false,
+                status:'active'
+            });
+            toast('TCH003 added successfully! Login: TCH003 / teacher123');
+        }
+        loadAdminUsers();
+    }catch(e){toast('Error: '+e.message,'error');}
+    finally{hideLoad();}
 }
 
 // ════════════════════════════════════════
 // WIRE UP ALL BUTTONS ON DOM READY
 // ════════════════════════════════════════
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded',()=>{
     renderPublic();
+    initPwdToggles(); // global show/hide password
 
-    // ✅ FIX: Seed runs in background ONLY — never blocks login
-    setTimeout(() => seedIfEmpty().catch(console.warn), 2000);
+    // Load announcements on site load
+    loadAnnouncements();
 
-    // Restore session if exists
-    if (CU) { showDash(CU.role); initDash(CU.role); }
+    // Seed in background
+    setTimeout(()=>seedIfEmpty().catch(console.warn),2000);
+
+    // Restore session
+    if(CU){showDash(CU.role);initDash(CU.role);}
 
     // NAV
-    document.getElementById('portalBtn').addEventListener('click', showPortal);
-    document.getElementById('menuBtn').addEventListener('click', () => document.getElementById('navLinks').classList.toggle('open'));
-    document.getElementById('applyHeroBtn').addEventListener('click', () => openModal('appModal'));
-    document.getElementById('applyAdmBtn').addEventListener('click', () => openModal('appModal'));
-    document.getElementById('backBtn').addEventListener('click', showSite);
+    document.getElementById('portalBtn').addEventListener('click',showPortal);
+    document.getElementById('menuBtn').addEventListener('click',()=>document.getElementById('navLinks').classList.toggle('open'));
+    document.getElementById('applyHeroBtn').addEventListener('click',()=>openModal('appModal'));
+    document.getElementById('applyAdmBtn').addEventListener('click',()=>openModal('appModal'));
+    document.getElementById('backBtn').addEventListener('click',showSite);
 
     // Hero dots
-    document.querySelectorAll('#heroDots .dot').forEach(d => d.addEventListener('click', () => setSlide(+d.dataset.i)));
+    document.querySelectorAll('#heroDots .dot').forEach(d=>d.addEventListener('click',()=>setSlide(+d.dataset.i)));
 
     // Role selector
-    document.querySelectorAll('.role-opt').forEach(el => el.addEventListener('click', () => {
-        selectedRole = el.dataset.role;
+    document.querySelectorAll('.role-opt').forEach(el=>el.addEventListener('click',()=>{
+        selectedRole=el.dataset.role;
         document.querySelectorAll('.role-opt').forEach(x=>x.classList.remove('active'));
         el.classList.add('active');
     }));
 
     // Login
-    document.getElementById('loginBtn').addEventListener('click', doLogin);
-    document.getElementById('loginPass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
-    document.getElementById('loginUser').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+    document.getElementById('loginBtn').addEventListener('click',doLogin);
+    document.getElementById('loginPass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+    document.getElementById('loginUser').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
 
     // Password change
-    document.getElementById('savePwdBtn').addEventListener('click', doPasswordChange);
+    document.getElementById('savePwdBtn').addEventListener('click',doPasswordChange);
 
     // Application
-    document.getElementById('submitAppBtn').addEventListener('click', doApply);
+    document.getElementById('submitAppBtn').addEventListener('click',doApply);
 
     // Contact
-    document.getElementById('contactSendBtn').addEventListener('click', () => {
+    document.getElementById('contactSendBtn').addEventListener('click',()=>{
         const fn=document.getElementById('cFname').value.trim();
-        if(!fn){ toast('Please fill all fields','error'); return; }
+        if(!fn){toast('Please fill all fields','error');return;}
         toast('Message sent! We will get back to you soon.');
         ['cFname','cLname','cEmail','cSubject','cMsg'].forEach(id=>document.getElementById(id).value='');
     });
 
     // Student
-    document.getElementById('saveProfileBtn').addEventListener('click', saveProfile);
+    document.getElementById('saveProfileBtn').addEventListener('click',saveProfile);
 
     // Teacher
-    document.getElementById('addStudBtn').addEventListener('click', openAddStudent);
-    document.getElementById('saveStudBtn').addEventListener('click', saveStudent);
-    document.getElementById('studSearch').addEventListener('input', filterStudents);
-    document.getElementById('saveResultBtn').addEventListener('click', saveResult);
-    document.getElementById('saveFeesBtn').addEventListener('click', saveFees);
-    document.getElementById('addExamBtn').addEventListener('click', () => {
-        document.getElementById('examRows').innerHTML=''; examRowN=0; addExamRow(); openModal('examModal');
+    document.getElementById('addStudBtn').addEventListener('click',openAddStudent);
+    document.getElementById('saveStudBtn').addEventListener('click',saveStudent);
+    document.getElementById('studSearch').addEventListener('input',filterStudents);
+    document.getElementById('saveResultBtn').addEventListener('click',saveResult);
+    document.getElementById('saveFeesBtn').addEventListener('click',saveFees);
+    document.getElementById('addExamBtn').addEventListener('click',()=>{
+        document.getElementById('examRows').innerHTML='';examRowN=0;addExamRow();openModal('examModal');
     });
-    document.getElementById('addExamRowBtn').addEventListener('click', addExamRow);
-    document.getElementById('saveExamsBtn').addEventListener('click', saveExams);
+    document.getElementById('addExamRowBtn').addEventListener('click',addExamRow);
+    document.getElementById('saveExamsBtn').addEventListener('click',saveExams);
+
+    // Teacher announcements
+    document.getElementById('addAnnBtn').addEventListener('click',()=>{
+        addAnnouncement(document.getElementById('newAnnText').value);
+        document.getElementById('newAnnText').value='';
+    });
+    document.getElementById('newAnnText').addEventListener('keydown',e=>{
+        if(e.key==='Enter'){addAnnouncement(e.target.value);e.target.value='';}
+    });
 
     // Admin
-    document.getElementById('saveSettingsBtn').addEventListener('click', saveSettings);
+    document.getElementById('saveSettingsBtn').addEventListener('click',saveSettings);
+    document.getElementById('saveUserPwdBtn').addEventListener('click',saveUserPassword);
+    document.getElementById('addTch003Btn').addEventListener('click',addMissingTeacher);
+
+    // Admin announcements
+    document.getElementById('aAddAnnBtn').addEventListener('click',()=>{
+        addAnnouncement(document.getElementById('aNewAnnText').value);
+        document.getElementById('aNewAnnText').value='';
+    });
+    document.getElementById('aNewAnnText').addEventListener('keydown',e=>{
+        if(e.key==='Enter'){addAnnouncement(e.target.value);e.target.value='';}
+    });
 
     // Admissions
-    document.getElementById('approveBtn').addEventListener('click', doApprove);
-    document.getElementById('rejectBtn').addEventListener('click', doReject);
+    document.getElementById('approveBtn').addEventListener('click',doApprove);
+    document.getElementById('rejectBtn').addEventListener('click',doReject);
 
     // Team modal
-    document.getElementById('teamGrid').addEventListener('click', e => {
-        const card = e.target.closest('[data-teamid]');
-        if (!card) return;
-        const m = TEAM.find(t=>t.id===card.dataset.teamid);
-        if (!m) return;
-        document.getElementById('teamModalBody').innerHTML = `
+    document.getElementById('teamGrid').addEventListener('click',e=>{
+        const card=e.target.closest('[data-teamid]');if(!card) return;
+        const m=TEAM.find(t=>t.id===card.dataset.teamid);if(!m) return;
+        document.getElementById('teamModalBody').innerHTML=`
             <div class="team-modal-img">${m.img?`<img src="${m.img}">`:'<i class="fas fa-user"></i>'}</div>
             <div><h3 style="color:var(--primary);">${m.name}</h3>
             <p style="color:var(--secondary);font-weight:600;margin-bottom:6px;">${m.role}</p>
@@ -1689,13 +1766,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Modal close
-    document.addEventListener('click', e => {
-        if (e.target.dataset.close) closeModal(e.target.dataset.close);
-        if (e.target.classList.contains('modal-overlay') && e.target.classList.contains('open')) e.target.classList.remove('open');
+    document.addEventListener('click',e=>{
+        if(e.target.dataset.close) closeModal(e.target.dataset.close);
+        if(e.target.classList.contains('modal-overlay')&&e.target.classList.contains('open')) e.target.classList.remove('open');
     });
 
     // Scroll nav
-    window.addEventListener('scroll', () => document.querySelector('.navbar').style.boxShadow = window.scrollY>50?'0 2px 20px rgba(0,0,0,0.1)':'');
+    window.addEventListener('scroll',()=>document.querySelector('.navbar').style.boxShadow=window.scrollY>50?'0 2px 20px rgba(0,0,0,0.1)':'');
 });
 </script>
 </body>

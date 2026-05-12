@@ -735,8 +735,8 @@ tr:hover{background:var(--bg-light);}
         <select id="aGrade">
           <option value="">-- Select Grade --</option>
           <option>A</option><option>A-</option><option>B+</option><option>B</option>
-          <option>B-</option><option>C+</option><option>C</option><option>C-</option><option>D+</option><option>D</option>
-          <option>D-</option><option>E</option><option>N/A</option>
+          <option>B-</option><option>C+</option><option>C</option><option>C-</option>
+          <option>D+</option><option>D</option><option>D-</option><option>E</option><option>N/A</option>
         </select>
       </div>
       <div class="form-group"><label>Previous School</label><input type="text" id="aSchool" placeholder="Previous institution"></div>
@@ -904,10 +904,10 @@ function toArr(obj){ if(!obj) return []; return Object.entries(obj).map(([id,v])
 // STATIC DATA
 // ════════════════════════════════════════
 const PROGRAMS=[
-    {name:"General Animal Production",duration:"6–15 Months",level:"Certificate",fee:"KES 7,000 – 84,000",desc:"Practical livestock health and management training covering animal disease prevention, treatment techniques, and herd management.",icon:"fa-horse-head"},
-    {name:"Women Empowerment Program",duration:"10 Months",level:"Certificate",fee:"KES 3,000 – 30,000",desc:"Focus on value chains and livestock industries including poultry, goats, rabbits, and agribusiness skills.",icon:"fa-female"},
+    {name:"Livestock and Agribusiness Program",duration:"6–15 Months",level:"Certificate",fee:"KES 7,000 – 84,000",desc:"Practical livestock health and management training covering animal disease prevention, poultry, goat and rabbit farming, apiculture, value addition and agribusiness.",icon:"fa-horse-head"},
+    {name:"Crop Development and Marketing Program",duration:"12 Months",level:"Certificate",fee:"KES 33,390",desc:"Modern farming techniques, soil science, value addition, market access, and occupational safety training.",icon:"fa-chart-line"},
     {name:"Junior Agripreneur Course",duration:"Holiday Program",level:"Short Course",fee:"KES 1,500 – 3,000",desc:"Hands-on agriculture and entrepreneurship for young learners during school holidays.",icon:"fa-seedling"},
-    {name:"Crop Development & Marketing Course",duration:"12 Months",level:"Certificate",fee:"KES 33,390",desc:"Modern farming techniques, value addition, and market access training.",icon:"fa-chart-line"}
+    {name:"Women Empowerment Program",duration:"10 Months",level:"Certificate",fee:"KES 3,000 – 30,000",desc:"Focus on value chains and livestock industries including poultry, goats, rabbits, agribusiness skills and entrepreneurship.",icon:"fa-female"}
 ];
 const TEAM=[
     {id:"1",name:"Mr. Vincent Otieno",role:"Principal & Head of AITAP Business Project",dept:"Executive",bio:"Mr. Otieno provides overall leadership, strategic direction, and institutional growth for KRAC and the AITAP Business Project.",img:"",portfolio:["Diploma in Agricultural Extension — Bukura Agricultural College","Diploma in Technical Instructor Education — Bukura Agricultural College","Field Technician & Extension Officer — ICIPE","Trainer at Bukura Agricultural College","Six-month internship in Southern Germany"]},
@@ -925,12 +925,55 @@ const AFFILIATES=[
     {name:"Kenya Rural Food Centre (KRFC)",type:"KRFC",desc:"Joint food security programs and resource sharing."},
     {name:"AITAP",type:"AITAP",desc:"Technical training and agribusiness innovation partnership."}
 ];
-const UNITS=[
-    {id:"VET101",name:"Livestock Health Management"},
-    {id:"WEP201",name:"Poultry & Small Livestock Production"},
-    {id:"CRP301",name:"Crop Production & Value Addition"},
-    {id:"AGR401",name:"Agribusiness & Market Access"}
-];
+
+// Course-specific units — each student only sees units for their enrolled course
+const COURSE_UNITS = {
+    "Livestock and Agribusiness Program": [
+        {id:"COMS101",name:"Communication Skills"},
+        {id:"EDUC102",name:"Life Skills"},
+        {id:"ANSC111",name:"Livestock Basics"},
+        {id:"ANSC112",name:"Poultry Production"},
+        {id:"ANSC114",name:"Goat Farming"},
+        {id:"ANSC120",name:"Rabbit Farming"},
+        {id:"APC140", name:"Apiculture"},
+        {id:"AGEC105",name:"Value Addition and Agro-processing"},
+        {id:"AGBM100",name:"Entrepreneurship"}
+    ],
+    "Crop Development and Marketing Program": [
+        {id:"COMS101",name:"Communication Skills"},
+        {id:"EDUC102",name:"Life Skills"},
+        {id:"AGRO101",name:"Crop Production"},
+        {id:"SOIL100",name:"Soil Science"},
+        {id:"AGRO103",name:"Crop Production (Advanced)"},
+        {id:"AGEC105",name:"Value Addition and Agro-processing"},
+        {id:"AGBM100",name:"Entrepreneurship"},
+        {id:"OSH120", name:"Occupational Safety and Health"}
+    ],
+    "Junior Agripreneur Course": [
+        {id:"AGRO105",name:"Basics of Agriculture"},
+        {id:"AGRO101",name:"Crop Production"},
+        {id:"ANSC111",name:"Livestock Basics"},
+        {id:"ENSC100",name:"Environment Conservation"},
+        {id:"AGBM101",name:"Agribusiness Basics"}
+    ],
+    "Women Empowerment Program": [
+        {id:"AGBM101",name:"Agribusiness Basics"},
+        {id:"ANSC111",name:"Livestock Basics"},
+        {id:"ANSC112",name:"Poultry Production"},
+        {id:"ANSC114",name:"Goat Farming"},
+        {id:"ANSC120",name:"Rabbit Farming"},
+        {id:"AGEC105",name:"Value Addition and Agro-processing"},
+        {id:"AGBM100",name:"Entrepreneurship"}
+    ]
+};
+
+// Helper: get units for a given course name
+function getUnitsForCourse(courseName) {
+    // Try exact match first, then partial match
+    if (COURSE_UNITS[courseName]) return COURSE_UNITS[courseName];
+    const key = Object.keys(COURSE_UNITS).find(k => courseName && courseName.toLowerCase().includes(k.toLowerCase().split(' ')[0]));
+    return key ? COURSE_UNITS[key] : [];
+}
 
 // ════════════════════════════════════════
 // UTILS

@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <style>
 :root{--primary:#1b5e20;--primary-light:#2e7d32;--primary-dark:#0d3b10;--secondary:#f9a825;--accent:#1565c0;--text-dark:#212121;--text-light:#757575;--bg-light:#f5f7fa;--bg-white:#ffffff;--border:#e0e0e0;--success:#43a047;--warning:#fb8c00;--danger:#e53935;--shadow:0 4px 6px -1px rgba(0,0,0,0.1);--shadow-lg:0 20px 25px -5px rgba(0,0,0,0.1);--radius:8px;--radius-lg:12px;}
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -595,7 +596,7 @@ tr:hover{background:var(--bg-light);}
       <tbody id="tStudBody"></tbody></table></div>
     </div>
     <div id="tResults" class="hidden"><div class="tbl-wrap"><div class="tbl-head"><h3>Update Results</h3></div>
-    <table><thead><tr><th>Student</th><th>Unit</th><th>CAT</th><th>Exam</th><th>Total</th><th>Action</th></tr></thead>
+    <table><thead><tr><th>Student</th><th>Course</th><th>Units</th><th>Action</th></tr></thead>
     <tbody id="tResultsBody"></tbody></table></div></div>
     <div id="tFees" class="hidden">
       <div class="dash-grid" style="margin-bottom:22px;">
@@ -624,11 +625,10 @@ tr:hover{background:var(--bg-light);}
       <div class="tbl-wrap"><table><thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Course</th><th>Grade</th><th>Date</th><th>Action</th></tr></thead>
       <tbody id="tAdmBody"></tbody></table></div>
     </div>
-    <!-- TEACHER ANNOUNCEMENTS -->
     <div id="tAnnouncements" class="hidden">
       <div class="ann-editor">
         <h4><i class="fas fa-bullhorn"></i> Manage Announcements</h4>
-        <p style="color:var(--text-light);font-size:0.9rem;margin-bottom:14px;">Announcements scroll across the top of the website. Visitors see all active announcements.</p>
+        <p style="color:var(--text-light);font-size:0.9rem;margin-bottom:14px;">Announcements scroll across the top of the website.</p>
         <div style="display:flex;gap:10px;margin-bottom:14px;">
           <input type="text" id="newAnnText" placeholder="Type announcement here..." style="flex:1;padding:10px 14px;border:2px solid var(--border);border-radius:var(--radius);font-family:inherit;font-size:0.95rem;">
           <button class="btn btn-primary" id="addAnnBtn"><i class="fas fa-plus"></i> Add</button>
@@ -674,7 +674,6 @@ tr:hover{background:var(--bg-light);}
       <div class="tbl-wrap"><table><thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Course</th><th>Grade</th><th>Date</th><th>Action</th></tr></thead>
       <tbody id="aAdmBody"></tbody></table></div>
     </div>
-    <!-- ADMIN USER MANAGEMENT -->
     <div id="aUsers" class="hidden">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;">
         <h3 style="color:var(--primary);">User Management</h3>
@@ -683,11 +682,10 @@ tr:hover{background:var(--bg-light);}
       <table><thead><tr><th>Username</th><th>Name</th><th>Role</th><th>Email</th><th>Status</th><th>Actions</th></tr></thead>
       <tbody id="aUsersBody"></tbody></table></div>
     </div>
-    <!-- ADMIN ANNOUNCEMENTS -->
     <div id="aAnnouncements" class="hidden">
       <div class="ann-editor">
         <h4><i class="fas fa-bullhorn"></i> Manage Announcements</h4>
-        <p style="color:var(--text-light);font-size:0.9rem;margin-bottom:14px;">Announcements scroll across the top of the website. Visitors see all active announcements.</p>
+        <p style="color:var(--text-light);font-size:0.9rem;margin-bottom:14px;">Announcements scroll across the top of the website.</p>
         <div style="display:flex;gap:10px;margin-bottom:14px;">
           <input type="text" id="aNewAnnText" placeholder="Type announcement here..." style="flex:1;padding:10px 14px;border:2px solid var(--border);border-radius:var(--radius);font-family:inherit;font-size:0.95rem;">
           <button class="btn btn-primary" id="aAddAnnBtn"><i class="fas fa-plus"></i> Add</button>
@@ -703,8 +701,14 @@ tr:hover{background:var(--bg-light);}
       <button class="btn btn-primary" id="saveSettingsBtn"><i class="fas fa-save"></i> Save Settings</button>
 
       <hr style="margin:28px 0;border:none;border-top:1px solid var(--border);">
+      <h4 style="color:var(--primary);margin-bottom:14px;"><i class="fas fa-database"></i> Course Units</h4>
+      <p style="color:var(--text-light);font-size:0.9rem;margin-bottom:16px;">Force-write all course units to Firebase. Run this once if units are missing from the database. Safe to re-run at any time.</p>
+      <!-- FIX 3: New Force Seed Course Units button -->
+      <button class="btn btn-warning" id="seedUnitsBtn" style="color:#fff;margin-bottom:22px;"><i class="fas fa-sync"></i> Force Seed Course Units</button>
+
+      <hr style="margin:28px 0;border:none;border-top:1px solid var(--border);">
       <h4 style="color:var(--primary);margin-bottom:14px;"><i class="fas fa-tools"></i> Fix / Add Missing Users</h4>
-      <p style="color:var(--text-light);font-size:0.9rem;margin-bottom:16px;">Use this if a user cannot log in or was not seeded correctly. This will add or reset the user in Firebase.</p>
+      <p style="color:var(--text-light);font-size:0.9rem;margin-bottom:16px;">Use this if a user cannot log in or was not seeded correctly.</p>
       <button class="btn btn-warning" id="addTch003Btn" style="color:#fff;"><i class="fas fa-user-plus"></i> Add / Fix TCH003 (Mr. Onyango — teacher123)</button>
     </div></div>
   </main>
@@ -844,7 +848,6 @@ tr:hover{background:var(--bg-light);}
   </div>
 </div>
 
-<!-- EDIT USER PASSWORD MODAL -->
 <div class="modal-overlay" id="editUserModal">
   <div class="modal" style="max-width:440px;">
     <div class="modal-hdr"><h3><i class="fas fa-user-edit"></i> Edit User</h3><button class="modal-close" data-close="editUserModal">&times;</button></div>
@@ -874,6 +877,56 @@ tr:hover{background:var(--bg-light);}
   </div>
 </div>
 
+<!-- Course Results Modal -->
+<div class="modal-overlay" id="courseResultsModal">
+  <div class="modal" style="max-width:720px;">
+    <div class="modal-hdr"><h3><i class="fas fa-graduation-cap"></i> Course Results</h3><button class="modal-close" data-close="courseResultsModal">&times;</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="crStudId">
+      <div style="background:var(--bg-light);padding:14px;border-radius:var(--radius);margin-bottom:18px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div><strong>Student:</strong> <span id="crStudName"></span></div>
+          <div><strong>Adm No:</strong> <span id="crStudAdm"></span></div>
+        </div>
+        <div style="margin-top:6px;"><strong>Course:</strong> <span id="crCourse"></span></div>
+      </div>
+      <div id="crUnitsContainer"></div>
+    </div>
+    <div class="modal-ftr">
+      <button class="btn btn-outline" data-close="courseResultsModal">Close</button>
+      <button class="btn btn-primary" id="saveCourseResultsBtn"><i class="fas fa-save"></i> Save All Results</button>
+    </div>
+  </div>
+</div>
+
+<!-- View Password Modal -->
+<div class="modal-overlay" id="viewPasswordModal">
+  <div class="modal" style="max-width:420px;">
+    <div class="modal-hdr"><h3><i class="fas fa-key"></i> View Password</h3><button class="modal-close" data-close="viewPasswordModal">&times;</button></div>
+    <div class="modal-body">
+      <div style="margin-bottom:18px;">
+        <strong style="color:var(--primary);">User:</strong> <span id="vpUserName"></span><br>
+        <strong style="color:var(--primary);">Username:</strong> <span id="vpUsername"></span><br>
+        <strong style="color:var(--primary);">Role:</strong> <span id="vpRole"></span>
+      </div>
+      <div style="background:rgba(251,140,0,0.1);padding:14px;border-radius:var(--radius);border:1px solid var(--warning);">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <i class="fas fa-exclamation-triangle" style="color:var(--warning);"></i>
+          <strong style="color:var(--warning);">Security Warning</strong>
+        </div>
+        <p style="font-size:0.88rem;color:var(--text-light);">Passwords are hashed in the database. This shows the hash value.</p>
+      </div>
+      <div style="width:100%;margin-top:14px;display:flex;align-items:center;gap:10px;">
+        <span id="vpPassword" style="word-break:break-all;flex:1;font-family:monospace;font-size:0.85rem;">Loading...</span>
+        <button class="btn btn-sm btn-outline" onclick="copyPassword()" style="padding:4px 10px;"><i class="fas fa-copy"></i></button>
+      </div>
+    </div>
+    <div class="modal-ftr">
+      <button class="btn btn-outline" data-close="viewPasswordModal">Close</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ════════════════════════════════════════
 // FIREBASE
@@ -888,6 +941,7 @@ const firebaseConfig = {
     appId: "1:574134231698:web:35c83d5eabe2af29773c4b"
 };
 firebase.initializeApp(firebaseConfig);
+emailjs.init('mtKuCnxiw_JqSspes');
 const db = firebase.database();
 
 function withTimeout(promise, ms=12000) {
@@ -904,7 +958,7 @@ function toArr(obj){ if(!obj) return []; return Object.entries(obj).map(([id,v])
 // STATIC DATA
 // ════════════════════════════════════════
 const PROGRAMS=[
-    {name:"Livestock and Agribusiness Program",duration:"6–15 Months",level:"Certificate",fee:"KES 7,000 – 84,000",desc:"Practical livestock health and management training covering animal disease prevention, poultry, goat and rabbit farming, apiculture, value addition and agribusiness.",icon:"fa-horse-head"},
+    {name:"General Animal Production",duration:"6–15 Months",level:"Certificate",fee:"KES 7,000 – 84,000",desc:"Practical livestock health and management training covering animal disease prevention, poultry, goat and rabbit farming, apiculture, value addition and agribusiness.",icon:"fa-horse-head"},
     {name:"Crop Development and Marketing Program",duration:"12 Months",level:"Certificate",fee:"KES 33,390",desc:"Modern farming techniques, soil science, value addition, market access, and occupational safety training.",icon:"fa-chart-line"},
     {name:"Junior Agripreneur Course",duration:"Holiday Program",level:"Short Course",fee:"KES 1,500 – 3,000",desc:"Hands-on agriculture and entrepreneurship for young learners during school holidays.",icon:"fa-seedling"},
     {name:"Women Empowerment Program",duration:"10 Months",level:"Certificate",fee:"KES 3,000 – 30,000",desc:"Focus on value chains and livestock industries including poultry, goats, rabbits, agribusiness skills and entrepreneurship.",icon:"fa-female"}
@@ -926,9 +980,9 @@ const AFFILIATES=[
     {name:"AITAP",type:"AITAP",desc:"Technical training and agribusiness innovation partnership."}
 ];
 
-// Course-specific units — each student only sees units for their enrolled course
+// Course-specific units
 const COURSE_UNITS = {
-    "Livestock and Agribusiness Program": [
+    "General Animal Production": [
         {id:"COMS101",name:"Communication Skills"},
         {id:"EDUC102",name:"Life Skills"},
         {id:"ANSC111",name:"Livestock Basics"},
@@ -967,11 +1021,10 @@ const COURSE_UNITS = {
     ]
 };
 
-// Helper: get units for a given course name
 function getUnitsForCourse(courseName) {
-    // Try exact match first, then partial match
-    if (COURSE_UNITS[courseName]) return COURSE_UNITS[courseName];
-    const key = Object.keys(COURSE_UNITS).find(k => courseName && courseName.toLowerCase().includes(k.toLowerCase().split(' ')[0]));
+    if(!courseName) return [];
+    if(COURSE_UNITS[courseName]) return COURSE_UNITS[courseName];
+    const key = Object.keys(COURSE_UNITS).find(k => courseName.toLowerCase().includes(k.toLowerCase().split(' ')[0]));
     return key ? COURSE_UNITS[key] : [];
 }
 
@@ -990,7 +1043,6 @@ function toast(msg,type='success'){
 function openModal(id){document.getElementById(id).classList.add('open');}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
 
-// Show/hide password toggle — works for any input with data-target
 function initPwdToggles(){
     document.querySelectorAll('.pwd-toggle').forEach(btn=>{
         btn.addEventListener('click',()=>{
@@ -1025,20 +1077,31 @@ function checkDbConnection(){
 }
 
 // ════════════════════════════════════════
-// SEED
+// FIX 1 & 2: CORRECTED SEED FUNCTIONS
 // ════════════════════════════════════════
 async function seedIfEmpty(){
     try{
-        const existing=await fbGet('users');
-        if(existing) return;
+        const existingUsers = await fbGet('users');
+        const existingUnits = await fbGet('course_units');
+
+        // FIX 1: Always seed units independently — even if users already exist
+        if(!existingUnits){
+            await withTimeout(db.ref('course_units').set(COURSE_UNITS));
+            toast('Course units seeded to database!');
+        }
+
+        // If both already exist, nothing more to do
+        if(existingUsers) return;
+
+        // Only reaches here if users need to be seeded
         const users=[
             {username:'admin',     password:hashPwd('admin123'),   role:'admin',   name:'System Administrator',    email:'admin@krac.ac.ke',    phone:'0700000001',first_login:false,status:'active'},
             {username:'TCH001',    password:hashPwd('teacher123'),  role:'teacher', name:'Mr. Vincent Otieno',      email:'v.otieno@krac.ac.ke', phone:'0712345001',first_login:false,status:'active'},
             {username:'TCH002',    password:hashPwd('teacher123'),  role:'teacher', name:'Ms. Hope Kanoti Munyoki', email:'h.munyoki@krac.ac.ke',phone:'0712345002',first_login:false,status:'active'},
             {username:'TCH003',    password:hashPwd('teacher123'),  role:'teacher', name:'Mr. Onyango Elly Omondi', email:'e.onyango@krac.ac.ke', phone:'0712345003',first_login:false,status:'active'},
-            {username:'KRAC2026001',password:hashPwd('student123'),role:'student',name:'John Kamau',   email:'john@email.com', phone:'0723456001',course:'General Animal Production',        admission_number:'KRAC2026001',fees_total:45000,fees_paid:33000,first_login:true,status:'active',enrollment_date:'2026-01-15'},
-            {username:'KRAC2026002',password:hashPwd('student123'),role:'student',name:'Mary Akinyi',  email:'mary@email.com', phone:'0723456002',course:'Women Empowerment Program',       admission_number:'KRAC2026002',fees_total:30000,fees_paid:30000,first_login:true,status:'active',enrollment_date:'2026-01-15'},
-            {username:'KRAC2026003',password:hashPwd('student123'),role:'student',name:'Peter Ochieng',email:'peter@email.com',phone:'0723456003',course:'Crop Development & Marketing Course',admission_number:'KRAC2026003',fees_total:33390,fees_paid:20000,first_login:true,status:'active',enrollment_date:'2026-01-15'}
+            {username:'KRAC2026001',password:hashPwd('student123'),role:'student',name:'John Kamau',   email:'john@email.com', phone:'0723456001',course:'Livestock and Agribusiness Program',admission_number:'KRAC2026001',fees_total:45000,fees_paid:33000,first_login:true,status:'active',enrollment_date:'2026-01-15'},
+            {username:'KRAC2026002',password:hashPwd('student123'),role:'student',name:'Mary Akinyi',  email:'mary@email.com', phone:'0723456002',course:'Women Empowerment Program',           admission_number:'KRAC2026002',fees_total:30000,fees_paid:30000,first_login:true,status:'active',enrollment_date:'2026-01-15'},
+            {username:'KRAC2026003',password:hashPwd('student123'),role:'student',name:'Peter Ochieng',email:'peter@email.com',phone:'0723456003',course:'Crop Development and Marketing Program',admission_number:'KRAC2026003',fees_total:33390,fees_paid:20000,first_login:true,status:'active',enrollment_date:'2026-01-15'}
         ];
         const batch={};
         users.forEach(u=>{const k=db.ref('users').push().key;batch[`users/${k}`]=u;});
@@ -1048,14 +1111,24 @@ async function seedIfEmpty(){
     }catch(e){console.warn('Seed skipped:',e.message);}
 }
 
-// ════════════════════════════════════════
-// ANNOUNCEMENTS
-// ════════════════════════════════════════
+// FIX 2: Remove the guard — always writes, safe to re-run
+async function seedCourseUnits(){
+    showLoad('Seeding course units...');
+    try{
+        await withTimeout(db.ref('course_units').set(COURSE_UNITS));
+        toast('Course units written to Firebase successfully! ✓');
+    }catch(e){
+        toast('Error seeding units: '+e.message,'error');
+        console.warn('Seed course units failed:',e.message);
+    }finally{
+        hideLoad();
+    }
+}
+
 async function loadAnnouncements(){
     try{
         const data=await fbGet('announcements');
         const items=toArr(data);
-        // Update ticker on public site
         const bar=document.getElementById('annBar');
         const annText=document.getElementById('annText');
         if(items.length>0){
@@ -1064,7 +1137,6 @@ async function loadAnnouncements(){
         } else {
             bar.classList.add('hidden-bar');
         }
-        // Render editor lists
         renderAnnList('annList',items);
         renderAnnList('aAnnList',items);
     }catch(e){console.warn('Ann load:',e.message);}
@@ -1386,35 +1458,142 @@ async function delStudent(id){
 }
 async function loadTResults(){
     const tbody=document.getElementById('tResultsBody');
-    tbody.innerHTML='<tr><td colspan="6" style="text-align:center;">Loading...</td></tr>';
+    tbody.innerHTML='<tr><td colspan="4" style="text-align:center;">Loading...</td></tr>';
     try{
-        const [uSnap,rSnap]=await Promise.all([fbGet('users'),fbGet('results')]);
-        const studs=toArr(uSnap).filter(u=>u.role==='student');
-        const results=toArr(rSnap);
-        let html='';
-        studs.forEach(s=>UNITS.forEach(u=>{
-            const ex=results.find(r=>r.student_id===s.id&&r.unit_id===u.id);
-            html+=`<tr><td>${s.name}</td><td>${u.name}</td><td>${ex?.cat||'-'}</td><td>${ex?.exam||'-'}</td><td>${ex?.total||'-'}</td><td><button class="btn btn-sm btn-primary" data-sid="${s.id}" data-uid="${u.id}" data-sn="${s.name}" data-un="${u.name}"><i class="fas fa-edit"></i> Edit</button></td></tr>`;
-        }));
-        tbody.innerHTML=html||'<tr><td colspan="6" style="text-align:center;">No students</td></tr>';
-        tbody.querySelectorAll('button[data-sid]').forEach(btn=>btn.onclick=()=>openEditResult(btn.dataset.sid,btn.dataset.uid,btn.dataset.sn,btn.dataset.un));
-    }catch(e){tbody.innerHTML=`<tr><td colspan="6" style="color:red;">${e.message}</td></tr>`;}
+        const studs=toArr(await fbGet('users')).filter(u=>u.role==='student');
+        const courseGroups = {};
+        studs.forEach(s => {
+            const course = s.course || 'Unassigned';
+            if(!courseGroups[course]) courseGroups[course] = [];
+            courseGroups[course].push(s);
+        });
+        let html = '';
+        Object.keys(courseGroups).sort().forEach(course => {
+            courseGroups[course].forEach(s => {
+                const units = getUnitsForCourse(s.course);
+                html += `<tr>
+                    <td><strong>${s.name}</strong><br><small style="color:var(--text-light);">${s.admission_number}</small></td>
+                    <td>${s.course || '-'}</td>
+                    <td><span class="badge badge-success">${units.length} units</span></td>
+                    <td><button class="btn btn-sm btn-primary" data-sid="${s.id}" data-sname="${s.name}" data-sadm="${s.admission_number}" data-scourse="${s.course}"><i class="fas fa-edit"></i> Edit Grades</button></td>
+                </tr>`;
+            });
+        });
+        tbody.innerHTML = html || '<tr><td colspan="4" style="text-align:center;">No students enrolled</td></tr>';
+        tbody.querySelectorAll('button[data-sid]').forEach(btn => {
+            btn.onclick = () => openCourseResults(btn.dataset.sid,btn.dataset.sname,btn.dataset.sadm,btn.dataset.scourse);
+        });
+    }catch(e){
+        tbody.innerHTML=`<tr><td colspan="4" style="color:red;">${e.message}</td></tr>`;
+    }
 }
-async function openEditResult(sId,uId,sName,uName){
-    const results=toArr(await fbGet('results'));
-    const ex=results.find(r=>r.student_id===sId&&r.unit_id===uId);
-    document.getElementById('rStudId').value=sId;document.getElementById('rUnitId').value=uId;
-    document.getElementById('rStudName').value=sName;document.getElementById('rUnitName').value=uName;
-    document.getElementById('rCat').value=ex?.cat||'';document.getElementById('rExam').value=ex?.exam||'';
-    openModal('resultModal');
+async function openCourseResults(studId, studName, studAdm, course) {
+    document.getElementById('crStudId').value = studId;
+    document.getElementById('crStudName').textContent = studName;
+    document.getElementById('crStudAdm').textContent = studAdm;
+    document.getElementById('crCourse').textContent = course || 'Unassigned';
+    const units = getUnitsForCourse(course);
+    const results = toArr(await fbGet('results'));
+    let html = '';
+    if (!units.length) {
+        html = `<div style="padding:16px;background:rgba(251,140,0,0.08);border:1px solid var(--warning);border-radius:var(--radius);color:var(--text-dark);">
+            No units defined for this course. Go to Admin → Settings → <strong>Force Seed Course Units</strong> to fix this.
+        </div>`;
+    } else {
+        html = `<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;">
+                <thead><tr style="background:var(--bg-light);">
+                    <th style="text-align:left;padding:12px 10px;border-bottom:1px solid var(--border);">Unit</th>
+                    <th style="width:110px;padding:12px 10px;border-bottom:1px solid var(--border);">CAT (0-30)</th>
+                    <th style="width:110px;padding:12px 10px;border-bottom:1px solid var(--border);">Exam (0-70)</th>
+                    <th style="width:90px;padding:12px 10px;border-bottom:1px solid var(--border);">Total</th>
+                    <th style="width:90px;padding:12px 10px;border-bottom:1px solid var(--border);">Grade</th>
+                </tr></thead><tbody>`;
+        units.forEach(unit => {
+            const existing = results.find(r => r.student_id === studId && r.unit_id === unit.id);
+            html += `<tr>
+                <td style="padding:12px 10px;border-bottom:1px solid var(--border);">
+                    <div style="font-weight:600;color:var(--primary);">${unit.name}</div>
+                    <div style="font-size:0.85rem;color:var(--text-light);">${unit.id}</div>
+                </td>
+                <td style="padding:12px 10px;border-bottom:1px solid var(--border);">
+                    <input type="number" class="unit-cat" data-unit="${unit.id}" value="${existing?.cat||''}" min="0" max="30" placeholder="0-30" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:var(--radius);">
+                </td>
+                <td style="padding:12px 10px;border-bottom:1px solid var(--border);">
+                    <input type="number" class="unit-exam" data-unit="${unit.id}" value="${existing?.exam||''}" min="0" max="70" placeholder="0-70" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:var(--radius);">
+                </td>
+                <td style="padding:12px 10px;border-bottom:1px solid var(--border);text-align:center;vertical-align:middle;">
+                    <span id="total-${unit.id}">${existing?.total||0}</span>
+                </td>
+                <td style="padding:12px 10px;border-bottom:1px solid var(--border);text-align:center;vertical-align:middle;">
+                    <span id="grade-${unit.id}" class="badge badge-success">${existing?.grade||'-'}</span>
+                </td>
+            </tr>`;
+        });
+        html += `</tbody></table></div>`;
+    }
+    document.getElementById('crUnitsContainer').innerHTML = html;
+    document.querySelectorAll('#crUnitsContainer .unit-cat, #crUnitsContainer .unit-exam').forEach(inp => {
+        inp.addEventListener('input', function() {
+            const unitId = this.dataset.unit;
+            const cat = parseFloat(document.querySelector(`#crUnitsContainer .unit-cat[data-unit="${unitId}"]`).value) || 0;
+            const exam = parseFloat(document.querySelector(`#crUnitsContainer .unit-exam[data-unit="${unitId}"]`).value) || 0;
+            const total = cat + exam;
+            let grade = 'F';
+            if(total >= 70) grade = 'A';
+            else if(total >= 60) grade = 'B';
+            else if(total >= 50) grade = 'C';
+            else if(total >= 40) grade = 'D';
+            document.getElementById(`total-${unitId}`).textContent = total;
+            document.getElementById(`grade-${unitId}`).textContent = grade;
+        });
+    });
+    openModal('courseResultsModal');
+}
+async function saveCourseResults() {
+    const studId = document.getElementById('crStudId').value;
+    const courseName = document.getElementById('crCourse').textContent;
+    const units = document.querySelectorAll('#crUnitsContainer .unit-cat');
+    showLoad('Saving all results...');
+    try {
+        for(const catInp of units) {
+            const unitId = catInp.dataset.unit;
+            const cat = parseFloat(catInp.value) || 0;
+            const exam = parseFloat(document.querySelector(`#crUnitsContainer .unit-exam[data-unit="${unitId}"]`).value) || 0;
+            const total = cat + exam;
+            let grade = 'F';
+            if(total >= 70) grade = 'A';
+            else if(total >= 60) grade = 'B';
+            else if(total >= 50) grade = 'C';
+            else if(total >= 40) grade = 'D';
+            const unitData = getUnitsForCourse(courseName).find(u => u.id === unitId);
+            await fbSet(`results/${studId}_${unitId}`, {
+                student_id: studId, unit_id: unitId, unit_code: unitId,
+                unit_name: unitData?.name || unitId, cat, exam, total, grade,
+                remarks: total >= 50 ? 'Pass' : 'Fail',
+                updated_at: new Date().toISOString()
+            });
+        }
+        closeModal('courseResultsModal');
+        toast('All results saved successfully!');
+        loadTResults();
+    } catch(e) {
+        toast('Error: ' + e.message, 'error');
+    } finally {
+        hideLoad();
+    }
 }
 async function saveResult(){
-    const sId=document.getElementById('rStudId').value;const uId=document.getElementById('rUnitId').value;
+    const sId=document.getElementById('rStudId').value;
+    const uId=document.getElementById('rUnitId').value;
     const uName=document.getElementById('rUnitName').value;
     const cat=parseInt(document.getElementById('rCat').value)||0;
     const exam=parseInt(document.getElementById('rExam').value)||0;
     const total=cat+exam;
-    let grade='F';if(total>=70)grade='A';else if(total>=60)grade='B';else if(total>=50)grade='C';else if(total>=40)grade='D';
+    let grade='F';
+    if(total>=70) grade='A';
+    else if(total>=60) grade='B';
+    else if(total>=50) grade='C';
+    else if(total>=40) grade='D';
     showLoad('Saving...');
     try{
         await fbSet(`results/${sId}_${uId}`,{student_id:sId,unit_id:uId,unit_code:uId,unit_name:uName,cat,exam,total,grade,remarks:total>=50?'Pass':'Fail'});
@@ -1547,30 +1726,94 @@ async function openReview(appId){
 }
 async function doApprove(){
     if(!reviewApp) return;
-    showLoad('Approving...');
+    showLoad('Approving & Sending Email...');
     try{
         const settings=await fbGet('settings')||{prefix:'KRAC',year:2026};
         const users=toArr(await fbGet('users')).filter(u=>u.role==='student'&&u.admission_number);
         const max=users.reduce((m,u)=>Math.max(m,parseInt(u.admission_number.replace(/\D/g,''))||0),(settings.year||2026)*1000);
         const admNo=`${settings.prefix||'KRAC'}${max+1}`;
-        await fbPush('users',{username:admNo,password:reviewApp.passwordHash,role:'student',name:reviewApp.name,email:reviewApp.email,phone:reviewApp.phone,course:reviewApp.course,admission_number:admNo,fees_total:45000,fees_paid:0,first_login:false,status:'active',enrollment_date:new Date().toISOString().split('T')[0]});
+
+        await fbPush('users',{
+            username:admNo, 
+            password:reviewApp.passwordHash, 
+            role:'student', 
+            name:reviewApp.name,
+            email:reviewApp.email, 
+            phone:reviewApp.phone, 
+            course:reviewApp.course,
+            admission_number:admNo, 
+            fees_total:45000, 
+            fees_paid:0,
+            first_login:false, 
+            status:'active', 
+            enrollment_date:new Date().toISOString().split('T')[0]
+        });
+
         await fbUpdate(`applications/${reviewApp.id}`,{status:'approved',admission_number:admNo});
-        closeModal('reviewModal');reviewApp=null;
-        toast(`Approved! ${admNo} enrolled`);loadAdmissions('t');loadAdmissions('a');
-        const apps=toArr(await fbGet('applications'));setBadges(apps.filter(a=>a.status==='pending').length);
-    }catch(e){toast('Error: '+e.message,'error');}
-    finally{hideLoad();}
+
+        // ====================== EMAIL SENDING ======================
+        if(reviewApp.email){
+            try {
+                await emailjs.send('service_4kehpge', 'template_4nx5xna', {
+                    to_email: reviewApp.email,
+                    to_name: reviewApp.name,
+                    admission_number: admNo,
+                    course: reviewApp.course,
+                    message: `Congratulations! Your application has been approved. Your admission number is ${admNo}. Please visit the campus with your original documents to complete enrollment.`
+                });
+                console.log("✅ Approval email sent to " + reviewApp.email);
+            } catch (emailErr) {
+                console.warn("Email sending failed:", emailErr);
+                // Don't stop the approval even if email fails
+            }
+        }
+        // ============================================================
+
+        closeModal('reviewModal'); 
+        reviewApp = null;
+        toast(`✅ Student Approved & Enrolled! Adm No: ${admNo}`);
+        
+        loadAdmissions('t'); 
+        loadAdmissions('a');
+    }catch(e){
+        toast('Error: '+e.message,'error');
+    }finally{
+        hideLoad();
+    }
 }
 async function doReject(){
     if(!reviewApp) return;
-    showLoad('Rejecting...');
+    showLoad('Rejecting & Sending Email...');
     try{
         await fbUpdate(`applications/${reviewApp.id}`,{status:'rejected'});
-        closeModal('reviewModal');reviewApp=null;
-        toast('Application rejected','warning');loadAdmissions('t');loadAdmissions('a');
-        const apps=toArr(await fbGet('applications'));setBadges(apps.filter(a=>a.status==='pending').length);
-    }catch(e){toast('Error: '+e.message,'error');}
-    finally{hideLoad();}
+
+        // ====================== EMAIL SENDING ======================
+        if(reviewApp.email){
+            try {
+                await emailjs.send('service_4kehpge', 'template_9tn7g6j', {
+                    to_email: reviewApp.email,
+                    to_name: reviewApp.name,
+                    course: reviewApp.course,
+                    message: `Thank you for your interest in KRAC. Unfortunately, your application has not been successful at this time.`
+                });
+                console.log("✅ Rejection email sent to " + reviewApp.email);
+            } catch (emailErr) {
+                console.warn("Email sending failed:", emailErr);
+            }
+        }
+        // ============================================================
+
+        closeModal('reviewModal'); 
+        reviewApp = null;
+        toast('Application rejected.','warning');
+        
+        loadAdmissions('t'); 
+        loadAdmissions('a');
+    }catch(e){
+        toast('Error: '+e.message,'error');
+    }finally{
+        hideLoad();
+    }
 }
 
 // ════════════════════════════════════════
@@ -1612,9 +1855,6 @@ async function loadAdminStudents(){
 }
 function filterAdminStudents(q){document.querySelectorAll('#aStudBody tr').forEach(r=>r.style.display=r.textContent.toLowerCase().includes(q.toLowerCase())?'':'none');}
 
-// ════════════════════════════════════════
-// ADMIN USER MANAGEMENT (reset passwords)
-// ════════════════════════════════════════
 async function loadAdminUsers(){
     const tbody=document.getElementById('aUsersBody');
     tbody.innerHTML='<tr><td colspan="6" style="text-align:center;">Loading...</td></tr>';
@@ -1626,9 +1866,17 @@ async function loadAdminUsers(){
             <td>${u.email||'-'}</td>
             <td><span class="badge ${u.status==='active'?'badge-success':'badge-danger'}">${u.status||'active'}</span></td>
             <td class="tbl-actions">
+                <button class="view-pwd" data-uid="${u.id}" data-uname="${u.name}" data-uuser="${u.username}" data-urole="${u.role}" data-upwd="${u.password}" title="View Password"><i class="fas fa-eye"></i></button>
                 <button class="edit" data-uid="${u.id}" data-uname="${u.name}" data-uuser="${u.username}" data-urole="${u.role}" title="Edit Password"><i class="fas fa-key"></i></button>
                 ${u.role!=='admin'?`<button class="del" data-del="${u.id}" title="Delete"><i class="fas fa-trash"></i></button>`:''}
             </td></tr>`).join('');
+        tbody.querySelectorAll('button.view-pwd[data-uid]').forEach(btn=>btn.onclick=()=>{
+            document.getElementById('vpUserName').textContent=btn.dataset.uname;
+            document.getElementById('vpUsername').textContent=btn.dataset.uuser;
+            document.getElementById('vpRole').textContent=btn.dataset.urole;
+            document.getElementById('vpPassword').textContent=btn.dataset.upwd;
+            openModal('viewPasswordModal');
+        });
         tbody.querySelectorAll('button.edit[data-uid]').forEach(btn=>btn.onclick=()=>{
             document.getElementById('editUserId').value=btn.dataset.uid;
             document.getElementById('editUserName').value=btn.dataset.uname;
@@ -1647,6 +1895,10 @@ async function loadAdminUsers(){
         });
     }catch(e){tbody.innerHTML=`<tr><td colspan="6" style="color:red;">${e.message}</td></tr>`;}
 }
+function copyPassword(){
+    const pwd=document.getElementById('vpPassword').textContent;
+    navigator.clipboard.writeText(pwd).then(()=>toast('Copied!')).catch(()=>toast('Copy failed','error'));
+}
 function filterUsers(q){document.querySelectorAll('#aUsersBody tr').forEach(r=>r.style.display=r.textContent.toLowerCase().includes(q.toLowerCase())?'':'none');}
 async function saveUserPassword(){
     const id=document.getElementById('editUserId').value;
@@ -1661,7 +1913,6 @@ async function saveUserPassword(){
     }catch(e){toast('Error: '+e.message,'error');}
     finally{hideLoad();}
 }
-
 async function saveSettings(){
     showLoad('Saving...');
     try{
@@ -1670,29 +1921,16 @@ async function saveSettings(){
     }catch(e){toast('Error: '+e.message,'error');}
     finally{hideLoad();}
 }
-
-// Add TCH003 directly — call this once from admin settings
 async function addMissingTeacher(){
     showLoad('Adding TCH003...');
     try{
-        // Check if TCH003 already exists
-        const all = toArr(await fbGet('users'));
-        const exists = all.find(u=>u.username==='TCH003');
+        const all=toArr(await fbGet('users'));
+        const exists=all.find(u=>u.username==='TCH003');
         if(exists){
-            // Just reset the password to make sure it is correct
             await fbUpdate(`users/${exists.id}`,{password:hashPwd('teacher123'),role:'teacher',status:'active',first_login:false});
             toast('TCH003 password reset to teacher123 ✓');
-        } else {
-            await fbPush('users',{
-                username:'TCH003',
-                password:hashPwd('teacher123'),
-                role:'teacher',
-                name:'Mr. Onyango Elly Omondi',
-                email:'e.onyango@krac.ac.ke',
-                phone:'0712345003',
-                first_login:false,
-                status:'active'
-            });
+        }else{
+            await fbPush('users',{username:'TCH003',password:hashPwd('teacher123'),role:'teacher',name:'Mr. Onyango Elly Omondi',email:'e.onyango@krac.ac.ke',phone:'0712345003',first_login:false,status:'active'});
             toast('TCH003 added successfully! Login: TCH003 / teacher123');
         }
         loadAdminUsers();
@@ -1705,12 +1943,10 @@ async function addMissingTeacher(){
 // ════════════════════════════════════════
 document.addEventListener('DOMContentLoaded',()=>{
     renderPublic();
-    initPwdToggles(); // global show/hide password
-
-    // Load announcements on site load
+    initPwdToggles();
     loadAnnouncements();
 
-    // Seed in background
+    // Seed in background — FIX 1 applies here
     setTimeout(()=>seedIfEmpty().catch(console.warn),2000);
 
     // Restore session
@@ -1760,6 +1996,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     document.getElementById('saveStudBtn').addEventListener('click',saveStudent);
     document.getElementById('studSearch').addEventListener('input',filterStudents);
     document.getElementById('saveResultBtn').addEventListener('click',saveResult);
+    document.getElementById('saveCourseResultsBtn').addEventListener('click',saveCourseResults);
     document.getElementById('saveFeesBtn').addEventListener('click',saveFees);
     document.getElementById('addExamBtn').addEventListener('click',()=>{
         document.getElementById('examRows').innerHTML='';examRowN=0;addExamRow();openModal('examModal');
@@ -1780,6 +2017,9 @@ document.addEventListener('DOMContentLoaded',()=>{
     document.getElementById('saveSettingsBtn').addEventListener('click',saveSettings);
     document.getElementById('saveUserPwdBtn').addEventListener('click',saveUserPassword);
     document.getElementById('addTch003Btn').addEventListener('click',addMissingTeacher);
+
+    // FIX 3: Wire up the Force Seed Course Units button
+    document.getElementById('seedUnitsBtn').addEventListener('click',seedCourseUnits);
 
     // Admin announcements
     document.getElementById('aAddAnnBtn').addEventListener('click',()=>{

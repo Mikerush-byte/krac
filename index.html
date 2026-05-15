@@ -507,6 +507,7 @@ tr:hover{background:var(--bg-light);}
     <div class="sidebar-header"><a href="#" class="logo"><img src="https://via.placeholder.com/44/1b5e20/ffffff?text=K" alt=""><div>KRAC <span>Portal</span></div></a></div>
     <ul class="sidebar-nav" id="studentNav">
       <li><a data-sec="sOverview"><i class="fas fa-home"></i> Overview</a></li>
+      <li><a data-sec="sUnits"><i class="fas fa-book"></i> My Units</a></li>
       <li><a data-sec="sResults"><i class="fas fa-graduation-cap"></i> Academic Results</a></li>
       <li><a data-sec="sExams"><i class="fas fa-file-alt"></i> Upcoming Exams</a></li>
       <li><a data-sec="sFees"><i class="fas fa-money-bill-wave"></i> Fees Status</a></li>
@@ -521,11 +522,19 @@ tr:hover{background:var(--bg-light);}
         <div class="dash-card"><div class="dash-card-header"><div><h3 id="sGPA">-</h3><p>Current GPA</p></div><i class="fas fa-chart-line"></i></div></div>
         <div class="dash-card"><div class="dash-card-header"><div><h3>92%</h3><p>Attendance</p></div><i class="fas fa-calendar-check"></i></div></div>
         <div class="dash-card"><div class="dash-card-header"><div><h3 id="sBalance">-</h3><p>Fees Balance</p></div><i class="fas fa-wallet"></i></div></div>
-        <div class="dash-card"><div class="dash-card-header"><div><h3 id="sCourses">-</h3><p>Active Courses</p></div><i class="fas fa-book-open"></i></div></div>
+        <div class="dash-card"><div class="dash-card-header"><div><h3 id="sCourses">-</h3><p>Course</p></div><i class="fas fa-book-open"></i></div></div>
+        <div class="dash-card"><div class="dash-card-header"><div><h3 id="sUnitsCount">-</h3><p>Course Units</p></div><i class="fas fa-book"></i></div></div>
       </div>
       <div class="tbl-wrap" style="margin-top:28px;"><div class="tbl-head"><h3>Recent Results</h3></div>
       <table><thead><tr><th>Course Unit</th><th>Code</th><th>Grade</th><th>Status</th></tr></thead>
       <tbody id="sRecentResults"><tr><td colspan="4" style="text-align:center;padding:18px;">No results yet</td></tr></tbody></table></div>
+    </div>
+    <div id="sUnits" class="hidden">
+      <div class="card">
+        <h3 style="color:var(--primary);margin-bottom:22px;"><i class="fas fa-book"></i> My Course Units</h3>
+        <div style="margin-bottom:18px;"><strong>Course:</strong> <span id="sCourseName">-</span></div>
+        <div id="sUnitsList" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;"></div>
+      </div>
     </div>
     <div id="sResults" class="hidden"><div class="tbl-wrap"><div class="tbl-head"><h3>Academic Results — 2026</h3></div>
     <table><thead><tr><th>Code</th><th>Unit</th><th>CAT</th><th>Exam</th><th>Total</th><th>Grade</th><th>Remarks</th></tr></thead>
@@ -591,7 +600,7 @@ tr:hover{background:var(--bg-light);}
         <button class="btn btn-primary" id="addStudBtn"><i class="fas fa-plus"></i> Add Student</button>
       </div>
       <div class="tbl-wrap"><div class="tbl-head"><div class="search-box"><i class="fas fa-search"></i><input type="text" id="studSearch" placeholder="Search..."></div></div>
-      <table><thead><tr><th>Adm No</th><th>Name</th><th>Course</th><th>Phone</th><th>Status</th><th>Actions</th></tr></thead>
+      <table><thead><tr><th>Adm No</th><th>Name</th><th>Course</th><th>Units</th><th></th>Phone</th><th>Status</th><th>Actions</th></tr></thead>
       <tbody id="tStudBody"></tbody></table></div>
     </div>
     <div id="tResults" class="hidden"><div class="tbl-wrap"><div class="tbl-head"><h3>Update Results</h3></div>
@@ -894,6 +903,25 @@ tr:hover{background:var(--bg-light);}
     <div class="modal-ftr">
       <button class="btn btn-outline" data-close="courseResultsModal">Close</button>
       <button class="btn btn-primary" id="saveCourseResultsBtn"><i class="fas fa-save"></i> Save All Results</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="viewStudentUnitsModal">
+  <div class="modal" style="max-width:720px;">
+    <div class="modal-hdr"><h3><i class="fas fa-book-open"></i> Student Units</h3><button class="modal-close" data-close="viewStudentUnitsModal">&times;</button></div>
+    <div class="modal-body">
+      <div style="background:var(--bg-light);padding:14px;border-radius:var(--radius);margin-bottom:18px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div><strong>Student:</strong> <span id="vsuStudName"></span></div>
+          <div><strong>Adm No:</strong> <span id="vsuStudAdm"></span></div>
+        </div>
+        <div style="margin-top:6px;"><strong>Course:</strong> <span id="vsuCourse"></span></div>
+      </div>
+      <div id="vsuUnitsContainer"></div>
+    </div>
+    <div class="modal-ftr">
+      <button class="btn btn-primary" data-close="viewStudentUnitsModal">Close</button>
     </div>
   </div>
 </div>
@@ -1326,11 +1354,15 @@ async function initStudentDash(){
         const gpa=results.length?(results.reduce((s,r)=>s+(r.total/100)*4,0)/results.length).toFixed(2):'0.00';
         document.getElementById('sGPA').textContent=gpa;
         document.getElementById('sBalance').textContent=`KES ${((CU.fees_total||0)-(CU.fees_paid||0)).toLocaleString()}`;
-        document.getElementById('sCourses').textContent=results.length;
+        document.getElementById('sCourses').textContent=CU.course||'-';
+        document.getElementById('sUnitsCount').textContent=getUnitsForCourse(CU.course).length;
+        document.getElementById('sCourseName').textContent=CU.course||'-';
         document.getElementById('sRecentResults').innerHTML=results.slice(0,5).map(r=>`<tr><td>${r.unit_name}</td><td>${r.unit_code}</td><td><strong>${r.grade}</strong></td><td><span class="badge ${r.total>=50?'badge-success':'badge-danger'}">${r.total>=50?'Pass':'Fail'}</span></td></tr>`).join('')||'<tr><td colspan="4" style="text-align:center;padding:18px;">No results yet</td></tr>';
     }catch(e){toast('Error: '+e.message,'error');}
     finally{hideLoad();}
+    loadStudentUnits();
     initSidebarNav('studentNav','student',sec=>{
+        if(sec==='sUnits') loadStudentUnits();
         if(sec==='sResults') loadSResults();
         if(sec==='sExams') loadSExams();
         if(sec==='sFees') loadSFees();
@@ -1345,6 +1377,21 @@ async function loadSResults(){
         const r=toArr(await fbGet('results')).filter(r=>r.student_id===CU.id);
         tbody.innerHTML=r.map(r=>`<tr><td>${r.unit_code}</td><td>${r.unit_name}</td><td>${r.cat}</td><td>${r.exam}</td><td><strong>${r.total}</strong></td><td><span class="badge badge-success">${r.grade}</span></td><td>${r.remarks}</td></tr>`).join('')||'<tr><td colspan="7" style="text-align:center;">No results yet</td></tr>';
     }catch(e){tbody.innerHTML=`<tr><td colspan="7" style="color:red;">${e.message}</td></tr>`;}
+}
+function loadStudentUnits(){
+    const course = CU.course || '-';
+    const units = getUnitsForCourse(CU.course);
+    document.getElementById('sCourseName').textContent = course;
+    document.getElementById('sUnitsCount').textContent = units.length;
+    const list = document.getElementById('sUnitsList');
+    if(!units.length){
+        list.innerHTML = `<div style="padding:18px;background:rgba(251,140,0,0.08);border:1px solid var(--warning);border-radius:var(--radius);color:var(--text-dark);">No units are defined for this course yet.</div>`;
+        return;
+    }
+    list.innerHTML = units.map(u=>`<div style="background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);">
+            <div style="font-weight:700;color:var(--primary);">${u.name}</div>
+            <div style="margin-top:8px;color:var(--text-light);">Code: <strong>${u.id}</strong></div>
+        </div>`).join('');
 }
 async function loadSExams(){
     const tbody=document.getElementById('sExamsBody');
@@ -1418,12 +1465,16 @@ async function initTeacherDash(){
 }
 async function loadTStudents(){
     const tbody=document.getElementById('tStudBody');
-    tbody.innerHTML='<tr><td colspan="6" style="text-align:center;">Loading...</td></tr>';
+    tbody.innerHTML='<tr><td colspan="7" style="text-align:center;">Loading...</td></tr>';
     try{
         const studs=toArr(await fbGet('users')).filter(u=>u.role==='student');
-        tbody.innerHTML=studs.map(s=>`<tr><td><strong>${s.admission_number}</strong></td><td>${s.name}</td><td>${s.course||'-'}</td><td>${s.phone||'-'}</td><td><span class="badge ${s.status==='active'?'badge-success':'badge-danger'}">${s.status}</span></td><td class="tbl-actions"><button class="del" data-del="${s.id}"><i class="fas fa-trash"></i></button></td></tr>`).join('');
+        tbody.innerHTML=studs.map(s=>{
+            const units=getUnitsForCourse(s.course);
+            return `<tr><td><strong>${s.admission_number}</strong></td><td>${s.name}</td><td>${s.course||'-'}</td><td><span class="badge badge-success">${units.length} units</span></td><td>${s.phone||'-'}</td><td><span class="badge ${s.status==='active'?'badge-success':'badge-danger'}">${s.status}</span></td><td class="tbl-actions"><button class="btn btn-sm btn-secondary" data-view-units="${s.id}" data-sname="${s.name}" data-sadm="${s.admission_number}" data-scourse="${s.course||''}" title="View course units"><i class="fas fa-eye"></i></button><button class="del" data-del="${s.id}" title="Delete student"><i class="fas fa-trash"></i></button></td></tr>`;
+        }).join('');
+        tbody.querySelectorAll('[data-view-units]').forEach(btn=>btn.onclick=()=>viewStudentUnits(btn.dataset.viewUnits,btn.dataset.sname,btn.dataset.sadm,btn.dataset.scourse));
         tbody.querySelectorAll('[data-del]').forEach(btn=>btn.onclick=()=>delStudent(btn.dataset.del));
-    }catch(e){tbody.innerHTML=`<tr><td colspan="6" style="color:red;">${e.message}</td></tr>`;}
+    }catch(e){tbody.innerHTML=`<tr><td colspan="7" style="color:red;">${e.message}</td></tr>`;}
 }
 function filterStudents(){const q=document.getElementById('studSearch').value.toLowerCase();document.querySelectorAll('#tStudBody tr').forEach(r=>r.style.display=r.textContent.toLowerCase().includes(q)?'':'none');}
 async function openAddStudent(){
@@ -1547,6 +1598,33 @@ async function openCourseResults(studId, studName, studAdm, course) {
         });
     });
     openModal('courseResultsModal');
+}
+function viewStudentUnits(studId, studName, studAdm, course) {
+    document.getElementById('vsuStudName').textContent = studName;
+    document.getElementById('vsuStudAdm').textContent = studAdm;
+    document.getElementById('vsuCourse').textContent = course || 'Unassigned';
+    const units = getUnitsForCourse(course);
+    let html = '';
+    if (!units.length) {
+        html = `<div style="padding:16px;background:rgba(251,140,0,0.08);border:1px solid var(--warning);border-radius:var(--radius);color:var(--text-dark);">
+            No units defined for this course. Go to Admin → Settings → <strong>Force Seed Course Units</strong> to fix this.
+        </div>`;
+    } else {
+        html = `<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;">
+                <thead><tr style="background:var(--bg-light);">
+                    <th style="text-align:left;padding:12px 10px;border-bottom:1px solid var(--border);">Unit Name</th>
+                    <th style="width:140px;padding:12px 10px;border-bottom:1px solid var(--border);">Unit Code</th>
+                </tr></thead><tbody>`;
+        units.forEach(unit => {
+            html += `<tr>
+                <td style="padding:12px 10px;border-bottom:1px solid var(--border);">${unit.name}</td>
+                <td style="padding:12px 10px;border-bottom:1px solid var(--border);">${unit.id}</td>
+            </tr>`;
+        });
+        html += `</tbody></table></div>`;
+    }
+    document.getElementById('vsuUnitsContainer').innerHTML = html;
+    openModal('viewStudentUnitsModal');
 }
 async function saveCourseResults() {
     const studId = document.getElementById('crStudId').value;
@@ -2060,3 +2138,6 @@ document.addEventListener('DOMContentLoaded',()=>{
 </script>
 </body>
 </html>
+
+
+

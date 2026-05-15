@@ -1253,7 +1253,7 @@ function initSidebarNav(navId,prefix,loader){
             e.preventDefault();const sec=a.dataset.sec;
             document.querySelectorAll(`#${navId} a`).forEach(x=>x.classList.remove('active'));
             a.classList.add('active');
-            document.querySelectorAll(`#${prefix}Dash .main-content > div`).forEach(d=>d.classList.add('hidden'));
+            document.querySelectorAll(`#${prefix}Dash .main-content > div:not(.dash-header)`).forEach(d=>d.classList.add('hidden'));
             document.getElementById(sec).classList.remove('hidden');
             if(loader) loader(sec);
             const sidebar=document.querySelector(`#${prefix}Dash .sidebar`);

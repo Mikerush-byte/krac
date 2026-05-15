@@ -202,7 +202,7 @@ footer{background:var(--primary-dark);color:#fff;padding:55px 20px 22px;}
 .dash-card p{color:var(--text-light);font-size:0.88rem;}
 
 /* TABLES */
-.tbl-wrap{background:#fff;border-radius:var(--radius-lg);box-shadow:var(--shadow);overflow:hidden;border:1px solid var(--border);}
+.tbl-wrap{background:#fff;border-radius:var(--radius-lg);box-shadow:var(--shadow);overflow-x:auto;border:1px solid var(--border);}
 .tbl-head{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
 .tbl-head h3{color:var(--primary);}
 .search-box{position:relative;}
@@ -268,8 +268,8 @@ tr:hover{background:var(--bg-light);}
 .ann-list li span{flex:1;font-size:0.93rem;}
 .ann-list li button{background:none;border:none;cursor:pointer;color:var(--danger);font-size:14px;}
 
-@media(max-width:1024px){.about-grid,.adm-grid,.contact-grid{grid-template-columns:1fr;}.sidebar{transform:translateX(-100%);transition:transform 0.3s;}.sidebar.open{transform:translateX(0);}.main-content{margin-left:0;}}
-@media(max-width:768px){.nav-links{display:none;position:absolute;top:70px;left:0;right:0;background:#fff;flex-direction:column;padding:14px;box-shadow:var(--shadow);}.nav-links.open{display:flex;}.mobile-btn{display:block;}.hero-content h1{font-size:1.9rem;}.mv-grid,.gi-grid{grid-template-columns:1fr;}.form-row{grid-template-columns:1fr;}.role-selector{grid-template-columns:1fr 1fr 1fr;}.dash-grid{grid-template-columns:1fr;}.team-modal-body{grid-template-columns:1fr;}.team-modal-img{margin:0 auto;}}
+@media(max-width:1024px){.about-grid,.adm-grid,.contact-grid{grid-template-columns:1fr;}.sidebar{position:fixed;left:-100%;top:0;width:280px;height:100vh;overflow-y:auto;transition:left 0.3s ease;z-index:120;}.sidebar.open{left:0;}.main-content{margin-left:0;}.sidebar-footer{position:relative;}.dash-grid{grid-template-columns:1fr;}.dashboard{flex-direction:column;}.dash-header{position:sticky;top:0;z-index:110;background:var(--bg-light);padding-top:16px;}.dash-menu-btn{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border:none;border-radius:50%;background:rgba(27,94,32,0.08);color:var(--primary);cursor:pointer;}.sidebar.open ~ .main-content{filter:brightness(0.95);} } 
+@media(max-width:768px){.nav-links{display:none;position:absolute;top:70px;left:0;right:0;background:#fff;flex-direction:column;padding:14px;box-shadow:var(--shadow);}.nav-links.open{display:flex;}.mobile-btn{display:block;}.hero-content h1{font-size:1.9rem;}.mv-grid,.gi-grid{grid-template-columns:1fr;}.form-row{grid-template-columns:1fr;}.role-selector{grid-template-columns:1fr 1fr 1fr;}.dash-grid{grid-template-columns:1fr;}.team-modal-body{grid-template-columns:1fr;}.team-modal-img{margin:0 auto;}.dash-header{flex-direction:column;align-items:flex-start;gap:14px;}.dash-header .user-menu{width:100%;justify-content:space-between;}.sidebar{width:280px;}.main-content{margin-left:0;padding:20px 14px;}.section{padding:45px 14px;}.tbl-wrap{overflow-x:auto;}.table,table{min-width:100%;}.search-box input{width:100%;}.card,.course-card,.team-card,.gi-box,.contact-form{padding:20px;}.portal-card{padding:28px;}.hero{min-height:70vh;}.sidebar-footer{position:relative;}}
 </style>
 </head>
 <body>
@@ -516,7 +516,7 @@ tr:hover{background:var(--bg-light);}
     <div class="sidebar-footer"><a onclick="logout()" style="color:rgba(255,255,255,0.8);text-decoration:none;display:flex;align-items:center;gap:8px;cursor:pointer;"><i class="fas fa-sign-out-alt"></i> Logout</a></div>
   </aside>
   <main class="main-content">
-    <div class="dash-header"><h1>Student Dashboard</h1><div class="user-menu"><span id="sName"></span><div class="avatar" id="sAvatar">S</div></div></div>
+    <div class="dash-header"><h1>Student Dashboard</h1><div style="display:flex;align-items:center;gap:12px;"><button class="dash-menu-btn" type="button" aria-label="Open menu"><i class="fas fa-bars"></i></button><div class="user-menu"><span id="sName"></span><div class="avatar" id="sAvatar">S</div></div></div></div>
     <div id="sOverview">
       <div class="dash-grid">
         <div class="dash-card"><div class="dash-card-header"><div><h3 id="sGPA">-</h3><p>Current GPA</p></div><i class="fas fa-chart-line"></i></div></div>
@@ -585,7 +585,7 @@ tr:hover{background:var(--bg-light);}
     <div class="sidebar-footer"><a onclick="logout()" style="color:rgba(255,255,255,0.8);text-decoration:none;display:flex;align-items:center;gap:8px;cursor:pointer;"><i class="fas fa-sign-out-alt"></i> Logout</a></div>
   </aside>
   <main class="main-content">
-    <div class="dash-header"><h1>Teacher Dashboard</h1><div class="user-menu"><span id="tName"></span><div class="avatar" id="tAvatar">T</div></div></div>
+    <div class="dash-header"><h1>Teacher Dashboard</h1><div style="display:flex;align-items:center;gap:12px;"><button class="dash-menu-btn" type="button" aria-label="Open menu"><i class="fas fa-bars"></i></button><div class="user-menu"><span id="tName"></span><div class="avatar" id="tAvatar">T</div></div></div></div>
     <div id="tOverview">
       <div class="dash-grid">
         <div class="dash-card"><div class="dash-card-header"><div><h3 id="tStudCount">-</h3><p>Total Students</p></div><i class="fas fa-users"></i></div></div>
@@ -2032,6 +2032,10 @@ document.addEventListener('DOMContentLoaded',()=>{
     // NAV
     document.getElementById('portalBtn').addEventListener('click',showPortal);
     document.getElementById('menuBtn').addEventListener('click',()=>document.getElementById('navLinks').classList.toggle('open'));
+    document.querySelectorAll('.dash-menu-btn').forEach(btn=>btn.addEventListener('click',()=>{
+        const sidebar=document.querySelector('.dashboard:not(.hidden) .sidebar');
+        if(sidebar) sidebar.classList.toggle('open');
+    }));
     document.getElementById('applyHeroBtn').addEventListener('click',()=>openModal('appModal'));
     document.getElementById('applyAdmBtn').addEventListener('click',()=>openModal('appModal'));
     document.getElementById('backBtn').addEventListener('click',showSite);

@@ -1256,6 +1256,8 @@ function initSidebarNav(navId,prefix,loader){
             document.querySelectorAll(`#${prefix}Dash .main-content > div`).forEach(d=>d.classList.add('hidden'));
             document.getElementById(sec).classList.remove('hidden');
             if(loader) loader(sec);
+            const sidebar=document.querySelector(`#${prefix}Dash .sidebar`);
+            if(sidebar && sidebar.classList.contains('open')) sidebar.classList.remove('open');
         });
     });
 }

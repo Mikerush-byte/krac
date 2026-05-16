@@ -42,8 +42,11 @@ body{font-family:'Segoe UI',sans-serif;background:var(--bg-light);color:var(--te
 .announcement-bar.hidden-bar{display:none;}
 .ann-label{background:var(--secondary);color:var(--text-dark);font-weight:700;font-size:0.82rem;padding:0 14px;height:100%;display:flex;align-items:center;white-space:nowrap;flex-shrink:0;gap:6px;}
 .ann-ticker{flex:1;overflow:hidden;position:relative;}
-.ann-text{display:inline-block;white-space:nowrap;animation:marquee 25s linear infinite;font-size:0.88rem;padding-left:100%;}
+.ann-text{display:inline-block;white-space:nowrap;animation:marquee 20s linear infinite;font-size:0.88rem;padding-left:100%;}
 .ann-text:hover{animation-play-state:paused;}
+.ann-preview{margin-top:18px;border:1px solid var(--border);border-radius:var(--radius);background:rgba(27,94,32,0.08);padding:14px;}
+.ann-preview small{display:block;color:var(--text-light);margin-bottom:8px;font-size:0.92rem;}
+.ann-preview .ann-ticker{height:32px;}
 
 /* HERO */
 .hero{position:relative;height:100vh;min-height:580px;display:flex;align-items:center;justify-content:center;overflow:hidden;}
@@ -283,7 +286,7 @@ tr:hover{background:var(--bg-light);}
 <!-- ANNOUNCEMENT BAR -->
 <div class="announcement-bar hidden-bar" id="annBar">
   <div class="ann-label"><i class="fas fa-bullhorn"></i> NOTICE</div>
-  <div class="ann-ticker"><span class="ann-text" id="annText"></span></div>
+  <div class="ann-ticker"><span class="ann-text" id="annText">Loading announcements...</span></div>
 </div>
 
 <nav class="navbar">
@@ -458,7 +461,7 @@ tr:hover{background:var(--bg-light);}
 <div id="portalPage" class="portal-page hidden">
   <div class="portal-card">
     <div class="portal-header">
-      <a href="#" class="logo" style="justify-content:center;"><img src="https://via.placeholder.com/44/1b5e20/ffffff?text=K" alt="KRAC"><div>KRAC <span>Portal</span></div></a>
+      <a href="#" class="logo" style="justify-content:center;"><img src="https://via.placeholder.com/44/1b5e20/ffffff?text=KRAC" alt="KRAC Logo"><div>KRAC <span>Portal</span></div></a>
       <h2 style="margin-top:14px;">Welcome Back</h2>
       <p>Sign in to access your dashboard</p>
     </div>
@@ -504,7 +507,7 @@ tr:hover{background:var(--bg-light);}
 <!-- ═══ STUDENT DASHBOARD ═══ -->
 <div id="studentDash" class="dashboard hidden">
   <aside class="sidebar">
-    <div class="sidebar-header"><a href="#" class="logo"><img src="https://via.placeholder.com/44/1b5e20/ffffff?text=K" alt=""><div>KRAC <span>Portal</span></div></a></div>
+    <div class="sidebar-header"><a href="#" class="logo"><img src="https://via.placeholder.com/44/1b5e20/ffffff?text=KRAC" alt="KRAC Logo"><div>KRAC <span>Portal</span></div></a></div>
     <ul class="sidebar-nav" id="studentNav">
       <li><a data-sec="sOverview"><i class="fas fa-home"></i> Overview</a></li>
       <li><a data-sec="sUnits"><i class="fas fa-book"></i> My Units</a></li>
@@ -572,7 +575,7 @@ tr:hover{background:var(--bg-light);}
 <!-- ═══ TEACHER DASHBOARD ═══ -->
 <div id="teacherDash" class="dashboard hidden">
   <aside class="sidebar">
-    <div class="sidebar-header"><a href="#" class="logo"><img src="https://via.placeholder.com/44/1b5e20/ffffff?text=K" alt=""><div>KRAC <span>Portal</span></div></a></div>
+    <div class="sidebar-header"><a href="#" class="logo"><img src="https://via.placeholder.com/44/1b5e20/ffffff?text=KRAC" alt="KRAC Logo"><div>KRAC <span>Portal</span></div></a></div>
     <ul class="sidebar-nav" id="teacherNav">
       <li><a data-sec="tOverview"><i class="fas fa-home"></i> Overview</a></li>
       <li><a data-sec="tStudents"><i class="fas fa-users"></i> Manage Students</a></li>
@@ -595,12 +598,16 @@ tr:hover{background:var(--bg-light);}
       </div>
     </div>
     <div id="tStudents" class="hidden">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;">
-        <h3 style="color:var(--primary);">Student Management</h3>
-        <button class="btn btn-primary" id="addStudBtn"><i class="fas fa-plus"></i> Add Student</button>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:22px;flex-wrap:wrap;">
+        <h3 style="color:var(--primary);margin:0;">Student Management</h3>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+          <button class="btn btn-primary" id="addStudBtn"><i class="fas fa-plus"></i> Add Student</button>
+          <button class="btn btn-secondary" id="importStudBtn"><i class="fas fa-file-import"></i> Import Students</button>
+          <input type="file" id="importStudFile" accept=".csv" style="display:none;">
+        </div>
       </div>
       <div class="tbl-wrap"><div class="tbl-head"><div class="search-box"><i class="fas fa-search"></i><input type="text" id="studSearch" placeholder="Search..."></div></div>
-      <table><thead><tr><th>Adm No</th><th>Name</th><th>Course</th><th>Units</th><th></th>Phone</th><th>Status</th><th>Actions</th></tr></thead>
+      <table><thead><tr><th>Adm No</th><th>Name</th><th>Course</th><th>Units</th><th>Phone</th><th>Status</th><th>Actions</th></tr></thead>
       <tbody id="tStudBody"></tbody></table></div>
     </div>
     <div id="tResults" class="hidden"><div class="tbl-wrap"><div class="tbl-head"><h3>Update Results</h3></div>
@@ -641,6 +648,7 @@ tr:hover{background:var(--bg-light);}
           <input type="text" id="newAnnText" placeholder="Type announcement here..." style="flex:1;padding:10px 14px;border:2px solid var(--border);border-radius:var(--radius);font-family:inherit;font-size:0.95rem;">
           <button class="btn btn-primary" id="addAnnBtn"><i class="fas fa-plus"></i> Add</button>
         </div>
+        <div class="ann-preview"><small>Preview on public website:</small><div class="ann-ticker"><span class="ann-text" id="tAnnPreview">No announcements yet.</span></div></div>
         <ul class="ann-list" id="annList"></ul>
       </div>
     </div>
@@ -650,7 +658,7 @@ tr:hover{background:var(--bg-light);}
 <!-- ═══ ADMIN DASHBOARD ═══ -->
 <div id="adminDash" class="dashboard hidden">
   <aside class="sidebar">
-    <div class="sidebar-header"><a href="#" class="logo"><img src="https://via.placeholder.com/44/1b5e20/ffffff?text=K" alt=""><div>KRAC <span>Admin</span></div></a></div>
+    <div class="sidebar-header"><a href="#" class="logo"><img src="https://via.placeholder.com/44/1b5e20/ffffff?text=KRAC" alt="KRAC Logo"><div>KRAC <span>Admin</span></div></a></div>
     <ul class="sidebar-nav" id="adminNav">
       <li><a data-sec="aOverview"><i class="fas fa-home"></i> Overview</a></li>
       <li><a data-sec="aStudents"><i class="fas fa-user-graduate"></i> All Students</a></li>
@@ -1154,19 +1162,43 @@ async function seedCourseUnits(){
 
 async function loadAnnouncements(){
     try{
+        console.log('[ANN] loadAnnouncements starting...');
         const data=await fbGet('announcements');
+        console.log('[ANN] Firebase returned:', data);
         const items=toArr(data);
-        const bar=document.getElementById('annBar');
-        const annText=document.getElementById('annText');
-        if(items.length>0){
-            annText.textContent=items.map(a=>a.text).join('   ✦   ');
-            bar.classList.remove('hidden-bar');
-        } else {
-            bar.classList.add('hidden-bar');
-        }
+        console.log('[ANN] Converted to array:', items);
+        renderAnnouncementTicker(items);
         renderAnnList('annList',items);
         renderAnnList('aAnnList',items);
-    }catch(e){console.warn('Ann load:',e.message);}
+    }catch(e){console.warn('[ANN] Error loading:', e.message);}
+}
+function renderAnnouncementTicker(items){
+    const bar=document.getElementById('annBar');
+    const annEl = document.getElementById('annText');
+    const previewEl = document.getElementById('tAnnPreview');
+    const text = items && items.length ? items.map(a=>a.text).join('   ✦   ') : '';
+    console.log('[ANN] renderAnnouncementTicker called with', items ? items.length : 0, 'items. Text:', text);
+    
+    if(annEl){
+        annEl.textContent = text || 'No announcements yet.';
+        // Force animation restart
+        annEl.style.animation = 'none';
+        setTimeout(()=>{ annEl.style.animation = 'marquee 20s linear infinite'; }, 10);
+    }
+    if(previewEl){
+        previewEl.textContent = text || 'No announcements yet.';
+        previewEl.style.animation = 'none';
+        setTimeout(()=>{ previewEl.style.animation = 'marquee 20s linear infinite'; }, 10);
+    }
+    if(bar){
+        if(text.length > 0){
+            bar.classList.remove('hidden-bar');
+            console.log('[ANN] Bar shown (has announcements)');
+        } else {
+            bar.classList.add('hidden-bar');
+            console.log('[ANN] Bar hidden (no announcements)');
+        }
+    }
 }
 function renderAnnList(listId,items){
     const ul=document.getElementById(listId);
@@ -1177,12 +1209,18 @@ function renderAnnList(listId,items){
 }
 async function addAnnouncement(text){
     if(!text.trim()){toast('Please type an announcement','error');return;}
-    showLoad('Saving...');
+    console.log('[ANN] addAnnouncement called with:', text);
+    showLoad('Saving announcement...');
     try{
-        await fbPush('announcements',{text:text.trim(),createdBy:CU.name,createdAt:new Date().toISOString()});
+        const result = await fbPush('announcements',{text:text.trim(),createdBy:CU?CU.name:'System',createdAt:new Date().toISOString()});
+        console.log('[ANN] Firebase saved:', result);
         toast('Announcement added!');
+        // Reload from Firebase
         await loadAnnouncements();
-    }catch(e){toast('Error: '+e.message,'error');}
+    }catch(e){
+        console.error('[ANN] Firebase error:', e);
+        toast('Error: '+e.message,'error');
+    }
     finally{hideLoad();}
 }
 async function deleteAnnouncement(id){
@@ -1471,7 +1509,7 @@ async function loadTStudents(){
     try{
         const studs=toArr(await fbGet('users')).filter(u=>u.role==='student');
         tbody.innerHTML=studs.map(s=>{
-            const units=getUnitsForCourse(s.course);
+            const units = Array.isArray(s.units)&&s.units.length? s.units : getUnitsForCourse(s.course);
             return `<tr><td><strong>${s.admission_number}</strong></td><td>${s.name}</td><td>${s.course||'-'}</td><td><span class="badge badge-success">${units.length} units</span></td><td>${s.phone||'-'}</td><td><span class="badge ${s.status==='active'?'badge-success':'badge-danger'}">${s.status}</span></td><td class="tbl-actions"><button class="btn btn-sm btn-secondary" data-view-units="${s.id}" data-sname="${s.name}" data-sadm="${s.admission_number}" data-scourse="${s.course||''}" title="View course units"><i class="fas fa-eye"></i></button><button class="del" data-del="${s.id}" title="Delete student"><i class="fas fa-trash"></i></button></td></tr>`;
         }).join('');
         tbody.querySelectorAll('[data-view-units]').forEach(btn=>btn.onclick=()=>viewStudentUnits(btn.dataset.viewUnits,btn.dataset.sname,btn.dataset.sadm,btn.dataset.scourse));
@@ -1500,6 +1538,73 @@ async function saveStudent(){
         closeModal('addStudModal');toast(`Student added. Adm No: ${admNo}`);loadTStudents();
     }catch(e){toast('Error: '+e.message,'error');}
     finally{hideLoad();}
+}
+function parseCSV(text){
+    const rows=[];
+    let current='';
+    let inQuotes=false;
+    const lines=text.replace(/\r/g,'').split('\n').filter(l=>l.trim());
+    const headers = lines.shift().split(',').map(h=>h.trim().toLowerCase());
+    for(const line of lines){
+        current=''; inQuotes=false; const cols=[];
+        for(let i=0;i<line.length;i++){
+            const ch=line[i];
+            if(ch==='"'){
+                if(inQuotes && line[i+1]==='"'){ current+='"'; i++; }
+                else inQuotes=!inQuotes;
+            } else if(ch===',' && !inQuotes){ cols.push(current.trim()); current=''; }
+            else { current+=ch; }
+        }
+        cols.push(current.trim());
+        if(cols.length===headers.length) rows.push(Object.fromEntries(headers.map((h,i)=>[h,cols[i]||''])));
+    }
+    return rows;
+}
+function normalizeStudentRow(row){
+    const first = row.first_name || row.firstname || row['first name'] || '';
+    const last = row.last_name || row.lastname || row['last name'] || '';
+    const name = (row.name || row.full_name || row.fullname || `${first} ${last}`).trim();
+    const admission_number = (row.admission_number || row.adm_no || row.admissionno || row.admno || row.adm).trim();
+    const course = (row.course || row.program || '').trim();
+    const units = (row.units || row.unit_codes || row.unitcodes || row.unit_list || '').split(/[,;|]/).map(u=>u.trim()).filter(Boolean);
+    return {name, admission_number, course, units, email:(row.email||'').trim(), phone:(row.phone||row.mobile||'').trim()};
+}
+async function importStudentsFromCsv(file){
+    if(!file){toast('No file selected','error');return;}
+    showLoad('Importing students...');
+    try{
+        const text = await file.text();
+        const records = parseCSV(text);
+        if(!records.length){toast('CSV file is empty or invalid','error');return;}
+        const students = records.map(normalizeStudentRow).filter(r=>r.name && r.admission_number && r.course);
+        if(!students.length){toast('No valid student rows found. Ensure header columns include name, admission_number, and course.','error');return;}
+        const settings = await fbGet('settings') || {defaultPwd:'student123'};
+        const defaultPwd = hashPwd(settings.defaultPwd || 'student123');
+        const created = [];
+        for(const student of students){
+            const studentData = {
+                username: student.admission_number,
+                password: defaultPwd,
+                role: 'student',
+                name: student.name,
+                email: student.email || '',
+                phone: student.phone || '',
+                course: student.course,
+                admission_number: student.admission_number,
+                units: student.units,
+                fees_total: 45000,
+                fees_paid: 0,
+                first_login: true,
+                status: 'active',
+                enrollment_date: new Date().toISOString().split('T')[0]
+            };
+            await fbPush('users', studentData);
+            created.push(student.admission_number);
+        }
+        toast(`${created.length} students imported successfully!`);
+        loadTStudents();
+    }catch(e){toast('Import failed: '+e.message,'error');}
+    finally{hideLoad();document.getElementById('importStudFile').value='';}
 }
 async function delStudent(id){
     if(!confirm('Delete this student?')) return;
@@ -2076,6 +2181,8 @@ document.addEventListener('DOMContentLoaded',()=>{
 
     // Teacher
     document.getElementById('addStudBtn').addEventListener('click',openAddStudent);
+    document.getElementById('importStudBtn').addEventListener('click',()=>document.getElementById('importStudFile').click());
+    document.getElementById('importStudFile').addEventListener('change',e=>importStudentsFromCsv(e.target.files[0]));
     document.getElementById('saveStudBtn').addEventListener('click',saveStudent);
     document.getElementById('studSearch').addEventListener('input',filterStudents);
     document.getElementById('saveResultBtn').addEventListener('click',saveResult);

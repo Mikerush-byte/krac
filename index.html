@@ -606,7 +606,7 @@ tr:hover{background:var(--bg-light);}
           <input type="file" id="importStudFile" accept=".csv" style="display:none;">
         </div>
       </div>
-      <div class="tbl-wrap"><div class="tbl-head"><div class="search-box"><i class="fas fa-search"></i><input type="text" id="studSearch" placeholder="Search..."></div></div>
+      <div class="tbl-wrap"><div class="tbl-head"><div class="search-box"><i class="fas fa-search"></i><input type="text" id="studSearch" placeholder="Search..." oninput="filterStudents()"></div></div>
       <table><thead><tr><th>Adm No</th><th>Name</th><th>Course</th><th>Units</th><th>Phone</th><th>Status</th><th>Actions</th></tr></thead>
       <tbody id="tStudBody"></tbody></table></div>
     </div>
@@ -804,6 +804,43 @@ tr:hover{background:var(--bg-light);}
   </div>
 </div>
 
+<div class="modal-overlay" id="editStudModal">
+  <div class="modal" style="max-width:520px;">
+    <div class="modal-hdr"><h3><i class="fas fa-user-edit"></i> Edit Student</h3><button class="modal-close" data-close="editStudModal">&times;</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="editStudId">
+      <div class="form-row">
+        <div class="form-group"><label>Full Name *</label><input type="text" id="editStudName"></div>
+      </div>
+      <div class="form-group"><label>Email</label><input type="email" id="editStudEmail"></div>
+      <div class="form-group"><label>Phone</label><input type="tel" id="editStudPhone"></div>
+      <div class="form-group"><label>Course *</label>
+        <select id="editStudCourse">
+          <option value="">-- Select --</option>
+          <option>General Animal Production</option>
+          <option>Women Empowerment Program</option>
+          <option>Junior Agripreneur Course (Holiday Program)</option>
+          <option>Crop Development &amp; Marketing Course</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Status</label>
+          <select id="editStudStatus">
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+            <option value="suspended">Suspended</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Fees Paid (KES)</label><input type="number" id="editStudFeesPaid" min="0"></div>
+      </div>
+    </div>
+    <div class="modal-ftr">
+      <button class="btn btn-outline" data-close="editStudModal">Cancel</button>
+      <button class="btn btn-primary" id="saveEditStudBtn"><i class="fas fa-save"></i> Save Changes</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="resultModal">
   <div class="modal" style="max-width:420px;">
     <div class="modal-hdr"><h3><i class="fas fa-edit"></i> Update Result</h3><button class="modal-close" data-close="resultModal">&times;</button></div>
@@ -861,6 +898,14 @@ tr:hover{background:var(--bg-light);}
       <button class="btn btn-danger" id="rejectBtn"><i class="fas fa-times"></i> Reject</button>
       <button class="btn btn-primary" id="approveBtn"><i class="fas fa-check"></i> Approve &amp; Enroll</button>
     </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="studentDetailModal">
+  <div class="modal" style="max-width:680px;max-height:90vh;overflow-y:auto;">
+    <div class="modal-hdr"><h3><i class="fas fa-user-circle"></i> Student Details</h3><button class="modal-close" data-close="studentDetailModal">&times;</button></div>
+    <div class="modal-body" id="studentDetailBody"></div>
+    <div class="modal-ftr" id="studentDetailFooter"></div>
   </div>
 </div>
 
@@ -1515,13 +1560,50 @@ async function loadTStudents(){
         const studs=toArr(await fbGet('users')).filter(u=>u.role==='student');
         tbody.innerHTML=studs.map(s=>{
             const units = Array.isArray(s.units)&&s.units.length? s.units : getUnitsForCourse(s.course);
-            return `<tr><td><strong>${s.admission_number}</strong></td><td>${s.name}</td><td>${s.course||'-'}</td><td><span class="badge badge-success">${units.length} units</span></td><td>${s.phone||'-'}</td><td><span class="badge ${s.status==='active'?'badge-success':'badge-danger'}">${s.status}</span></td><td class="tbl-actions"><button class="btn btn-sm btn-secondary" data-view-units="${s.id}" data-sname="${s.name}" data-sadm="${s.admission_number}" data-scourse="${s.course||''}" title="View course units"><i class="fas fa-eye"></i></button><button class="del" data-del="${s.id}" title="Delete student"><i class="fas fa-trash"></i></button></td></tr>`;
+            return `<tr style="cursor:pointer;" data-stud-id="${s.id}" data-click-row><td><strong>${s.admission_number}</strong></td><td>${s.name}</td><td>${s.course||'-'}</td><td><span class="badge badge-success">${units.length} units</span></td><td>${s.phone||'-'}</td><td><span class="badge ${s.status==='active'?'badge-success':'badge-danger'}">${s.status}</span></td><td class="tbl-actions"><button class="btn btn-sm btn-secondary" data-view-units="${s.id}" data-sname="${s.name}" data-sadm="${s.admission_number}" data-scourse="${s.course||''}" title="View course units" onclick="event.stopPropagation();"><i class="fas fa-eye"></i></button><button class="del" data-del="${s.id}" title="Delete student" onclick="event.stopPropagation();"><i class="fas fa-trash"></i></button></td></tr>`;
         }).join('');
+        tbody.querySelectorAll('[data-click-row]').forEach(row=>row.onclick=()=>viewStudentDetail(row.dataset.studId));
         tbody.querySelectorAll('[data-view-units]').forEach(btn=>btn.onclick=()=>viewStudentUnits(btn.dataset.viewUnits,btn.dataset.sname,btn.dataset.sadm,btn.dataset.scourse));
         tbody.querySelectorAll('[data-del]').forEach(btn=>btn.onclick=()=>delStudent(btn.dataset.del));
     }catch(e){tbody.innerHTML=`<tr><td colspan="7" style="color:red;">${e.message}</td></tr>`;}
 }
 function filterStudents(){const q=document.getElementById('studSearch').value.toLowerCase();document.querySelectorAll('#tStudBody tr').forEach(r=>r.style.display=r.textContent.toLowerCase().includes(q)?'':'none');}
+async function viewStudentDetail(studId){
+    showLoad('Loading student details...');
+    try{
+        const allUsers=toArr(await fbGet('users'));
+        const stud=allUsers.find(u=>u.id===studId);
+        if(!stud){toast('Student not found','error');return;}
+        const units=Array.isArray(stud.units)&&stud.units.length?stud.units:getUnitsForCourse(stud.course);
+        const results=await fbGet('results')||{};
+        const studResults=toArr(results).filter(r=>r.student_id===studId);
+        const html=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;"><div><h4 style="color:var(--primary);margin-bottom:10px;">Personal Information</h4><div style="display:grid;gap:10px;"><div><label style="font-weight:600;font-size:0.85rem;color:var(--text-light);">Full Name</label><div style="font-size:1rem;">${stud.name||'-'}</div></div><div><label style="font-weight:600;font-size:0.85rem;color:var(--text-light);">Admission Number</label><div style="font-size:1rem;">${stud.admission_number||'-'}</div></div><div><label style="font-weight:600;font-size:0.85rem;color:var(--text-light);">Email</label><div style="font-size:1rem;">${stud.email||'-'}</div></div><div><label style="font-weight:600;font-size:0.85rem;color:var(--text-light);">Phone</label><div style="font-size:1rem;">${stud.phone||'-'}</div></div></div></div><div><h4 style="color:var(--primary);margin-bottom:10px;">Academic Information</h4><div style="display:grid;gap:10px;"><div><label style="font-weight:600;font-size:0.85rem;color:var(--text-light);">Course</label><div style="font-size:1rem;">${stud.course||'-'}</div></div><div><label style="font-weight:600;font-size:0.85rem;color:var(--text-light);">Status</label><div style="font-size:1rem;"><span class="badge ${stud.status==='active'?'badge-success':'badge-danger'}">${stud.status}</span></div></div><div><label style="font-weight:600;font-size:0.85rem;color:var(--text-light);">Units Enrolled</label><div style="font-size:1rem;">${units.length} units</div></div><div><label style="font-weight:600;font-size:0.85rem;color:var(--text-light);">Enrollment Date</label><div style="font-size:1rem;">${stud.enrollment_date||'-'}</div></div></div></div></div><div style="margin-bottom:20px;"><h4 style="color:var(--primary);margin-bottom:10px;">Financial Information</h4><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:15px;"><div style="background:rgba(67,160,71,0.1);padding:15px;border-radius:var(--radius);border-left:4px solid var(--success);"><div style="font-weight:600;color:var(--text-light);font-size:0.85rem;">Total Fees</div><div style="font-size:1.5rem;color:var(--success);">KES ${(stud.fees_total||0).toLocaleString()}</div></div><div style="background:rgba(67,160,71,0.1);padding:15px;border-radius:var(--radius);border-left:4px solid var(--success);"><div style="font-weight:600;color:var(--text-light);font-size:0.85rem;">Paid</div><div style="font-size:1.5rem;color:var(--success);">KES ${(stud.fees_paid||0).toLocaleString()}</div></div><div style="background:rgba(229,57,53,0.1);padding:15px;border-radius:var(--radius);border-left:4px solid var(--danger);"><div style="font-weight:600;color:var(--text-light);font-size:0.85rem;">Outstanding</div><div style="font-size:1.5rem;color:var(--danger);">KES ${((stud.fees_total||0)-(stud.fees_paid||0)).toLocaleString()}</div></div></div></div><div style="margin-bottom:20px;"><h4 style="color:var(--primary);margin-bottom:10px;">Units & Results</h4><div style="display:grid;gap:10px;"><table style="width:100%;border-collapse:collapse;"><thead><tr style="background:var(--bg-light);"><th style="padding:10px;text-align:left;border-bottom:2px solid var(--border);font-size:0.85rem;">Unit Code</th><th style="padding:10px;text-align:left;border-bottom:2px solid var(--border);font-size:0.85rem;">Unit Name</th><th style="padding:10px;text-align:left;border-bottom:2px solid var(--border);font-size:0.85rem;">CAT</th><th style="padding:10px;text-align:left;border-bottom:2px solid var(--border);font-size:0.85rem;">Exam</th><th style="padding:10px;text-align:left;border-bottom:2px solid var(--border);font-size:0.85rem;">Total</th></tr></thead><tbody>${units.map(u=>{const ur=studResults.find(r=>r.unit_id===u.id);return `<tr><td style="padding:10px;border-bottom:1px solid var(--border);">${u.code||'-'}</td><td style="padding:10px;border-bottom:1px solid var(--border);">${u.name||'-'}</td><td style="padding:10px;border-bottom:1px solid var(--border);">${ur?.cat||'-'}</td><td style="padding:10px;border-bottom:1px solid var(--border);">${ur?.exam||'-'}</td><td style="padding:10px;border-bottom:1px solid var(--border);font-weight:600;">${ur?(ur.cat||0)+(ur.exam||0):'-'}</td></tr>`;}).join('')}</tbody></table></div></div>`;
+        document.getElementById('studentDetailBody').innerHTML=html;
+        document.getElementById('studentDetailFooter').innerHTML=`<button class="btn btn-secondary" id="editStudBtn" data-stud-id="${studId}"><i class="fas fa-edit"></i> Edit Details</button><button class="btn btn-danger" id="deleteStudBtn" data-stud-id="${studId}"><i class="fas fa-trash"></i> Delete Student</button><button class="btn btn-outline" data-close="studentDetailModal">Close</button>`;
+        document.getElementById('editStudBtn').onclick=()=>openEditStudent(stud);
+        document.getElementById('deleteStudBtn').onclick=()=>{closeModal('studentDetailModal');delStudent(studId);};
+        openModal('studentDetailModal');
+    }catch(e){toast('Error: '+e.message,'error');}
+    finally{hideLoad();}
+}
+async function openEditStudent(stud){
+    document.getElementById('editStudId').value=stud.id;
+    document.getElementById('editStudName').value=stud.name||'';
+    document.getElementById('editStudEmail').value=stud.email||'';
+    document.getElementById('editStudPhone').value=stud.phone||'';
+    document.getElementById('editStudCourse').value=stud.course||'';
+    document.getElementById('editStudStatus').value=stud.status||'active';
+    document.getElementById('editStudFeesPaid').value=stud.fees_paid||0;
+    openModal('editStudModal');
+}
+async function saveEditStudent(){
+    const id=document.getElementById('editStudId').value;
+    const updates={name:document.getElementById('editStudName').value,email:document.getElementById('editStudEmail').value,phone:document.getElementById('editStudPhone').value,course:document.getElementById('editStudCourse').value,status:document.getElementById('editStudStatus').value,fees_paid:parseInt(document.getElementById('editStudFeesPaid').value)||0};
+    if(!updates.name){toast('Name required','error');return;}
+    showLoad('Updating...');
+    try{await fbSet('users/'+id,updates);closeModal('editStudModal');toast('Student updated');loadTStudents();viewStudentDetail(id);}catch(e){toast('Error: '+e.message,'error');}
+    finally{hideLoad();}
+}
 async function openAddStudent(){
     const settings=await fbGet('settings')||{prefix:'KRAC',year:2026};
     const users=toArr(await fbGet('users')).filter(u=>u.role==='student'&&u.admission_number);
@@ -2194,6 +2276,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     document.getElementById('importStudBtn').addEventListener('click',()=>document.getElementById('importStudFile').click());
     document.getElementById('importStudFile').addEventListener('change',e=>importStudentsFromCsv(e.target.files[0]));
     document.getElementById('saveStudBtn').addEventListener('click',saveStudent);
+    document.getElementById('saveEditStudBtn').addEventListener('click',saveEditStudent);
     document.getElementById('studSearch').addEventListener('input',filterStudents);
     document.getElementById('saveResultBtn').addEventListener('click',saveResult);
     document.getElementById('saveCourseResultsBtn').addEventListener('click',saveCourseResults);
